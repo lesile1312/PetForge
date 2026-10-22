@@ -1,0 +1,27 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/pet_controller.gd" id="1_controller"]
+
+[node name="PetController" type="Node2D"]
+script = ExtResource("1_controller")
+
+[node name="Character" type="Sprite2D" parent="."]
+texture_filter = 1
+input_pickable = true
+
+[node name="SleepLabel" type="Label" parent="."]
+visible = false
+layout_mode = 0
+offset_left = 120.0
+offset_top = 45.0
+offset_right = 210.0
+offset_bottom = 75.0
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.95, 0.96, 0.86, 0.92)
+theme_override_colors/font_shadow_color = Color(0.1, 0.17, 0.14, 0.34)
+theme_override_constants/shadow_offset_x = 0
+theme_override_constants/shadow_offset_y = 1
+theme_override_font_sizes/font_size = 17
+text = "Z  z  z"
+horizontal_alignment = 1
+vertical_alignment = 1

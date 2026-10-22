@@ -1,0 +1,37 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://petforge.local/schemas/pet-v1.schema.json",
+  "title": "PetForge pet package",
+  "type": "object",
+  "required": ["version", "id", "name", "appearance", "behavior", "window"],
+  "properties": {
+    "version": { "const": "1.0" },
+    "id": { "type": "string", "pattern": "^pet_[a-f0-9]{32}$" },
+    "name": { "type": "string", "minLength": 1, "maxLength": 40 },
+    "appearance": {
+      "type": "object", "required": ["sprite", "scale"],
+      "properties": {
+        "sprite": { "type": "string", "pattern": "^[A-Za-z0-9._/-]+\\.png$" },
+        "model": { "type": ["string", "null"], "pattern": "^model\\.glb$" },
+        "scale": { "type": "number", "minimum": 0.5, "maximum": 2 }
+      }, "additionalProperties": false
+    },
+    "behavior": {
+      "type": "object", "required": ["moveSpeed", "idleDuration", "sleepDuration", "randomWalk", "randomJump", "autoSleep", "draggable", "initialPosition", "randomWalkFrequency"],
+      "properties": {
+        "moveSpeed": { "type": "integer", "minimum": 20, "maximum": 300 },
+        "idleDuration": { "type": "integer", "minimum": 10, "maximum": 120 },
+        "sleepDuration": { "type": "integer", "minimum": 30, "maximum": 600 },
+        "randomWalk": { "type": "boolean" }, "randomJump": { "type": "boolean" }, "autoSleep": { "type": "boolean" }, "draggable": { "type": "boolean" },
+        "initialPosition": { "enum": ["left", "right", "random"] },
+        "randomWalkFrequency": { "enum": ["low", "medium", "high"] }
+      }, "additionalProperties": false
+    },
+    "window": {
+      "type": "object", "required": ["alwaysOnTop", "mousePassthrough"],
+      "properties": { "alwaysOnTop": { "type": "boolean" }, "mousePassthrough": { "type": "boolean" } }, "additionalProperties": false
+    },
+    "animations": { "type": "object" }, "personality": { "type": "object" }, "voice": { "type": "object" }, "skills": { "type": "array", "items": { "type": "string" } }, "agent": { "type": "object" }
+  },
+  "additionalProperties": false
+}

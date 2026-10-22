@@ -1,0 +1,8 @@
+{
+  "version": "1.0",
+  "id": "pet_00000000000000000000000000000000",
+  "name": "Momo",
+  "appearance": { "sprite": "character.png", "scale": 1.0 },
+  "behavior": { "moveSpeed": 100, "idleDuration": 20, "sleepDuration": 120, "randomWalk": true, "randomJump": true, "autoSleep": true, "draggable": true, "initialPosition": "right", "randomWalkFrequency": "medium" },
+  "window": { "alwaysOnTop": true, "mousePassthrough": true }
+}
