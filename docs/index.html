@@ -1,0 +1,359 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#f5f1e8" />
+    <meta name="description" content="PetForge：Windows 本地桌宠创作工具。看看角色待机、眨眼和左右跑动的实际演示，并了解当前项目进展。" />
+    <meta property="og:title" content="PetForge — 让喜欢的角色住进桌面" />
+    <meta property="og:description" content="一个 Windows 优先、照片本地处理的开源桌宠工坊。查看实际动作预览与项目进展。" />
+    <meta property="og:type" content="website" />
+    <title>PetForge — 让喜欢的角色住进桌面</title>
+    <style>
+      :root {
+        color-scheme: light;
+        --paper: #f5f1e8;
+        --paper-light: #fbf9f4;
+        --ink: #342a36;
+        --muted: #756d73;
+        --line: #d9d1c7;
+        --sage: #98a99a;
+        --coral: #e69a86;
+        --butter: #e8c86a;
+        --lilac: #d8cce4;
+        --serif: Georgia, "Noto Serif SC", "Songti SC", serif;
+        --sans: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", sans-serif;
+      }
+
+      * { box-sizing: border-box; }
+      html { scroll-behavior: smooth; }
+      body {
+        margin: 0;
+        background: var(--paper);
+        color: var(--ink);
+        font-family: var(--sans);
+        line-height: 1.65;
+        text-rendering: optimizeLegibility;
+      }
+      a { color: inherit; }
+      button { font: inherit; }
+      .shell { width: min(1160px, calc(100% - 64px)); margin: 0 auto; }
+
+      .topbar {
+        min-height: 76px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border-bottom: 1px solid var(--line);
+      }
+      .brand { display: inline-flex; align-items: center; gap: 11px; text-decoration: none; font-weight: 760; letter-spacing: -.04em; }
+      .brand-mark { width: 28px; height: 28px; display: grid; place-items: center; border: 1px solid var(--ink); border-radius: 50%; font: 18px/1 var(--serif); color: var(--coral); }
+      .brand small { display: block; color: var(--muted); font-size: 10px; font-weight: 600; letter-spacing: .13em; line-height: 1.2; text-transform: uppercase; }
+      .nav { display: flex; align-items: center; gap: 28px; font-size: 13px; }
+      .nav a { color: var(--muted); text-decoration: none; transition: color .2s ease; }
+      .nav a:hover { color: var(--ink); }
+      .nav .github-link { padding: 8px 13px; border: 1px solid var(--ink); border-radius: 999px; color: var(--ink); }
+
+      .hero {
+        min-height: 650px;
+        display: grid;
+        grid-template-columns: minmax(0, .92fr) minmax(390px, 1.08fr);
+        align-items: center;
+        gap: clamp(30px, 6vw, 82px);
+        padding: 52px 0 56px;
+      }
+      .eyebrow { display: flex; align-items: center; gap: 10px; color: #716751; font-size: 10px; font-weight: 750; letter-spacing: .17em; text-transform: uppercase; }
+      .eyebrow::before { width: 26px; height: 1px; background: var(--coral); content: ""; }
+      h1 { max-width: 560px; margin: 23px 0 20px; font: 500 clamp(42px, 5vw, 64px)/1.13 var(--serif); letter-spacing: -.075em; }
+      h1 .accent { color: #bd7464; white-space: nowrap; }
+      .lead { max-width: 475px; margin: 0; color: var(--muted); font-size: 16px; line-height: 1.9; }
+      .hero-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-top: 31px; }
+      .button { display: inline-flex; min-height: 46px; align-items: center; justify-content: center; gap: 9px; padding: 0 17px; border: 1px solid var(--ink); border-radius: 3px; background: var(--ink); color: #fffdf8; font-size: 13px; font-weight: 700; text-decoration: none; transition: transform .2s ease, background .2s ease; }
+      .button:hover { transform: translateY(-2px); background: #514453; }
+      .button.secondary { background: transparent; color: var(--ink); }
+      .button.secondary:hover { background: #ebe5da; }
+      .button svg { width: 16px; height: 16px; }
+      .project-meta { display: flex; flex-wrap: wrap; gap: 8px 18px; margin-top: 26px; color: var(--muted); font-size: 11px; }
+      .project-meta span::before { margin-right: 7px; color: #8d9c8d; content: "✳"; }
+
+      .pet-column { position: relative; min-width: 0; }
+      .pet-stage {
+        position: relative;
+        min-height: 468px;
+        display: grid;
+        place-items: center;
+        overflow: hidden;
+        border: 1px solid #d4c9bb;
+        background: var(--paper-light);
+        isolation: isolate;
+      }
+      .pet-stage::before, .pet-stage::after { position: absolute; z-index: -1; content: ""; }
+      .pet-stage::before { inset: 15px; border: 1px solid #ebe4d9; }
+      .pet-stage::after { width: 320px; height: 320px; top: 68px; left: 50%; border: 1px solid #e4d9cd; border-radius: 50%; transform: translateX(-50%); }
+      .stage-note { position: absolute; z-index: 2; top: 30px; left: 31px; color: #8a7b70; font: 11px/1.5 var(--serif); letter-spacing: .08em; }
+      .stage-index { position: absolute; z-index: 2; right: 30px; top: 27px; color: #a79b91; font-size: 10px; letter-spacing: .16em; }
+      .pet-halo { position: absolute; width: 222px; height: 222px; top: 110px; left: 50%; border-radius: 50%; background: #eae2d5; opacity: .54; transform: translateX(-50%); }
+      .pet-image {
+        position: relative;
+        z-index: 1;
+        display: block;
+        width: min(78%, 340px);
+        height: 340px;
+        object-fit: contain;
+        image-rendering: auto;
+        filter: drop-shadow(0 13px 13px rgba(64, 48, 43, .11));
+        transition: opacity .15s ease, transform .35s ease;
+      }
+      .pet-image.swap { opacity: .35; transform: translateY(-4px); }
+      .ground-line { position: absolute; bottom: 72px; left: 16%; width: 68%; height: 1px; background: #c9bdae; }
+      .ground-line::after { position: absolute; top: 4px; left: 22%; width: 56%; height: 1px; background: #e4ddd3; content: ""; }
+      .stage-caption { position: absolute; right: 31px; bottom: 25px; left: 31px; display: flex; align-items: end; justify-content: space-between; gap: 12px; }
+      .stage-caption strong { display: block; font: 20px/1.3 var(--serif); font-weight: 500; }
+      .stage-caption small { color: var(--muted); font-size: 11px; }
+      .stage-caption .counter { color: #94887e; font: 12px var(--serif); }
+      .spark { position: absolute; color: var(--coral); font: 18px var(--serif); }
+      .spark.one { top: 114px; right: 22%; }
+      .spark.two { bottom: 119px; left: 19%; color: #aab69e; font-size: 14px; }
+
+      .action-strip { display: flex; align-items: center; gap: 8px; padding-top: 11px; }
+      .action-label { margin-right: auto; color: var(--muted); font-size: 11px; }
+      .action-button { display: inline-flex; min-height: 35px; align-items: center; gap: 6px; padding: 0 10px; border: 1px solid transparent; border-radius: 2px; background: transparent; color: #756d73; cursor: pointer; font-size: 11px; transition: background .2s ease, border .2s ease, color .2s ease; }
+      .action-button:hover { border-color: var(--line); color: var(--ink); }
+      .action-button[aria-pressed="true"] { border-color: #b8c4b7; background: #e9eee7; color: #35453c; }
+      .action-button .arrow { font-size: 15px; line-height: 1; }
+      :focus-visible { outline: 3px solid #bd7464; outline-offset: 3px; }
+
+      .section { padding: 96px 0; border-top: 1px solid var(--line); }
+      .section-heading { display: grid; grid-template-columns: .65fr 1.35fr; align-items: end; gap: 35px; margin-bottom: 34px; }
+      .section-kicker { color: #8c7f71; font-size: 10px; font-weight: 750; letter-spacing: .17em; text-transform: uppercase; }
+      h2 { margin: 7px 0 0; font: 500 clamp(32px, 4vw, 48px)/1.22 var(--serif); letter-spacing: -.05em; }
+      .section-heading p { max-width: 540px; margin: 0 0 5px; color: var(--muted); font-size: 14px; line-height: 1.9; }
+
+      .gallery { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; align-items: start; }
+      .gallery-plate { position: relative; padding: 17px; border: 1px solid var(--line); background: #faf8f2; }
+      .gallery-plate img { display: block; width: 100%; height: auto; }
+      .gallery-plate figcaption { display: flex; justify-content: space-between; gap: 12px; padding: 12px 2px 0; color: var(--muted); font-size: 11px; }
+      .gallery-plate figcaption strong { color: var(--ink); font-size: 12px; }
+      .gallery-side { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+      .pose { margin: 0; padding: 12px 12px 9px; border: 1px solid var(--line); background: #fbf9f4; }
+      .pose:nth-child(2) { background: #f2f5f8; }
+      .pose:nth-child(3) { background: #f7f2fa; }
+      .pose:nth-child(4) { background: #eff7f3; }
+      .pose img { display: block; width: 100%; height: 188px; object-fit: contain; }
+      .pose figcaption { display: flex; align-items: center; justify-content: space-between; padding-top: 6px; font-size: 12px; font-weight: 700; }
+      .pose figcaption span { color: var(--muted); font-size: 10px; font-weight: 500; }
+
+      .process-section { background: #e9e7dc; }
+      .process-grid { display: grid; grid-template-columns: repeat(3, 1fr); border-top: 1px solid #c9c5b7; border-bottom: 1px solid #c9c5b7; }
+      .process-item { min-height: 205px; padding: 24px 25px 27px 0; }
+      .process-item + .process-item { padding-left: 25px; border-left: 1px solid #c9c5b7; }
+      .process-number { color: #9a7768; font: 14px var(--serif); }
+      .process-item h3 { margin: 22px 0 8px; font: 500 21px/1.3 var(--serif); }
+      .process-item p { max-width: 300px; margin: 0; color: #6f6964; font-size: 12px; line-height: 1.8; }
+
+      .status-band { display: grid; grid-template-columns: .8fr 1.2fr; gap: 50px; align-items: start; padding: 37px 38px; background: var(--ink); color: #f5f1e8; }
+      .status-band .section-kicker { color: #d6b790; }
+      .status-band h2 { max-width: 360px; font-size: 34px; }
+      .status-copy p { margin: 0 0 12px; color: #ded8dc; font-size: 13px; line-height: 1.9; }
+      .status-copy .note { color: #c5b8bb; font-size: 11px; }
+      .status-list { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 20px; }
+      .status-list span { padding: 5px 9px; border: 1px solid #625564; border-radius: 999px; color: #e7dfe4; font-size: 10px; }
+
+      .source-row { display: grid; grid-template-columns: 1fr auto; gap: 35px; align-items: center; }
+      .source-row h2 { max-width: 570px; }
+      .source-row p { max-width: 570px; margin: 14px 0 0; color: var(--muted); font-size: 13px; line-height: 1.8; }
+      .source-actions { display: flex; flex-direction: column; gap: 10px; min-width: 210px; }
+      footer { padding: 23px 0 35px; border-top: 1px solid var(--line); color: #867d7a; font-size: 10px; }
+      .footer-inner { display: flex; justify-content: space-between; gap: 16px; }
+      .footer-inner a { text-underline-offset: 3px; }
+
+      @media (max-width: 800px) {
+        .shell { width: min(100% - 40px, 620px); }
+        .nav { gap: 14px; }
+        .nav a:not(.github-link) { display: none; }
+        .hero { min-height: auto; grid-template-columns: 1fr; gap: 35px; padding: 57px 0 60px; }
+        h1 { max-width: 530px; font-size: clamp(46px, 10vw, 64px); }
+        .pet-stage { min-height: 435px; }
+        .section { padding: 72px 0; }
+        .section-heading { grid-template-columns: 1fr; gap: 14px; }
+        .gallery { grid-template-columns: 1fr; }
+        .process-grid { grid-template-columns: 1fr; }
+        .process-item { min-height: auto; padding: 22px 0; }
+        .process-item + .process-item { padding: 22px 0; border-top: 1px solid #c9c5b7; border-left: 0; }
+        .process-item h3 { margin-top: 12px; }
+        .status-band { grid-template-columns: 1fr; gap: 20px; padding: 28px 25px; }
+      }
+      @media (max-width: 480px) {
+        .shell { width: calc(100% - 30px); }
+        .topbar { min-height: 65px; }
+        .brand small { font-size: 8px; }
+        .nav .github-link { padding: 6px 10px; font-size: 11px; }
+        .hero { padding-top: 45px; }
+        .lead { font-size: 14px; }
+        .pet-stage { min-height: 390px; }
+        .pet-image { height: 290px; }
+        .pet-halo { top: 87px; width: 190px; height: 190px; }
+        .pet-stage::after { top: 49px; width: 285px; height: 285px; }
+        .ground-line { bottom: 67px; }
+        .stage-caption { right: 22px; bottom: 19px; left: 22px; }
+        .stage-note { left: 22px; top: 23px; }
+        .stage-index { right: 22px; top: 21px; }
+        .action-strip { flex-wrap: wrap; gap: 3px; }
+        .action-label { flex-basis: 100%; margin: 0 0 3px 4px; }
+        .action-button { padding: 0 8px; }
+        .pose img { height: 145px; }
+        .gallery-plate { padding: 10px; }
+        .status-band h2 { font-size: 30px; }
+        .source-row { grid-template-columns: 1fr; gap: 22px; }
+        .source-actions { flex-direction: row; flex-wrap: wrap; }
+        .footer-inner { flex-direction: column; }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="shell topbar">
+      <a class="brand" href="#top" aria-label="PetForge 首页">
+        <span class="brand-mark" aria-hidden="true">p</span>
+        <span>PetForge<small>DESKTOP PET STUDIO</small></span>
+      </a>
+      <nav class="nav" aria-label="主导航">
+        <a href="#actions">动作预览</a>
+        <a href="#project">项目进展</a>
+        <a class="github-link" href="https://github.com/lesile1312/PetForge" target="_blank" rel="noreferrer">GitHub ↗</a>
+      </nav>
+    </header>
+
+    <main id="top">
+      <section class="shell hero" aria-labelledby="hero-title">
+        <div class="hero-copy">
+          <div class="eyebrow">LOCAL-FIRST · WINDOWS FIRST</div>
+          <h1 id="hero-title">让喜欢的角色，<br /><span class="accent">住进你的桌面。</span></h1>
+          <p class="lead">PetForge 是一款开源桌宠创作工具。上传角色图片，在本机预览形象和动作，再把透明桌宠放到整个电脑桌面上。</p>
+          <div class="hero-actions">
+            <a class="button" href="https://github.com/lesile1312/PetForge" target="_blank" rel="noreferrer">
+              <svg viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M8 .7a7.3 7.3 0 0 0-2.31 14.22c.36.07.5-.15.5-.35v-1.25c-2.04.45-2.47-.87-2.47-.87-.33-.85-.82-1.08-.82-1.08-.67-.46.05-.45.05-.45.74.05 1.13.76 1.13.76.66 1.13 1.73.8 2.15.61.07-.48.26-.8.47-.99-1.63-.19-3.35-.82-3.35-3.64 0-.8.29-1.46.76-1.97-.08-.19-.33-.93.07-1.94 0 0 .62-.2 2.01.75a6.98 6.98 0 0 1 3.66 0c1.39-.94 2.01-.75 2.01-.75.4 1.01.15 1.75.07 1.94.47.51.76 1.17.76 1.97 0 2.83-1.73 3.45-3.37 3.63.27.24.5.68.5 1.37v2.02c0 .2.13.43.5.35A7.3 7.3 0 0 0 8 .7Z"/></svg>
+              查看开源项目 <span aria-hidden="true">↗</span>
+            </a>
+            <a class="button secondary" href="#actions">先看动作演示 ↓</a>
+          </div>
+          <div class="project-meta"><span>照片默认留在本机</span><span>Windows 桌面运行时</span><span>Apache 2.0</span></div>
+        </div>
+
+        <div class="pet-column" aria-label="桌宠动作预览">
+          <div class="pet-stage">
+            <div class="stage-note">角色样本 001<br />日常陪伴系列</div>
+            <div class="stage-index">PET / 01</div>
+            <div class="pet-halo" aria-hidden="true"></div>
+            <span class="spark one" aria-hidden="true">✳</span>
+            <span class="spark two" aria-hidden="true">✦</span>
+            <img id="pet-image" class="pet-image" src="images/pet-demo/idle.png" alt="PetForge 示例角色的完整待机形象" width="256" height="244" />
+            <div class="ground-line" aria-hidden="true"></div>
+            <div class="stage-caption">
+              <div><strong id="pose-title">安静待机</strong><small id="pose-description">轻轻站着，随时准备陪伴</small></div>
+              <span class="counter" id="pose-counter">01 / 04</span>
+            </div>
+          </div>
+          <div class="action-strip" role="group" aria-label="切换角色动作">
+            <span class="action-label">点选动作，看看不同姿态</span>
+            <button class="action-button" type="button" data-pose="idle" aria-pressed="true">待机</button>
+            <button class="action-button" type="button" data-pose="blink" aria-pressed="false">眨眼</button>
+            <button class="action-button" type="button" data-pose="run-left" aria-pressed="false"><span class="arrow" aria-hidden="true">←</span> 跑动</button>
+            <button class="action-button" type="button" data-pose="run-right" aria-pressed="false">跑动 <span class="arrow" aria-hidden="true">→</span></button>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="actions" aria-labelledby="actions-title">
+        <div class="shell">
+          <div class="section-heading">
+            <div><div class="section-kicker">A LITTLE CHARACTER, A FEW GESTURES</div><h2 id="actions-title">有自己的小动作。</h2></div>
+            <p>下面是这个定制示例当前接入桌面运行时的动作素材。待机、眨眼和左右跑动都可以直接查看；跑步帧组也保留在仓库里，方便继续调整。</p>
+          </div>
+          <div class="gallery">
+            <figure class="gallery-plate">
+              <img src="images/pet-demo/action-gallery.png" alt="待机、眨眼、向左跑和向右跑的角色动作总览" loading="lazy" width="872" height="812" />
+              <figcaption><strong>四个已接入姿态</strong><span>原始演示画布，完整显示角色</span></figcaption>
+            </figure>
+            <div class="gallery-side">
+              <figure class="pose"><img src="images/pet-demo/idle.png" alt="角色安静待机" loading="lazy" width="256" height="244" /><figcaption>待机 <span>idle</span></figcaption></figure>
+              <figure class="pose"><img src="images/pet-demo/blink.png" alt="角色闭眼微笑" loading="lazy" width="256" height="244" /><figcaption>眨眼 <span>blink</span></figcaption></figure>
+              <figure class="pose"><img src="images/pet-demo/run-left.png" alt="角色向左跑" loading="lazy" width="256" height="244" /><figcaption>向左跑 <span>run left</span></figcaption></figure>
+              <figure class="pose"><img src="images/pet-demo/run-right.png" alt="角色向右跑" loading="lazy" width="256" height="244" /><figcaption>向右跑 <span>run right</span></figcaption></figure>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section process-section" aria-labelledby="process-title">
+        <div class="shell">
+          <div class="section-heading">
+            <div><div class="section-kicker">FROM IMAGE TO DESKTOP</div><h2 id="process-title">从一张图开始。</h2></div>
+            <p>PetForge 正在搭建一条本地创作流程：图片处理、形象预览、桌面运行各自独立，便于用户在生成后确认和修整。</p>
+          </div>
+          <div class="process-grid">
+            <article class="process-item"><div class="process-number">01 / IMPORT</div><h3>导入角色图片</h3><p>在本地网页编辑器里上传图片。默认开发流程把原图和生成文件保存在自己的电脑。</p></article>
+            <article class="process-item"><div class="process-number">02 / SHAPE</div><h3>预览并整理形象</h3><p>查看透明角色与已有动作，再继续调整角色外观和动作素材。任意照片的自动拆分与绑骨仍在规划中。</p></article>
+            <article class="process-item"><div class="process-number">03 / COMPANION</div><h3>放到桌面陪伴</h3><p>Godot 桌面运行时支持透明窗口、拖动与屏幕内移动，可独立于编辑器显示。</p></article>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="project" aria-labelledby="status-title">
+        <div class="shell status-band">
+          <div><div class="section-kicker">PROJECT STATUS · V0.1</div><h2 id="status-title">一个诚实的早期版本。</h2></div>
+          <div class="status-copy">
+            <p>仓库包含 Next.js 编辑器、FastAPI 本地服务、共享桌宠格式和 Godot 透明桌面运行时。照片转卡通目前是本地调色、轮廓与描边处理；不能保证任意照片都自动变成高质量动漫形象。</p>
+            <p class="note">网页展示的是已制作的示例角色与动作素材，不提供在线上传或云端照片生成。自动人物识别、身体补全与动作绑定仍是后续技术目标。</p>
+            <div class="status-list"><span>Windows 优先</span><span>本地开发可运行</span><span>桌面运行时原型</span><span>自动动作生成开发中</span></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="shell source-row">
+          <div><div class="section-kicker">OPEN SOURCE · APACHE 2.0</div><h2>一起把桌宠工坊做完整。</h2><p>欢迎查看源码、阅读技术文档或提交改进建议。首次运行需要在 Windows 上安装 Node.js、Python 和 Godot；完整步骤见项目 README。</p></div>
+          <div class="source-actions">
+            <a class="button" href="https://github.com/lesile1312/PetForge" target="_blank" rel="noreferrer">打开 GitHub 仓库 ↗</a>
+            <a class="button secondary" href="https://github.com/lesile1312/PetForge/blob/main/docs/photo-to-pet-technical-design.zh-CN.md" target="_blank" rel="noreferrer">阅读技术路线 ↗</a>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <div class="shell footer-inner"><span>© PetForge · Independent open-source project</span><span>不隶属于 OpenAI 或 Codex · <a href="https://github.com/lesile1312/PetForge/blob/main/LICENSE" target="_blank" rel="noreferrer">Apache License 2.0</a></span></div>
+    </footer>
+    <script>
+      (() => {
+        const poses = {
+          idle: { src: "images/pet-demo/idle.png", title: "安静待机", description: "轻轻站着，随时准备陪伴" },
+          blink: { src: "images/pet-demo/blink.png", title: "眨眼微笑", description: "一个轻柔的小表情" },
+          "run-left": { src: "images/pet-demo/run-left.png", title: "向左跑动", description: "沿着桌面向左移动" },
+          "run-right": { src: "images/pet-demo/run-right.png", title: "向右跑动", description: "沿着桌面向右移动" }
+        };
+        const image = document.querySelector("#pet-image");
+        const title = document.querySelector("#pose-title");
+        const description = document.querySelector("#pose-description");
+        const counter = document.querySelector("#pose-counter");
+        const buttons = [...document.querySelectorAll("[data-pose]")];
+        buttons.forEach((button, index) => button.addEventListener("click", () => {
+          const pose = poses[button.dataset.pose];
+          if (!pose) return;
+          image.classList.add("swap");
+          window.setTimeout(() => {
+            image.src = pose.src;
+            image.alt = `PetForge 示例角色：${pose.title}`;
+            title.textContent = pose.title;
+            description.textContent = pose.description;
+            counter.textContent = `${String(index + 1).padStart(2, "0")} / 04`;
+            image.classList.remove("swap");
+          }, 110);
+          buttons.forEach((item) => item.setAttribute("aria-pressed", String(item === button)));
+        }));
+      })();
+    </script>
+  </body>
+</html>

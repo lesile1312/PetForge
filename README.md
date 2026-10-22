@@ -6,6 +6,8 @@ PetForge is a Windows-first, local desktop-pet studio. Upload a character image,
 
 PetForge is an independent community project. It is not affiliated with or endorsed by OpenAI or Codex.
 
+**Project showcase / 项目演示页:** <https://lesile1312.github.io/PetForge/>
+
 <p align="center">
   <img src="apps/desktop/assets/default-pet/character.png" width="220" alt="PetForge demo cat character" />
 </p>
