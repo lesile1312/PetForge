@@ -15,7 +15,7 @@ PetForge is an independent community project. It is not affiliated with or endor
 ## What works today
 
 - **Photo to character:** locally segments a portrait, preserves a transparent cutout, and creates a comic-style sprite for the desktop pet.
-- **Desktop companion:** a separate, borderless, transparent Godot 4 runtime supports dragging, screen bounds, and desktop movement. The public cat is a basic demo; advanced hand-tuned gestures require character-specific art and rig data.
+- **Desktop companion:** a separate, borderless, transparent Godot 4 runtime supports dragging, screen bounds, and desktop movement. Drag with the left mouse button, right-click the pet to cycle an action, and press Esc to exit. The public cat is a basic demo; advanced hand-tuned gestures require character-specific art and rig data.
 - **Editor and project settings:** adjust the pet's appearance and behavior in a Next.js editor backed by a local FastAPI service.
 - **Portable pet package:** export the character and its configuration for a compatible PetForge runtime.
 - **Optional 3D experiment:** reconstructs a separate static GLB for viewing. It is not the animated desktop character, and unseen surfaces are inferred.

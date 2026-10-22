@@ -108,6 +108,11 @@ func _physics_process(delta: float) -> void:
 		state_machine.tick(delta)
 
 func _input(event: InputEvent) -> void:
+	if event is InputEventKey:
+		var key_event := event as InputEventKey
+		if key_event.pressed and not key_event.echo and key_event.keycode == KEY_ESCAPE:
+			get_tree().quit()
+			return
 	if state_machine == null:
 		return
 	if state_machine.is_in_state(&"DRAG"):
