@@ -20,7 +20,23 @@ PetForge is an independent community project. It is not affiliated with or endor
 - **Portable pet package:** export the character and its configuration for a compatible PetForge runtime.
 - **Optional 3D experiment:** reconstructs a separate static GLB for viewing. It is not the animated desktop character, and unseen surfaces are inferred.
 
-The image-to-cartoon step currently uses local palette, contour, and outline processing. It does not redraw every photo into a new anime illustration. Automatic character-part detection and rigging for arbitrary uploaded photos are planned; check the [technical design](docs/photo-to-pet-technical-design.zh-CN.md) for the implementation path and current limits. This source repository includes a generic sample cat; it does not include personalized reference photos or photo-derived character artwork.
+The image-to-cartoon step currently uses local palette, contour, and outline processing. It does not redraw every photo into a new anime illustration. Automatic character-part detection and rigging for arbitrary uploaded photos are planned; check the [technical design](docs/photo-to-pet-technical-design.zh-CN.md) for the implementation path and current limits. The source repository includes a generic sample cat and the small photo-inspired demo gallery below. It does not include the original reference photo or local editing files.
+
+## Desktop-pet demo / 桌宠演示
+
+This creator-provided example shows the supported idle, blink, and left/right run frame sets. The running preview samples four of the eight frames in each direction. These hand-tuned demo assets illustrate the runtime; they do not mean arbitrary uploaded portraits already receive the same detailed animation automatically.
+
+这组创作者提供的示例展示了当前桌面运行时已接入的待机、眨眼和左右跑帧组。跑动预览从每个方向的 8 帧中抽取了 4 帧。它展示的是定制示例素材，不代表任意上传照片都已能自动生成同等精细的动作。
+
+<p align="center">
+  <img src="docs/images/pet-demo/action-gallery.png" width="872" alt="PetForge desktop-pet idle, blink, and directional run poses" />
+</p>
+
+<p align="center">
+  <img src="docs/images/pet-demo/run-cycle.png" width="1130" alt="Sampled left and right run-cycle frames" />
+</p>
+
+Individual transparent frames are available in [`docs/images/pet-demo/`](docs/images/pet-demo/).
 
 ## Quick start (Windows development)
 
