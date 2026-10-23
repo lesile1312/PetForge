@@ -1,10 +1,10 @@
-# PetForge · 桌宠工坊
+# 自定义桌宠petforge
 
 **把你自己的角色图片，做成住在电脑桌面上的小伙伴。**
 
 **中文** · [English](README.md) · [真人原图与桌宠演示](https://lesile1312.github.io/PetForge/#example) · [参考图入口](https://lesile1312.github.io/PetForge/#create)
 
-PetForge 是面向 Windows 的开源桌宠项目，使用 Next.js、FastAPI 和 Godot。你可以直接用透明 PNG 制作自己的桌宠，也可以在本机编辑器中上传人物照片，抠除背景并应用漫画滤镜，再运行独立的透明桌面窗口。
+自定义桌宠petforge 是面向 Windows 的开源桌宠项目，使用 Next.js、FastAPI 和 Godot。你可以直接用透明 PNG 制作自己的桌宠，也可以在本机编辑器中上传人物照片，抠除背景并应用漫画滤镜，再运行独立的透明桌面窗口。
 
 ## 第一次使用？从这里开始
 
@@ -12,7 +12,7 @@ PetForge 是面向 Windows 的开源桌宠项目，使用 Next.js、FastAPI 和 
 
 | 你的目标 | 适合的路线 | 需要准备 |
 | --- | --- | --- |
-| 我已经有透明角色 PNG，想把它放到桌面 | [快速启动 PNG 桌宠](#路线一直接用自己的透明-png制作桌宠)（[下载源码 ZIP](https://github.com/lesile1312/PetForge/archive/refs/heads/main.zip)） | Windows、Godot 4、PetForge 源码 |
+| 我已经有透明角色 PNG，想把它放到桌面 | [快速启动 PNG 桌宠](#路线一直接用自己的透明-png制作桌宠)（[下载源码 ZIP](https://github.com/lesile1312/PetForge/archive/refs/heads/main.zip)） | Windows、Godot 4、自定义桌宠petforge 源码 |
 | 我想从人物照片开始 | [安装本机照片编辑器](#路线二从真人照片开始使用本机编辑器) | Windows、Node.js、pnpm、Python、Godot 4；首次处理还需联网下载模型 |
 | 我只想先看看效果 | [打开演示网页](https://lesile1312.github.io/PetForge/#example) | 浏览器；演示网页不会在电脑上启动桌宠 |
 
@@ -116,13 +116,13 @@ pnpm dev
 
 ### 再次启动或分享导出的宠物
 
-把 ZIP 解压到独立目录，保留 `pet.json`、`character.png` 和它引用的素材。在 PetForge 项目根目录执行：
+把 ZIP 解压到独立目录，保留 `pet.json`、`character.png` 和它引用的素材。在项目根目录执行：
 
 ```powershell
 & 'C:\Tools\Godot\Godot.exe' --path '.\apps\desktop' -- --pet-project 'C:\MyPets\MyCompanion'
 ```
 
-替换为你的实际路径。桌宠可以独立于网页运行；让宠物获得焦点后按 Esc 退出。发给别人试用时，对方也需要本项目与 Godot，或兼容的 PetForge 桌面运行器；单发资源 ZIP 不会自动为对方安装运行程序。
+替换为你的实际路径。桌宠可以独立于网页运行；让宠物获得焦点后按 Esc 退出。发给别人试用时，对方也需要本项目与 Godot，或兼容的自定义桌宠petforge 桌面运行器；单发资源 ZIP 不会自动为对方安装运行程序。
 
 ## 常见问题
 

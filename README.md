@@ -1,20 +1,20 @@
-# PetForge
+# 自定义桌宠petforge
 
 **Make a desktop companion from your own character image.**
 
 [中文文档](README.zh-CN.md) · **English** · [Live demo](https://lesile1312.github.io/PetForge/#example) · [Create with your reference](https://lesile1312.github.io/PetForge/#create)
 
-PetForge is a Windows-first open-source desktop-pet studio built with Next.js, FastAPI and Godot. Bring a transparent character PNG to run a pet directly, or process a portrait locally into a transparent, comic-filtered image before launching it in an independent desktop window.
+自定义桌宠petforge is a Windows-first open-source desktop-pet studio built with Next.js, FastAPI and Godot. Bring a transparent character PNG to run a pet directly, or process a portrait locally into a transparent, comic-filtered image before launching it in an independent desktop window.
 
 ## New here? Start with the route that fits
 
 | What you want to do | Follow this route | You will need |
 | --- | --- | --- |
-| I already have a transparent character PNG | [Run a PNG desktop pet](#make-your-own-pet--transparent-png-route) ([download source ZIP](https://github.com/lesile1312/PetForge/archive/refs/heads/main.zip)) | Windows, Godot 4, and the PetForge source |
+| I already have a transparent character PNG | [Run a PNG desktop pet](#make-your-own-pet--transparent-png-route) ([download source ZIP](https://github.com/lesile1312/PetForge/archive/refs/heads/main.zip)) | Windows, Godot 4, and the 自定义桌宠petforge source |
 | I want to start from a portrait | [Set up the local photo editor](#quick-start-windows-development) | Windows, Node.js, pnpm, Python, Godot 4, and internet for the first model download |
 | I only want to preview the project | [Open the live demo](https://lesile1312.github.io/PetForge/#example) | A browser; the demo cannot launch a pet on your computer |
 
-**What this release does:** GitHub Pages is a static showcase and reference-photo helper, not a hosted photo-generation service. Photo processing currently removes the background and applies a comic filter. It does not yet redraw arbitrary photos as polished chibi art, invent cropped body parts, or generate a character-specific animation rig. This repository contains source code; a one-click consumer installer is not available yet. For the most reliable result today, start with a complete transparent cartoon PNG. PetForge is an independent community project and is not affiliated with OpenAI or Codex.
+**What this release does:** GitHub Pages is a static showcase and reference-photo helper, not a hosted photo-generation service. Photo processing currently removes the background and applies a comic filter. It does not yet redraw arbitrary photos as polished chibi art, invent cropped body parts, or generate a character-specific animation rig. This repository contains source code; a one-click consumer installer is not available yet. For the most reliable result today, start with a complete transparent cartoon PNG. 自定义桌宠petforge is an independent community project and is not affiliated with OpenAI or Codex.
 
 ## From the original photo to the custom character
 
@@ -122,7 +122,7 @@ Extract the resource ZIP into its own folder. Keep `pet.json` beside `character.
 & 'C:\Tools\Godot\Godot.exe' --path '.\apps\desktop' -- --pet-project 'C:\MyPets\MyCompanion'
 ```
 
-Run this from the PetForge repository root. The pet continues independently of the web editor; Esc exits the focused pet. To share a package, recipients also need this project and Godot or a compatible packaged runtime. Exporting only the ZIP does not install that runtime on another computer.
+Run this from the repository root. The pet continues independently of the web editor; Esc exits the focused pet. To share a package, recipients also need this project and Godot or a compatible 自定义桌宠petforge runtime. Exporting only the ZIP does not install that runtime on another computer.
 
 ## Troubleshooting
 
