@@ -1,4 +1,19 @@
 .reference-section { background: #f0ede4; }
+.photo-comparison { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+.comparison-card { margin: 0; padding: 18px; background: var(--paper-light); border: 1px solid var(--line); min-width: 0; }
+.comparison-art { height: 460px; display: grid; place-items: center; position: relative; }
+.comparison-art img { width: 100%; height: 100%; object-fit: contain; min-height: 0; }
+.cartoon-result { background: #eee9e0; }
+.cartoon-result img { max-width: 360px; height: 360px; }
+.comparison-stamp { position: absolute; bottom: 17px; color: #89796d; font-size: 10px; letter-spacing: .15em; }
+.comparison-card figcaption { padding-top: 16px; display: flex; flex-wrap: wrap; gap: 6px 14px; align-items: baseline; }
+.comparison-card figcaption strong { font-size: 14px; }
+.comparison-card figcaption span { color: var(--muted); font-size: 11px; }
+.comparison-bottom { display: flex; align-items: center; gap: 30px; justify-content: space-between; margin-top: 20px; }
+.comparison-bottom p { max-width: 690px; margin: 0; color: var(--muted); font-size: 12px; }
+.comparison-bottom .button { flex-shrink: 0; }
+@media (max-width: 800px) { .comparison-art { height: 370px; } .cartoon-result img { max-width: 100%; height: 300px; } .comparison-bottom { flex-wrap: wrap; gap: 14px; } }
+@media (max-width: 480px) { .photo-comparison { grid-template-columns: 1fr; } }
 .reference-grid { display: grid; grid-template-columns: 1.1fr 1fr; gap: 24px; }
 .reference-upload, .reference-next { min-width: 0; border: 1px solid var(--line); background: var(--paper-light); padding: 24px; }
 .reference-drop { display: grid; place-items: center; min-height: 300px; padding: 22px; border: 1px dashed #ac9e91; text-align: center; cursor: pointer; }

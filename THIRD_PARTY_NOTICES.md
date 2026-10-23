@@ -1,5 +1,9 @@
 # Third-party notices
 
+## Demonstration photograph
+
+`docs/images/pet-demo/reference-photo.jpg` is a web-sized copy of the creator-provided personal reference photograph, displayed at the creator's request to demonstrate the custom character design. The source-code Apache-2.0 license does not grant rights to reuse this personal photograph. Contact the creator for permission to reuse it. The unchanged local source is retained outside the public website files.
+
 PetForge depends on third-party code and may download separate model weights. Each dependency and model keeps its own license and usage terms. This inventory is a starting point; packaged distributions must ship the exact notices and license texts for their pinned versions.
 
 | Component | Project / license |

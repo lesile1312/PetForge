@@ -6,7 +6,7 @@ The static showcase in `docs/index.html` can select and decode a local photo, di
 
 The local Next.js editor accepts that reference file through its upload picker, validates its envelope/type/size, and feeds the extracted original into the existing API flow. The editor displays original and processed images together. The public page links to the local editor only after explaining that it must first be installed and started. This handoff does not add cloud inference or generative cartoon redrawing; the current processing step remains segmentation plus a comic filter.
 
-The original personal reference photograph is not included in the public repository. A visitor's selected image is a temporary browser preview and is not persisted on the website.
+At the creator's explicit request, a web-sized copy of the original demonstration photograph is included at `docs/images/pet-demo/reference-photo.jpg`, beside the custom cartoon character. This fixed example is separate from visitor uploads. A visitor's selected image remains a temporary browser preview and is not persisted on the website.
 
 The creator flow now talks to FastAPI through the Next.js `/api/*` proxy. The browser uses same-origin URLs, so a deployed site does not send visitors to their own `localhost`. Configure `PETFORGE_API_ORIGIN` in the Next.js server environment to the FastAPI origin.
 

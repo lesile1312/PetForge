@@ -26,7 +26,16 @@ The public page lets visitors select and preview a reference photo locally and s
 - **Portable pet package:** export the character and its configuration for a compatible PetForge runtime.
 - **Optional 3D experiment:** reconstructs a separate static GLB for viewing. It is not the animated desktop character, and unseen surfaces are inferred.
 
-The image-to-cartoon step currently uses local palette, contour, and outline processing. It does not redraw every photo into a new anime illustration. Automatic character-part detection and rigging for arbitrary uploaded photos are planned; check the [technical design](docs/photo-to-pet-technical-design.zh-CN.md) for the implementation path and current limits. The source repository includes a generic sample cat and the small photo-inspired demo gallery below. It does not include the original reference photo or local editing files.
+The image-to-cartoon step currently uses local palette, contour, and outline processing. It does not redraw every photo into a new anime illustration. Automatic character-part detection and rigging for arbitrary uploaded photos are planned; check the [technical design](docs/photo-to-pet-technical-design.zh-CN.md) for the implementation path and current limits. The repository includes a generic sample cat, the photo-inspired demo gallery, and a web copy of the creator-provided original reference photograph. Local editing files remain outside the public source.
+
+## Original reference / 真人原图对照
+
+The creator requested this original reference photograph be displayed beside the custom cartoon pet. This is a hand-refined example, not an automatically generated result for arbitrary uploaded photos. The full comparison is available on the [website](https://lesile1312.github.io/PetForge/#example).
+
+<p align="center">
+  <img src="docs/images/pet-demo/reference-photo.jpg" height="340" alt="Original creator-provided reference photograph" />
+  <img src="docs/images/pet-demo/idle.png" height="300" alt="Custom cartoon desktop pet inspired by the photograph" />
+</p>
 
 ## Desktop-pet demo / 桌宠演示
 
