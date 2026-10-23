@@ -8,6 +8,10 @@ PetForge is an independent community project. It is not affiliated with or endor
 
 **Project showcase / 项目演示页:** <https://lesile1312.github.io/PetForge/>
 
+The public page lets visitors select and preview a reference photo locally and save a `.petforge.json` reference file. Import that file through the local editor's image picker to continue the existing segmentation, comic-filter, export, and desktop-runtime flow. The public page does not provide cloud AI generation. The reference file contains the original image: keep it private unless you intend to share the photo.
+
+公开网页现可选择参考原图、完整预览并保存 `.petforge.json` 参考文件。在本机创作器选择该文件，就能继续抠图、漫画滤镜和桌宠制作；编辑器并排展示原图与处理结果。公开页面不提供云端 AI 重绘。参考文件包含原始照片，请按照片本身保管。
+
 <p align="center">
   <img src="apps/desktop/assets/default-pet/character.png" width="220" alt="PetForge demo cat character" />
 </p>

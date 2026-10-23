@@ -472,3 +472,9 @@ button:focus-visible, a:focus-visible, input:focus-visible, [tabindex="0"]:focus
   .preview-caption { gap: 8px 12px; }
   .desktop-file { left: 3px; width: 48px; }.desktop-file small { max-width: 47px; }
 }
+/* Source and result stay visible without cropping the reference character. */
+.reference-comparison { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px; }
+.reference-comparison figure { min-width: 0; margin: 0; border: 1px solid #e5dfd4; border-radius: 12px; background: #faf8f3; padding: 14px; }
+.reference-comparison figcaption { color: #6f746a; font-size: 12px; margin-bottom: 12px; }
+.reference-comparison img { display: block; width: 100%; height: 220px; object-fit: contain; }
+@media (max-width: 600px) { .reference-comparison { grid-template-columns: 1fr; } }

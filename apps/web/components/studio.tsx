@@ -8,6 +8,7 @@ import { Icon } from "@/components/icons";
 import { UploadStage } from "@/components/upload-stage";
 import { DesktopPreview } from "@/components/desktop-preview";
 import { SettingsPanel } from "@/components/settings-panel";
+import { readReferenceFile } from "@/lib/reference";
 
 type Stage = "upload" | "cutout" | "editor";
 type ModelStatus = "idle" | "processing" | "ready" | "error";
@@ -47,15 +48,26 @@ export function Studio() {
     return () => { cancelled = true; };
   }, []);
 
-  async function handleFile(file: File, nameHint?: string) {
+  async function handleFile(inputFile: File, nameHint?: string) {
     setError(null);
     setNotice(null);
+    setWorking(true);
+    let file: File;
+    try {
+      file = await readReferenceFile(inputFile);
+    } catch (reason) {
+      setError(reason instanceof Error ? reason.message : "参考文件无法读取。");
+      setWorking(false);
+      return;
+    }
     if (!new Set(["image/png", "image/jpeg", "image/webp"]).has(file.type)) {
       setError("请选择 PNG、JPG 或 WEBP 格式的图片。");
+      setWorking(false);
       return;
     }
     if (file.size > 10 * 1024 * 1024) {
       setError("图片不能超过 10 MB，请压缩后再试。");
+      setWorking(false);
       return;
     }
 
@@ -75,7 +87,7 @@ export function Studio() {
       setActiveStep(2);
       setPreviewOriginal(true);
       setModelStatus("idle");
-    setNotice("图片已上传，正在识别人物并抠除背景…");
+      setNotice("图片已上传，正在识别人物并抠除背景…");
       await processImage(uploaded);
     } catch (reason) {
       setError(reason instanceof Error ? reason.message : "图片上传失败，请重试。");
@@ -385,6 +397,10 @@ export function Studio() {
               <div className="editor-grid">
                 <div className="editor-main-column">
                   <div className="editor-heading"><div><span className="section-eyebrow">桌面伙伴 · {pet.id.slice(0, 12)}</span><h1>给它一点个性。</h1><p>调好大小和行动习惯，预览会即时更新。</p></div><div className="editor-image-actions"><button type="button" className="text-button" onClick={restoreOriginal} disabled={working}><Icon name="undo" size={15} /> 恢复原图</button><button type="button" className="text-button" onClick={downloadPng} disabled={working || !pet.processedImage}><Icon name="download" size={15} /> 下载透明 PNG</button><button type="button" className="text-button" onClick={downloadModel} disabled={working || !pet.modelUrl}><Icon name="download" size={15} /> 下载 GLB</button></div></div>
+                  <div className="reference-comparison">
+                    <figure><figcaption>参考原图 · 保留在本机</figcaption>{pet.originalImage && <img src={imageUrl(pet.originalImage) ?? ""} alt="人物参考原图" />}</figure>
+                    <figure><figcaption>当前处理结果 · 漫画滤镜</figcaption>{pet.processedImage && <img src={imageUrl(pet.processedImage) ?? ""} alt="处理后的卡通风格角色" />}</figure>
+                  </div>
                   <DesktopPreview config={config} imageSrc={image} modelSrc={pet.modelUrl ? imageUrl(pet.modelUrl) : null} />
                   <div className={`model-status-card model-status-${modelStatus}`} aria-live="polite">
                     <span className="model-status-mark"><Icon name={modelStatus === "ready" ? "check" : modelStatus === "processing" ? "spark" : "layers"} size={15} /></span>

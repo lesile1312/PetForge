@@ -6,6 +6,8 @@
     <meta name="theme-color" content="#f5f1e8" />
     <meta name="description" content="PetForge：Windows 本地桌宠创作工具。看看角色待机、眨眼和左右跑动的实际演示，并了解当前项目进展。" />
     <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+    <link rel="stylesheet" href="reference-studio.css" />
+    <script src="reference-studio.js" defer></script>
     <meta property="og:title" content="PetForge — 让喜欢的角色住进桌面" />
     <meta property="og:description" content="一个 Windows 优先、照片本地处理的开源桌宠工坊。查看实际动作预览与项目进展。" />
     <meta property="og:type" content="website" />
@@ -223,6 +225,7 @@
         <span>PetForge<small>DESKTOP PET STUDIO</small></span>
       </a>
       <nav class="nav" aria-label="主导航">
+        <a href="#create">上传参考图</a>
         <a href="#actions">动作预览</a>
         <a href="#project">项目进展</a>
         <a class="github-link" href="https://github.com/lesile1312/PetForge" target="_blank" rel="noreferrer">GitHub ↗</a>
@@ -240,7 +243,7 @@
               <svg viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M8 .7a7.3 7.3 0 0 0-2.31 14.22c.36.07.5-.15.5-.35v-1.25c-2.04.45-2.47-.87-2.47-.87-.33-.85-.82-1.08-.82-1.08-.67-.46.05-.45.05-.45.74.05 1.13.76 1.13.76.66 1.13 1.73.8 2.15.61.07-.48.26-.8.47-.99-1.63-.19-3.35-.82-3.35-3.64 0-.8.29-1.46.76-1.97-.08-.19-.33-.93.07-1.94 0 0 .62-.2 2.01.75a6.98 6.98 0 0 1 3.66 0c1.39-.94 2.01-.75 2.01-.75.4 1.01.15 1.75.07 1.94.47.51.76 1.17.76 1.97 0 2.83-1.73 3.45-3.37 3.63.27.24.5.68.5 1.37v2.02c0 .2.13.43.5.35A7.3 7.3 0 0 0 8 .7Z"/></svg>
               查看开源项目 <span aria-hidden="true">↗</span>
             </a>
-            <a class="button secondary" href="#actions">先看动作演示 ↓</a>
+            <a class="button secondary" href="#create">上传参考图，开始制作 ↓</a>
           </div>
           <div class="project-meta"><span>照片默认留在本机</span><span>Windows 桌面运行时</span><span>Apache 2.0</span></div>
         </div>
@@ -265,6 +268,43 @@
             <button class="action-button" type="button" data-pose="blink" aria-pressed="false">眨眼</button>
             <button class="action-button" type="button" data-pose="run-left" aria-pressed="false"><span class="arrow" aria-hidden="true">←</span> 跑动</button>
             <button class="action-button" type="button" data-pose="run-right" aria-pressed="false">跑动 <span class="arrow" aria-hidden="true">→</span></button>
+          </div>
+        </div>
+      </section>
+
+      <section class="section reference-section" id="create" aria-labelledby="reference-title">
+        <div class="shell">
+          <div class="section-heading">
+            <div><div class="section-kicker">YOUR PHOTO, YOUR COMPANION</div><h2 id="reference-title">从你的参考原图开始。</h2></div>
+            <p>先选一张清晰的人物照片，完整查看原图，再带入本机创作器制作卡通角色和桌宠。照片不会上传到这个公开网站。</p>
+          </div>
+          <div class="reference-grid">
+            <div class="reference-upload">
+              <label class="reference-drop" id="reference-drop" for="reference-file">
+                <span id="reference-empty"><strong>放入你的参考照片</strong><small>拖入图片，或点击这里选择<br />PNG / JPG / WEBP · 最大 10 MB</small><span class="button secondary" aria-hidden="true">选择参考图片 ＋</span></span>
+                <img id="reference-preview" alt="你选择的参考原图，完整显示" hidden />
+              </label>
+              <input id="reference-file" type="file" accept="image/png,image/jpeg,image/webp" aria-label="选择参考原图" style="max-width:100%;margin-top:12px" />
+              <p class="reference-meta" id="reference-meta">照片只在当前浏览器预览，刷新或清除后不保留。</p>
+              <div class="reference-controls"><button class="button secondary" id="reference-reset" type="button" hidden>清除原图</button></div>
+            </div>
+            <div class="reference-next">
+              <h3>把熟悉的模样，带到桌面。</h3>
+              <ol>
+                <li>确认参考原图<span>优先选择人物清晰、遮挡少的照片；原图已裁掉的身体部分需要后续补全。</span></li>
+                <li>在本机制作卡通角色<span>保存参考文件，在本机编辑器导入。当前支持人物抠图与漫画滤镜；AI 全身卡通重绘仍在开发。</span></li>
+                <li>预览并启动桌宠<span>检查原图与处理结果，确认后调整大小、导出资源，或启动已配置的 Windows 桌面运行器。</span></li>
+              </ol>
+              <div class="reference-controls">
+                <button class="button" id="reference-download" type="button" disabled>保存参考文件 ↓</button>
+                <a class="button secondary" href="http://127.0.0.1:3000/" target="_blank" rel="noreferrer">打开本机创作器 ↗</a>
+              </div>
+              <p id="reference-status" class="reference-status" role="status" aria-live="polite"></p>
+              <p class="reference-note">本机创作器需先安装并启动。网页内选图不会自动生成新角色，也不会让宠物出现在浏览器窗口外。</p>
+              <details><summary>还没有安装本机创作器？</summary><p>目前提供开发版源码。按 <a href="https://github.com/lesile1312/PetForge#quick-start-windows-development" target="_blank" rel="noreferrer">Windows 安装说明</a>准备 Node.js、Python 和 Godot，启动项目后，再打开本机创作器并导入下载的 .petforge.json 文件。</p><pre>Copy-Item .env.example .env
+.\scripts\setup.ps1
+pnpm dev</pre></details>
+            </div>
           </div>
         </div>
       </section>
@@ -309,7 +349,7 @@
           <div><div class="section-kicker">PROJECT STATUS · V0.1</div><h2 id="status-title">一个诚实的早期版本。</h2></div>
           <div class="status-copy">
             <p>仓库包含 Next.js 编辑器、FastAPI 本地服务、共享桌宠格式和 Godot 透明桌面运行时。照片转卡通目前是本地调色、轮廓与描边处理；不能保证任意照片都自动变成高质量动漫形象。</p>
-            <p class="note">网页展示的是已制作的示例角色与动作素材，不提供在线上传或云端照片生成。自动人物识别、身体补全与动作绑定仍是后续技术目标。</p>
+            <p class="note">网页支持参考图片的本地预览和参考文件保存；抠图、漫画滤镜与桌面运行由本机创作器完成。上方动作属于定制示例，任意照片的 AI 卡通重绘、身体补全与自动动作绑定仍在开发。</p>
             <div class="status-list"><span>Windows 优先</span><span>本地开发可运行</span><span>桌面运行时原型</span><span>自动动作生成开发中</span></div>
           </div>
         </div>

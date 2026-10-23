@@ -44,7 +44,7 @@ export function UploadStage({ busy, error, onFile, onSample }: UploadStageProps)
       <div className="hero-copy">
         <div className="hero-kicker"><span className="kicker-orbit" /> 从一张照片开始</div>
         <h1 id="hero-title">让熟悉的模样，<br /><span>住进你的桌面。</span></h1>
-        <p className="hero-subtitle">上传自己、朋友或宠物的照片。PetForge 会自动抠出主体，并尝试重建可旋转的 3D 预览，再导出桌宠资源。</p>
+        <p className="hero-subtitle">上传参考照片，或导入公开网页保存的参考文件。PetForge 在本机抠除背景、应用漫画滤镜，再预览和制作桌宠资源。</p>
         <p className="hero-english">One photo in. A little companion on your screen.</p>
 
         <div
@@ -55,7 +55,7 @@ export function UploadStage({ busy, error, onFile, onSample }: UploadStageProps)
           onDragLeave={() => setDragging(false)}
           onDrop={onDrop}
         >
-          <input ref={inputRef} type="file" accept="image/png,image/jpeg,image/webp,.png,.jpg,.jpeg,.webp" onChange={onInput} hidden />
+          <input ref={inputRef} type="file" accept="image/png,image/jpeg,image/webp,.png,.jpg,.jpeg,.webp,.json" onChange={onInput} hidden />
           <div className="upload-icon"><Icon name={busy ? "spark" : "upload"} size={20} /></div>
           <div className="dropzone-content">
             <strong>{busy ? "正在准备你的桌宠…" : "拖一张图片到这里"}</strong>
@@ -65,7 +65,7 @@ export function UploadStage({ busy, error, onFile, onSample }: UploadStageProps)
             <Icon name="plus" size={16} /> 创建我的桌宠
           </button>
         </div>
-        <div className="upload-footnote"><Icon name="image" size={15} /><span>PNG、JPG 或 WEBP</span><i /> <span>最大 10 MB</span></div>
+        <div className="upload-footnote"><Icon name="image" size={15} /><span>PNG、JPG、WEBP 或 .petforge.json 参考文件</span><i /> <span>原图最大 10 MB</span></div>
         <p className="upload-privacy-note">仅上传你本人或已获授权的照片。图片会发送到当前 PetForge 服务进行处理。</p>
         {error && <div className="inline-alert" role="alert">{error}</div>}
       </div>
