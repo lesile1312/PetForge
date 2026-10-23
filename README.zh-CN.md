@@ -1,0 +1,155 @@
+# PetForge · 桌宠工坊
+
+**把你自己的角色图片，做成住在电脑桌面上的小伙伴。**
+
+**中文** · [English](README.md) · [真人原图与桌宠演示](https://lesile1312.github.io/PetForge/#example) · [参考图入口](https://lesile1312.github.io/PetForge/#create)
+
+PetForge 是面向 Windows 的开源桌宠项目，使用 Next.js、FastAPI 和 Godot。你可以直接用透明 PNG 制作自己的桌宠，也可以在本机编辑器中上传人物照片，抠除背景并应用漫画滤镜，再运行独立的透明桌面窗口。
+
+目前提供早期开发版源码。**最容易成功的路径是先准备一张透明卡通 PNG，再用下方脚本启动。** 完整编辑器需要安装开发环境，尚未提供面向普通用户的一键安装包。本项目为独立社区项目，不隶属于 OpenAI 或 Codex。
+
+## 真人照片与卡通桌宠对照
+
+<p align="center">
+  <img src="docs/images/pet-demo/reference-photo.jpg" height="340" alt="最初的真人参考照片" />
+  <img src="docs/images/pet-demo/idle.png" height="300" alt="参照真人照片制作的卡通桌宠" />
+</p>
+
+左边是最初使用的真人照片，右边是参照人物特征设计并反复调整的卡通桌宠。双辫、碎花上衣、浅色长裤与棕色鞋子都保留了设计参考。这是定制案例，**不代表任意照片上传后都已能自动生成同等精细的卡通立绘和动作绑定。**
+
+<p align="center"><img src="docs/images/pet-demo/action-gallery.png" width="760" alt="定制角色的待机、眨眼和左右跑动作" /></p>
+
+[查看网页对照](https://lesile1312.github.io/PetForge/#example) · [查看跑步帧组](docs/images/pet-demo/run-cycle.png)
+
+## 当前能做什么
+
+| 功能 | 当前状态 |
+| --- | --- |
+| 用自己的 PNG 制作桌宠 | 可创建资源包并运行通用 Godot 桌宠，无需 AI 模型 |
+| 处理人物照片 | 本机人物抠图与漫画滤镜，保留原图并展示前后对照 |
+| 显示在整个桌面 | 独立透明无边框窗口，可拖动、置顶，独立于浏览器 |
+| 行为互动 | 移动、待机、睡眠、跳跃、点击反馈；细致肢体动作需要配套素材与绑定 |
+| 导出资源 | `pet.json`、`character.png`，以及可选抠图和静态 GLB |
+| 公开网页 | 本地选图预览和保存 `.petforge.json` 参考文件，不提供云端图片生成 |
+| AI 全身卡通重绘、缺失身体补全、任意角色自动绑骨 | 开发规划中，见[技术文档](docs/photo-to-pet-technical-design.zh-CN.md) |
+
+目前上传照片得到的是抠图与滤镜处理，尚不能自动重绘成示例里的 Q 版人物。如果希望立即使用卡通形象，请先准备好卡通 PNG；新图片能使用通用行为，但不会自动获得新的跑步肢体帧与专属动作。
+
+## 路线一：直接用自己的透明 PNG，制作桌宠
+
+需要 Windows 10/11 x64、PowerShell、项目源码与 Godot 4。**这条路线无需 Node.js、Python、CUDA 或 AI 账号。**
+
+1. 下载并解压仓库 ZIP，或克隆项目：
+
+```powershell
+git clone https://github.com/lesile1312/PetForge.git
+cd PetForge
+```
+
+2. 准备透明 PNG：人物完整，头发、手脚四周留出透明边距。如果原图有不透明背景，桌宠也会带着该背景显示。
+3. 将命令中的两个路径换成你自己的图片路径和 Godot 可执行文件路径：
+
+```powershell
+.\scripts\create-pet.ps1 -ImagePath 'C:\Pictures\my-character.png' -Name '我的桌宠' -GodotExecutable 'C:\Tools\Godot\Godot.exe'
+```
+
+脚本会显示生成目录并启动宠物。每次新建一个 `storage/custom-pets/` 子文件夹，保留原始图片，不覆盖已有资源包。只制作文件、暂不启动时使用：
+
+```powershell
+.\scripts\create-pet.ps1 -ImagePath 'C:\Pictures\my-character.png' -Name '我的桌宠' -NoLaunch
+```
+
+鼠标左键拖动，右键切换互动；让宠物获得焦点后按 Esc 退出。宠物显示在独立桌面窗口中。单张平面 PNG 的动作表现取决于图片及现有绑定，不能直接获得示例的全部精细动作。
+
+## 路线二：从真人照片开始，使用本机编辑器
+
+### 准备环境
+
+- Windows 10/11 x64；Git 或下载解压后的仓库。
+- Node.js 22.13 以上、pnpm 11.19.0（与项目 `package.json` 一致；pnpm 需要此 Node 版本）。
+- Python 3.12，确保 `py` 启动器或 `python.exe` 可用。
+- Godot 4，项目当前开发使用 Godot 4.7.2，请选择兼容的 Godot 4 版本。
+- 安装依赖和首次下载抠图模型时需要联网。2D 人物抠图可用 CPU；CUDA 显卡只属于可选的 TripoSR 实验要求。
+
+### 安装与启动
+
+在项目根目录执行：
+
+```powershell
+npm install --global pnpm@11.19.0
+.\scripts\setup.ps1
+```
+
+安装脚本会在 `.env` 不存在时创建它。编辑其中这一行，填写你电脑上的实际路径：
+
+```dotenv
+PETFORGE_GODOT_EXECUTABLE=C:/Tools/Godot/Godot.exe
+```
+
+然后启动网页和 API：
+
+```powershell
+pnpm dev
+```
+
+保持终端打开，访问 <http://127.0.0.1:3000/>。API 健康检查地址为 <http://127.0.0.1:8000/health>。公开 GitHub Pages 网页不会自动启动你电脑上的服务。
+
+### 从照片到桌宠的具体操作
+
+1. 选择 PNG/JPG/WEBP 照片，最大 10 MB；也可以选择公开网页保存的 `.petforge.json` 参考文件。
+2. 等待本机人物分割与漫画滤镜处理。首次加载可能下载模型；头发遮挡、复杂背景的效果需要检查。
+3. 对照参考原图与透明处理结果，调整大小和行为设置。当前不会自动补全身体或 AI 重绘成新卡通人物。
+4. 满意后点击 **启动桌宠**。`.env` 中需要配置 Godot；修改环境配置后要重新启动 `pnpm dev`。桌宠使用独立原生窗口显示。
+5. 点击 **导出资源**，保存你自己的桌宠 ZIP。这个 ZIP 是资源包，不是 Windows 安装程序。
+
+**2D 制作不会自动运行 3D 建模。** 只有你主动选择可选的 3D 实验时，才需要单独运行 `scripts/setup-ai.ps1` 配置 TripoSR。它会下载较大的模型与运行环境，需要兼容的 CUDA 显卡。
+
+### 再次启动或分享导出的宠物
+
+把 ZIP 解压到独立目录，保留 `pet.json`、`character.png` 和它引用的素材。在 PetForge 项目根目录执行：
+
+```powershell
+& 'C:\Tools\Godot\Godot.exe' --path '.\apps\desktop' -- --pet-project 'C:\MyPets\MyCompanion'
+```
+
+替换为你的实际路径。桌宠可以独立于网页运行；让宠物获得焦点后按 Esc 退出。发给别人试用时，对方也需要本项目与 Godot，或兼容的 PetForge 桌面运行器；单发资源 ZIP 不会自动为对方安装运行程序。
+
+## 常见问题
+
+| 问题 | 处理办法 |
+| --- | --- |
+| 打不开 `127.0.0.1:3000` | 先在这台电脑启动 `pnpm dev`，保持终端运行。公网演示页不等于本机编辑器。 |
+| 提示未配置 Godot | 填好 `.env` 的实际可执行文件路径并重启服务；直启脚本使用 `-GodotExecutable`。 |
+| PowerShell 禁止运行脚本 | 阅读脚本后，可用 `powershell -NoProfile -ExecutionPolicy Bypass` 新开仅当前进程放行的终端再执行，无需修改整机策略。 |
+| 安装失败 | 核对 Node、pnpm、Python 版本，按终端报错修复后重跑 `scripts/setup.ps1`。 |
+| 抠图很慢或失败 | 首次可能下载模型；检查 API 终端、网络和磁盘空间。也可以先用透明 PNG 路线。 |
+| 看起来只是照片滤镜 | 当前就是抠图加漫画滤镜。希望使用 Q 版角色时，请先提供画好的透明卡通 PNG。 |
+| 头发或脚被裁掉 | 检查原图与抠图边缘，保留透明边距；运行器无法恢复原图已经缺失的部分。 |
+| 自己的图片没有演示人物的动作 | 演示角色使用定制素材，新 PNG 只获得通用行为，不会自动生成同样的肢体绑定与新动画帧。 |
+| 3D 模型失败 | 继续使用 2D 桌宠。3D 是单独实验，需要额外环境。 |
+
+## 隐私、开源许可与贡献
+
+公开网页选图只在当前浏览器预览，除非用户主动下载或分享参考文件。本机编辑器把照片发送到同一台电脑的 FastAPI；原图、生成图和数据库默认保存在 `storage/`。可以通过 `PETFORGE_STORAGE_ROOT` 和 `PETFORGE_DATABASE_PATH` 修改位置。直启脚本不上传图片。请勿提交 `.env`、个人项目和模型缓存。
+
+演示真人照片是按创作者要求公开展示的素材，不随源代码许可授予再利用权，见[第三方与素材说明](THIRD_PARTY_NOTICES.md)。源代码采用 [Apache-2.0](LICENSE)，模型权重与素材遵循各自条款。
+
+API 当前面向本地开发；公开托管前需要补齐访问控制、配额、存储和照片保留策略。依赖需要持续安全更新，开发构建通过不等于完成安全审计。
+
+欢迎贡献安装包、通用角色绑定、自然动作和编辑体验改进。提交 Issue 时附复现步骤、系统与版本，避免附带私人照片和密钥。
+
+## 工程结构与技术资料
+
+[制作流程核对记录](docs/validation-2026-10-23.md)列出了本机已检查的环节，以及尚未覆盖的验证范围。
+
+```text
+apps/web/              Next.js 本机编辑器
+apps/desktop/          Godot 透明桌宠运行器
+services/api/          FastAPI 与本机图片处理
+packages/pet-schema/   共享宠物配置格式
+scripts/create-pet.ps1 自有 PNG 直启入口
+storage/               本地私人项目，Git 忽略
+docs/                  公开网页与技术文档
+```
+
+[架构](docs/architecture.md) · [照片到桌宠技术设计](docs/photo-to-pet-technical-design.zh-CN.md) · [资源包格式](docs/pet-format.md) · [开发说明](docs/development.md) · [项目状态](docs/project-status.md)

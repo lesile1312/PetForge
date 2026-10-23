@@ -40,8 +40,8 @@ export function Studio() {
       setStage(savedPet.processedImage ? "editor" : savedPet.originalImage ? "cutout" : "upload");
       setActiveStep(savedPet.modelUrl ? 4 : savedPet.processedImage ? 3 : savedPet.originalImage ? 2 : 1);
       setPreviewOriginal(!savedPet.processedImage);
-      setModelStatus(savedPet.modelUrl ? "ready" : savedPet.processedImage ? "error" : "idle");
-      setNotice(savedPet.modelUrl ? "已恢复上次项目，3D 模型已就绪。" : savedPet.processedImage ? "已恢复上次项目，可以重试 3D 建模。" : null);
+      setModelStatus(savedPet.modelUrl ? "ready" : "idle");
+      setNotice(savedPet.modelUrl ? "已恢复上次项目，3D 模型已就绪。" : savedPet.processedImage ? "已恢复上次的 2D 桌宠项目。" : null);
     }).catch(() => {
       if (!cancelled) window.localStorage.removeItem("petforge:lastPetId");
     });
@@ -165,27 +165,8 @@ export function Studio() {
     setPreviewOriginal(false);
     setStage("editor");
     setActiveStep(3);
-    setModelStatus("processing");
-    setNotice(`漫画风格角色已生成 · ${result.width} × ${result.height}。正在重建 3D 模型…`);
-    const localLaunch = canLaunchLocalRuntime
-      ? api.launch(cutoutPet.id)
-        .then(() => {
-          setDesktopStarted(true);
-          setNotice("卡通桌宠已显示在桌面，3D 参考模型继续生成…");
-          return { started: true, message: "卡通桌宠已显示在桌面。" };
-        })
-        .catch((reason) => ({
-          started: false,
-          message: reason instanceof Error ? `桌面启动失败：${reason.message}` : "桌面启动失败，请检查 Godot Runtime。",
-        }))
-      : null;
-    await generateModel(cutoutPet);
-    if (localLaunch) {
-      const launchResult = await localLaunch;
-      setDesktopStarted(launchResult.started);
-      if (!launchResult.started) setError(launchResult.message);
-      setNotice((current) => `${current ?? "漫画风格角色已生成。"} ${launchResult.message}`);
-    }
+    setDesktopStarted(false);
+    setNotice(`2D 漫画风格角色已生成 · ${result.width} × ${result.height}。请先检查原图对照，再点击启动桌宠或导出资源。3D 建模可单独选择。`);
   }
 
   async function generateModel(sourcePet: PetRecord) {
@@ -364,7 +345,7 @@ export function Studio() {
           <div className="workflow-bar" aria-label="创建步骤">
             <div className="workflow-project"><button type="button" onClick={startAnother} aria-label="返回创建页面"><Icon name="arrow" size={17} className="back-arrow" /></button><span className="workflow-project-name">{config?.name || "新桌宠"}</span><span className="workflow-unsaved"><i /> PetForge 项目</span></div>
             <ol className="workflow-steps">
-              {(["上传照片", "自动抠图", "角色设置", "3D 预览", canLaunchLocalRuntime ? "启动桌宠" : "导出资源"] as const).map((label, index) => {
+              {(["上传照片", "自动抠图", "检查与设置", "导出资源", canLaunchLocalRuntime ? "启动桌宠" : "导出资源"] as const).map((label, index) => {
                 const number = index + 1;
                 return <li key={label} className={`${activeStep === number ? "is-current" : ""}${activeStep > number ? " is-complete" : ""}`}><span className="workflow-step-number">{activeStep > number ? <Icon name="check" size={13} /> : number}</span><span>{label}</span></li>;
               })}
@@ -378,13 +359,13 @@ export function Studio() {
 
           {stage === "cutout" ? (
             <section className="cutout-stage">
-              <div className="cutout-intro"><span className="section-eyebrow">第 2 步 · 角色制作</span><h1>让角色从背景里<br /><span>轻轻地走出来。</span></h1><p>本机自动抠图、做漫画风格角色，再重建可旋转的 3D 参考模型。原图和透明抠图都会保留。</p></div>
+              <div className="cutout-intro"><span className="section-eyebrow">第 2 步 · 角色制作</span><h1>让角色从背景里<br /><span>轻轻地走出来。</span></h1><p>本机抠除背景并应用漫画滤镜。先检查原图和透明形象，再启动 2D 桌宠。3D 是独立的可选实验。</p></div>
               <div className="cutout-card">
                 {(error || notice) && <div className="editor-status" aria-live="polite">{error && <span className="editor-alert" role="alert">{error}</span>}{notice && !error && <span className="editor-notice"><Icon name="spark" size={14} /> {notice}</span>}</div>}
                 <div className="cutout-card-top"><div><span className="cutout-card-kicker"><Icon name="image" size={15} /> 原始图片</span><b>{pet?.name}</b></div><button className="text-button" type="button" onClick={() => fileInputRef.current?.click()}><Icon name="undo" size={15} /> 换一张</button></div>
                 <div className="cutout-image-preview"><div className="checkerboard" />{image ? <img src={image} alt="待处理的角色原图" /> : <span className="cutout-no-image">图片未能加载</span>}<span className="image-dimension-note">原图 · 背景保留</span></div>
                 <input ref={fileInputRef} hidden type="file" accept="image/png,image/jpeg,image/webp" onChange={(event) => { const file = event.target.files?.[0]; if (file) void handleFile(file); event.target.value = ""; }} />
-                <div className="cutout-card-bottom"><button type="button" className="button button-quiet" onClick={startAnother} disabled={working}>取消</button><button type="button" className="button button-primary cutout-action" onClick={removeBackground} disabled={working || !pet?.originalImage}><Icon name="spark" size={17} /> {working ? "AI 正在处理…" : "重新抠图并建模"}<Icon name="arrow" size={15} /></button></div>
+                <div className="cutout-card-bottom"><button type="button" className="button button-quiet" onClick={startAnother} disabled={working}>取消</button><button type="button" className="button button-primary cutout-action" onClick={removeBackground} disabled={working || !pet?.originalImage}><Icon name="spark" size={17} /> {working ? "AI 正在处理…" : "重新处理 2D 角色"}<Icon name="arrow" size={15} /></button></div>
               </div>
               <div className="cutout-assurance"><span className="assurance-icon"><Icon name="layers" size={17} /></span><p><b>原图会保留</b><small>不满意可以随时恢复，或换一张图片重试。</small></p></div>
             </section>
@@ -404,8 +385,8 @@ export function Studio() {
                   <DesktopPreview config={config} imageSrc={image} modelSrc={pet.modelUrl ? imageUrl(pet.modelUrl) : null} />
                   <div className={`model-status-card model-status-${modelStatus}`} aria-live="polite">
                     <span className="model-status-mark"><Icon name={modelStatus === "ready" ? "check" : modelStatus === "processing" ? "spark" : "layers"} size={15} /></span>
-                    <div><b>{modelStatus === "ready" ? "3D 参考模型已生成" : modelStatus === "processing" ? "正在重建 3D 参考模型" : modelStatus === "error" ? "3D 模型尚未生成" : "上传后自动生成卡通角色与 3D 参考模型"}</b><small>{modelStatus === "ready" ? "可在网页单独查看；桌面运行的是带动作的卡通角色。" : modelStatus === "processing" ? "首次运行可能需要下载模型权重；卡通桌宠可以先运行。" : modelStatus === "error" ? "卡通桌宠和动作仍可使用，3D 下载稍后重试。" : "人物分割与单图重建都在本机完成。"}</small></div>
-                    {modelStatus === "error" && <button type="button" className="text-button" onClick={retryModelGeneration} disabled={working}>重试 3D 建模</button>}
+                    <div><b>{modelStatus === "ready" ? "3D 参考模型已生成" : modelStatus === "processing" ? "正在重建 3D 参考模型" : modelStatus === "error" ? "3D 模型尚未生成" : "可选：生成 3D 参考模型"}</b><small>{modelStatus === "ready" ? "可在网页单独查看；桌面运行的是带动作的卡通角色。" : modelStatus === "processing" ? "首次运行可能需要下载模型权重；卡通桌宠可以先运行。" : modelStatus === "error" ? "卡通桌宠和动作仍可使用，3D 下载稍后重试。" : "2D 桌宠已可独立使用；3D 实验需要额外安装模型与显卡依赖。"}</small></div>
+                    {(modelStatus === "idle" || modelStatus === "error") && <button type="button" className="text-button" onClick={retryModelGeneration} disabled={working}>{modelStatus === "error" ? "重试 3D 建模" : "生成 3D（可选）"}</button>}
                   </div>
                   <div className="cutout-method"><span className="method-status"><i /> {pet.modelUrl ? "3D GLB 已生成" : pet.processedImage ? "透明 PNG 已生成" : "背景未移除"}</span><span>{pet.modelUrl ? "单图重建 · 背面与细节为 AI 推断" : pet.processedImage ? "AI 人物分割" : "先上传图片以运行 AI 抠图"}</span><button type="button" onClick={() => { setStage("cutout"); setActiveStep(2); setPreviewOriginal(true); setError(null); setNotice(null); }} disabled={working}>重新处理</button></div>
                 </div>

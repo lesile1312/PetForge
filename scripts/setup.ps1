@@ -32,7 +32,9 @@ if (-not (Test-Path -LiteralPath ".venv\Scripts\python.exe")) {
 }
 
 pnpm install
+if ($LASTEXITCODE -ne 0) { throw "pnpm install failed. Fix the reported error, then rerun setup." }
 & ".venv\Scripts\python.exe" -m pip install -r services/api/requirements.txt
+if ($LASTEXITCODE -ne 0) { throw "Python dependency installation failed. Fix the reported error, then rerun setup." }
 if (-not (Test-Path -LiteralPath ".env")) {
     Copy-Item .env.example .env
 }

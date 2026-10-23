@@ -86,11 +86,11 @@ export function UploadStage({ busy, error, onFile, onSample }: UploadStageProps)
           <span className="step-connector" />
           <div className="creation-step"><span className="step-number">2</span><b>自动抠图</b><small>保留照片主体</small></div>
           <span className="step-connector" />
-          <div className="creation-step"><span className="step-number">3</span><b>3D 预览</b><small>单图重建可旋转模型</small></div>
+          <div className="creation-step"><span className="step-number">3</span><b>形象预览</b><small>对照原图检查透明角色</small></div>
           <span className="step-connector" />
           <div className="creation-step"><span className="step-number">4</span><b>导出资源</b><small>配合桌面运行程序使用</small></div>
         </div>
-        <p className="creation-note">网页负责制作和预览；单张照片看不到的背面会由 AI 推断，生成效果需要检查。常驻桌面还需安装运行程序。</p>
+        <p className="creation-note">本机编辑器负责抠图、漫画滤镜和形象预览；常驻桌面需要 Godot 运行器。3D 建模是单独的可选实验。</p>
       </div>
 
       <div className="sample-shelf" id="examples">

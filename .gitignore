@@ -7,7 +7,7 @@ __pycache__/
 .env
 .env.*
 !.env.example
-storage/
+/storage/
 /deliverables/
 /release/
 /PROJECT_STATUS.md

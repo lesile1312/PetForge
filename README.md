@@ -1,116 +1,157 @@
 # PetForge
 
-**Turn your character into a desktop companion.**
+**Make a desktop companion from your own character image.**
 
-PetForge is a Windows-first, local desktop-pet studio. Upload a character image, create a transparent 2D companion, preview its behavior in the editor, and let it move across your desktop in a lightweight Godot window.
+[中文文档](README.zh-CN.md) · **English** · [Live demo](https://lesile1312.github.io/PetForge/#example) · [Create with your reference](https://lesile1312.github.io/PetForge/#create)
 
-PetForge is an independent community project. It is not affiliated with or endorsed by OpenAI or Codex.
+PetForge is a Windows-first open-source desktop-pet studio built with Next.js, FastAPI and Godot. Bring a transparent character PNG to run a pet directly, or process a portrait locally into a transparent, comic-filtered image before launching it in an independent desktop window.
 
-**Project showcase / 项目演示页:** <https://lesile1312.github.io/PetForge/>
+This is an early development release. The direct-PNG route below is the simplest way to make your own pet. The full editor requires a development environment; a one-click consumer installer is not included. PetForge is an independent community project and is not affiliated with OpenAI or Codex.
 
-The public page lets visitors select and preview a reference photo locally and save a `.petforge.json` reference file. Import that file through the local editor's image picker to continue the existing segmentation, comic-filter, export, and desktop-runtime flow. The public page does not provide cloud AI generation. The reference file contains the original image: keep it private unless you intend to share the photo.
-
-公开网页现可选择参考原图、完整预览并保存 `.petforge.json` 参考文件。在本机创作器选择该文件，就能继续抠图、漫画滤镜和桌宠制作；编辑器并排展示原图与处理结果。公开页面不提供云端 AI 重绘。参考文件包含原始照片，请按照片本身保管。
+## From the original photo to the custom character
 
 <p align="center">
-  <img src="apps/desktop/assets/default-pet/character.png" width="220" alt="PetForge demo cat character" />
+  <img src="docs/images/pet-demo/reference-photo.jpg" height="340" alt="Original portrait used as the character reference" />
+  <img src="docs/images/pet-demo/idle.png" height="300" alt="Custom cartoon desktop pet based on the reference" />
 </p>
 
-**中文简介：** PetForge（AI 桌宠工坊）是一款面向 Windows 的本地桌宠创作工具。上传人物图片、预览卡通角色与动作，再让透明桌宠在整个桌面上活动。默认本地流程不会把用户照片发送到云端。
+The photo is the original creator-provided reference. The cartoon example was designed and refined over multiple iterations. Its appearance and detailed action sheets demonstrate the intended result; arbitrary photo uploads do not automatically receive the same artwork or animation rig.
 
-## What works today
+<p align="center"><img src="docs/images/pet-demo/action-gallery.png" width="760" alt="Custom pet idle, blink, left-run and right-run poses" /></p>
 
-- **Photo to character:** locally segments a portrait, preserves a transparent cutout, and creates a comic-style sprite for the desktop pet.
-- **Desktop companion:** a separate, borderless, transparent Godot 4 runtime supports dragging, screen bounds, and desktop movement. Drag with the left mouse button, right-click the pet to cycle an action, and press Esc to exit. The public cat is a basic demo; advanced hand-tuned gestures require character-specific art and rig data.
-- **Editor and project settings:** adjust the pet's appearance and behavior in a Next.js editor backed by a local FastAPI service.
-- **Portable pet package:** export the character and its configuration for a compatible PetForge runtime.
-- **Optional 3D experiment:** reconstructs a separate static GLB for viewing. It is not the animated desktop character, and unseen surfaces are inferred.
+[View the original-photo comparison](https://lesile1312.github.io/PetForge/#example) · [View run-cycle frames](docs/images/pet-demo/run-cycle.png)
 
-The image-to-cartoon step currently uses local palette, contour, and outline processing. It does not redraw every photo into a new anime illustration. Automatic character-part detection and rigging for arbitrary uploaded photos are planned; check the [technical design](docs/photo-to-pet-technical-design.zh-CN.md) for the implementation path and current limits. The repository includes a generic sample cat, the photo-inspired demo gallery, and a web copy of the creator-provided original reference photograph. Local editing files remain outside the public source.
+## What you can use today
 
-## Original reference / 真人原图对照
+| Capability | Current behavior |
+| --- | --- |
+| Your own PNG → desktop pet | Creates a package from your image and runs the generic Godot pet; no AI model required |
+| Portrait processing | Local rembg segmentation plus a comic palette/outline filter; original and processed images are shown together |
+| Desktop window | Transparent, borderless, draggable, optionally always on top; independent of the browser |
+| Behavior | Movement, idle, sleep, jump and click interactions; detailed character gestures depend on suitable artwork/rig data |
+| Portable package | `pet.json` and `character.png`; optional cutout and static GLB |
+| Public website | Reference-photo preview and `.petforge.json` download; no cloud photo generation |
+| AI chibi redrawing, body completion, automatic rigging | Planned; see the [technical design](docs/photo-to-pet-technical-design.zh-CN.md) |
 
-The creator requested this original reference photograph be displayed beside the custom cartoon pet. This is a hand-refined example, not an automatically generated result for arbitrary uploaded photos. The full comparison is available on the [website](https://lesile1312.github.io/PetForge/#example).
+An uploaded photo is currently filtered, not redrawn into a new chibi illustration. For a polished cartoon pet today, prepare a cartoon PNG first and use the direct-PNG route. Existing artwork is animated through the generic runtime; new limb-motion frames are not automatically generated.
 
-<p align="center">
-  <img src="docs/images/pet-demo/reference-photo.jpg" height="340" alt="Original creator-provided reference photograph" />
-  <img src="docs/images/pet-demo/idle.png" height="300" alt="Custom cartoon desktop pet inspired by the photograph" />
-</p>
+## Make your own pet — transparent PNG route
 
-## Desktop-pet demo / 桌宠演示
+Requires Windows 10/11 x64, PowerShell, Git (or a downloaded repository ZIP), and a Godot 4 executable. This route does not require Node.js, Python, CUDA or an AI account.
 
-This creator-provided example shows the supported idle, blink, and left/right run frame sets. The running preview samples four of the eight frames in each direction. These hand-tuned demo assets illustrate the runtime; they do not mean arbitrary uploaded portraits already receive the same detailed animation automatically.
+1. Clone the repository, or download and extract its ZIP:
 
-这组创作者提供的示例展示了当前桌面运行时已接入的待机、眨眼和左右跑帧组。跑动预览从每个方向的 8 帧中抽取了 4 帧。它展示的是定制示例素材，不代表任意上传照片都已能自动生成同等精细的动作。
+```powershell
+git clone https://github.com/lesile1312/PetForge.git
+cd PetForge
+```
 
-<p align="center">
-  <img src="docs/images/pet-demo/action-gallery.png" width="872" alt="PetForge desktop-pet idle, blink, and directional run poses" />
-</p>
+2. Prepare a transparent PNG with the whole character visible. Keep padding around hair, hands and feet. A PNG with an opaque background will display that background too.
+3. Run this command, replacing both example file paths with your own:
 
-<p align="center">
-  <img src="docs/images/pet-demo/run-cycle.png" width="1130" alt="Sampled left and right run-cycle frames" />
-</p>
+```powershell
+.\scripts\create-pet.ps1 -ImagePath 'C:\Pictures\my-character.png' -Name 'My companion' -GodotExecutable 'C:\Tools\Godot\Godot.exe'
+```
 
-Individual transparent frames are available in [`docs/images/pet-demo/`](docs/images/pet-demo/).
+The script prints the package folder and starts the pet. Each run creates a new folder under `storage/custom-pets/`; it does not modify your source image or overwrite existing packages. To create files without starting Godot:
+
+```powershell
+.\scripts\create-pet.ps1 -ImagePath 'C:\Pictures\my-character.png' -Name 'My companion' -NoLaunch
+```
+
+Drag with the left mouse button, right-click to cycle interactions, and press Esc while the pet has focus to quit. The small pet window can appear over other applications. Action quality depends on the image and available rig, especially for a single flat PNG.
 
 ## Quick start (Windows development)
 
-### Prerequisites
+Use the full local editor when starting from a photograph.
 
-- Windows 10/11, x64
-- Node.js 20.9 or newer and pnpm
-- Python 3.12
-- Godot 4 (for the separate desktop runtime)
-- NVIDIA GPU and CUDA-compatible environment for the optional local TripoSR 3D experiment
+### Requirements
 
-### Install and launch the editor
+- Windows 10/11 x64; Git or the extracted repository ZIP.
+- Node.js 22.13+ and pnpm 11.19.0 (as declared in `package.json`; pnpm requires this Node version).
+- Python 3.12 with the Windows `py` launcher or `python.exe` on PATH.
+- Godot 4 to run the desktop pet. The current project has been developed with Godot 4.7.2; use a compatible Godot 4 build.
+- Internet access for dependency installation and the first segmentation-model download. CPU segmentation is supported; a CUDA GPU is only needed for the separate TripoSR experiment.
+
+### Install, configure, start
+
+From the repository root:
 
 ```powershell
-Copy-Item .env.example .env
+npm install --global pnpm@11.19.0
 .\scripts\setup.ps1
+```
+
+The setup script creates `.env` if missing. Edit this line to point to your installed executable:
+
+```dotenv
+PETFORGE_GODOT_EXECUTABLE=C:/Tools/Godot/Godot.exe
+```
+
+Then start both local services:
+
+```powershell
 pnpm dev
 ```
 
-Open <http://localhost:3000>. The API health endpoint and interactive API documentation are at <http://127.0.0.1:8000/health> and <http://127.0.0.1:8000/docs>.
+Keep that terminal open and visit <http://127.0.0.1:3000/>. API health: <http://127.0.0.1:8000/health>.
 
-The setup script installs the local API and portrait-segmentation dependencies. To enable the optional 3D experiment, run `scripts/setup-ai.ps1` separately. It downloads large model weights and a dedicated CUDA/PyTorch environment. Photos are processed by the local API; model and dependency downloads require internet access. Review each upstream model's license before redistribution or commercial use.
+### Photo → processed image → your desktop pet
 
-To enable the editor's desktop launch button in development, set `PETFORGE_GODOT_EXECUTABLE` in `.env` to the Godot 4 executable on your machine. For example:
+1. Select a PNG/JPG/WEBP photo (maximum 10 MB), or import the `.petforge.json` reference file saved by the public website.
+2. Wait for local portrait segmentation and the comic filter. The first model load can download weights; a complicated background or occluded hair may need a different source image.
+3. Compare the original with the transparent result. Adjust appearance and behavior in the editor. This step currently does not offer AI cartoon redrawing or automatic body completion.
+4. Click **启动桌宠** after you are satisfied. Godot must be configured in `.env`; restart `pnpm dev` after changing configuration. The pet runs in a separate native window.
+5. Click **导出资源** to keep or share your generated ZIP. It is an asset package, not an `.exe` installer.
 
-```dotenv
-PETFORGE_GODOT_EXECUTABLE=C:/Tools/Godot/Godot_v4.7.2-stable_win64.exe
+3D generation is an explicit optional action, so making a 2D pet does not wait for TripoSR. Install the separate environment with `scripts/setup-ai.ps1` only if you want the static 3D preview. It can download large files and requires compatible CUDA hardware.
+
+### Run an exported pet again
+
+Extract the resource ZIP into its own folder. Keep `pet.json` beside `character.png` and preserve any referenced assets. Run:
+
+```powershell
+& 'C:\Tools\Godot\Godot.exe' --path '.\apps\desktop' -- --pet-project 'C:\MyPets\MyCompanion'
 ```
 
-The Windows export preset is a starting point. Export templates, a packaged creator/player installer, and a signed end-user release still need to be prepared and verified.
+Run this from the PetForge repository root. The pet continues independently of the web editor; Esc exits the focused pet. To share a package, recipients also need this project and Godot or a compatible packaged runtime. Exporting only the ZIP does not install that runtime on another computer.
 
-## Project layout
+## Troubleshooting
+
+| Symptom | What to check |
+| --- | --- |
+| `127.0.0.1:3000` cannot open | Start `pnpm dev` on that computer and keep the terminal open. The public Pages site does not start local services. |
+| Launch reports Godot is not configured | Set the actual executable path in `.env` and restart services; `create-pet.ps1` accepts `-GodotExecutable` directly. |
+| Script execution is blocked | Open a PowerShell session with a process-only policy, e.g. `powershell -NoProfile -ExecutionPolicy Bypass`, then run the command there after reviewing the script. No machine-wide policy change is needed. |
+| Installation fails | Check Node/pnpm/Python versions and the terminal error; rerun `scripts/setup.ps1` after correcting it. |
+| First segmentation is slow or fails | Model loading may require a download. Check the API terminal, network and free disk space. A transparent PNG can use the direct route while you resolve model setup. |
+| The output looks like a filtered photo | That is the present photo-processing capability. Supply a prepared cartoon PNG for a cartoon character. |
+| Hair or a foot is missing | Check the source and segmentation result. Add transparent padding; the runtime cannot recover body parts missing from the source. |
+| New image does not perform the sample's gestures | The sample uses custom art. A new PNG gets generic runtime behavior, not a matching newly generated skeletal rig. |
+| 3D fails | 2D creation still works. 3D is optional and needs its separately installed environment. |
+
+## Privacy, licenses and contribution
+
+Visitor photos selected on the static website remain in that browser unless the visitor saves/shares the reference file. The local editor sends images to FastAPI on the same machine; source images, generated files and project data live under `storage/` by default. Choose another location with `PETFORGE_STORAGE_ROOT` and `PETFORGE_DATABASE_PATH`. Neither runtime script uploads photos. Do not commit `.env`, personal projects or model caches.
+
+The demonstration photo was published at the creator's request. Its display does not grant reuse rights; see [third-party notices](THIRD_PARTY_NOTICES.md). Source code is [Apache-2.0](LICENSE); model weights and artwork have separate terms.
+
+The API is a local development service. Public hosting requires additional access control, quotas, storage and retention policies. Dependencies also need regular security updates; a development build is not a security audit.
+
+Contributions to installer packaging, automatic character rigging, natural gestures and accessible editing are welcome. Include reproduction steps and your OS/version in issues; omit private photos and credentials.
+
+## Project structure and design
+
+See the [workflow validation record](docs/validation-2026-10-23.md) for what was checked locally and the remaining verification boundaries.
 
 ```text
-apps/web/                 Next.js image-creation editor
-apps/desktop/             Godot 4 transparent desktop runtime
-services/api/              FastAPI, SQLite, local storage and image providers
-packages/pet-schema/       Shared TypeScript and JSON Schema contracts
-assets/demo/               License-safe web editor examples
-docs/                      Architecture, API, package and development docs
-scripts/                   Windows development and local-model setup
+apps/web/              Next.js local editor
+apps/desktop/          Godot transparent desktop runtime
+services/api/          FastAPI and local image processing
+packages/pet-schema/   Shared pet configuration contracts
+scripts/create-pet.ps1 Direct image-to-runtime workflow
+storage/               Local private projects (ignored by Git)
+docs/                  Public website and technical documentation
 ```
 
-## Privacy and local data
-
-In the default local setup, the browser talks to the API on the same computer. Uploaded photos, generated files, SQLite data, and logs are stored under `storage/`. The original photo is kept locally so the user can restore it. Set `PETFORGE_STORAGE_ROOT` or `PETFORGE_DATABASE_PATH` in `.env` to choose another location.
-
-Model weights are downloaded separately and can occupy several gigabytes. They are not bundled with this repository. A public deployment needs a separate security, account, storage, consent, and retention design; the development API is not a public image-processing service.
-
-## Development status and design
-
-This repository is a runnable local-development foundation for the upload, image-processing, editor, export, and desktop-runtime paths. It is not yet a packaged consumer installer or an automatic high-quality animation-rigging service for arbitrary photos.
-
-- [Public development status](docs/project-status.md)
-- [Photo-to-pet technical design](docs/photo-to-pet-technical-design.zh-CN.md)
-- [Current project audit](docs/current-state-audit.zh-CN.md)
-- [Architecture](docs/architecture.md) · [API](docs/api.md) · [Pet package format](docs/pet-format.md) · [AI providers](docs/ai-providers.md) · [Development](docs/development.md)
-
-## License
-
-Project source code is licensed under the [Apache License 2.0](LICENSE). Model weights, generated outputs, and third-party assets are governed by their own licenses and terms. See [third-party notices](THIRD_PARTY_NOTICES.md).
-
+[Architecture](docs/architecture.md) · [Photo-to-pet design](docs/photo-to-pet-technical-design.zh-CN.md) · [Package format](docs/pet-format.md) · [Development](docs/development.md) · [Project status](docs/project-status.md)

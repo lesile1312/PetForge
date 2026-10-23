@@ -12,7 +12,7 @@ The creator flow now talks to FastAPI through the Next.js `/api/*` proxy. The br
 
 ## Desktop launch behavior
 
-- Development mode defaults to `PETFORGE_RUNTIME_MODE=local`, auto-launches Godot after local portrait processing, and keeps a manual launch button in the editor.
+- Development mode defaults to `PETFORGE_RUNTIME_MODE=local`. Local portrait processing stops at the review screen; users explicitly launch Godot after checking the original and processed image. Optional 3D generation is requested separately.
 - Production defaults to `PETFORGE_RUNTIME_MODE=package`. Visitors can download the generated image/model resource package; the website does not try to launch a process on the web server.
 - The exported ZIP contains pet configuration, the comic sprite, its transparent cutout, and a GLB when 3D generation succeeds. It is not a standalone Windows installer. Visitors need a packaged PetForge desktop runtime before they can run the pet on their own desktop.
 
