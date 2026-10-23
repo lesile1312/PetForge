@@ -6,7 +6,15 @@
 
 PetForge is a Windows-first open-source desktop-pet studio built with Next.js, FastAPI and Godot. Bring a transparent character PNG to run a pet directly, or process a portrait locally into a transparent, comic-filtered image before launching it in an independent desktop window.
 
-This is an early development release. The direct-PNG route below is the simplest way to make your own pet. The full editor requires a development environment; a one-click consumer installer is not included. PetForge is an independent community project and is not affiliated with OpenAI or Codex.
+## New here? Start with the route that fits
+
+| What you want to do | Follow this route | You will need |
+| --- | --- | --- |
+| I already have a transparent character PNG | [Run a PNG desktop pet](#make-your-own-pet--transparent-png-route) ([download source ZIP](https://github.com/lesile1312/PetForge/archive/refs/heads/main.zip)) | Windows, Godot 4, and the PetForge source |
+| I want to start from a portrait | [Set up the local photo editor](#quick-start-windows-development) | Windows, Node.js, pnpm, Python, Godot 4, and internet for the first model download |
+| I only want to preview the project | [Open the live demo](https://lesile1312.github.io/PetForge/#example) | A browser; the demo cannot launch a pet on your computer |
+
+**What this release does:** GitHub Pages is a static showcase and reference-photo helper, not a hosted photo-generation service. Photo processing currently removes the background and applies a comic filter. It does not yet redraw arbitrary photos as polished chibi art, invent cropped body parts, or generate a character-specific animation rig. This repository contains source code; a one-click consumer installer is not available yet. For the most reliable result today, start with a complete transparent cartoon PNG. PetForge is an independent community project and is not affiliated with OpenAI or Codex.
 
 ## From the original photo to the custom character
 
