@@ -45,6 +45,7 @@
 - Create: `services/worker/requirements-p0-dev.txt`
 - Create: `services/worker/pyproject.toml`
 - Create: `services/worker/petforge_worker/__init__.py`
+- Modify: `.gitignore`
 - Create: `services/worker/petforge_worker/device.py`
 - Create: `services/worker/petforge_worker/manifest.py`
 - Create: `models/manifest.json`
@@ -64,7 +65,7 @@ Add the package metadata in `pyproject.toml`, including pytest `pythonpath = [".
 
 - [x] **Step 2: Run focused worker tests**
 
-Create the venv with `$python312 = (uv python find 3.12).Trim(); & $python312 -m venv services/worker/.venv`, install the editable package and dev requirements with `services/worker/.venv/Scripts/python.exe -m pip install -e services/worker -r services/worker/requirements-p0-dev.txt`, then run `services/worker/.venv/Scripts/python.exe -m pytest -c services/worker/pyproject.toml services/worker/tests/test_device.py services/worker/tests/test_manifest.py -q`. The setup script must prefer `uv python find 3.12` and fall back to `py -3.12` when `uv` is absent.  
+Create the venv with `$python312 = (uv python find 3.12).Trim(); & $python312 -m venv services/worker/.venv`, install the editable package and dev requirements with `services/worker/.venv/Scripts/python.exe -m pip install -e services/worker -r services/worker/requirements-p0-dev.txt`, then run `services/worker/.venv/Scripts/python.exe -m pytest -c services/worker/pyproject.toml services/worker/tests/test_device.py services/worker/tests/test_manifest.py -q`. The setup script must prefer `uv python find 3.12` and fall back to `py -3.12` when `uv` is absent.
 Expected: FAIL because worker modules do not exist.
 
 - [x] **Step 3: Implement device and manifest checks**
@@ -77,7 +78,8 @@ Keep heavyweight imports out of `services/api`. Store only public model metadata
 
 - [x] **Step 5: Run focused checks**
 
-Run: `services/worker/.venv/Scripts/python.exe -m pytest -c services/worker/pyproject.toml services/worker/tests/test_device.py services/worker/tests/test_manifest.py services/worker/tests/test_setup_script.py -q`  
+Run: `services/worker/.venv/Scripts/python.exe -m pytest -c services/worker/pyproject.toml services/worker/tests/test_device.py services/worker/tests/test_manifest.py services/worker/tests/test_setup_script.py -q`
+
 Expected: PASS; CPU/GPU status and missing model details are actionable and contain no user-photo data.
 
 ### Task 2: Private evaluation corpus and redacted report contract
@@ -103,7 +105,8 @@ Cover invalid/oversized/corrupt files, EXIF orientation removal, missing consent
 
 - [ ] **Step 2: Run focused privacy and preflight tests**
 
-Run: `services/worker/.venv/Scripts/python.exe -m pytest -c services/worker/pyproject.toml services/worker/tests/test_preflight.py services/worker/tests/test_corpus.py services/worker/tests/test_report.py -q`  
+Run: `services/worker/.venv/Scripts/python.exe -m pytest -c services/worker/pyproject.toml services/worker/tests/test_preflight.py services/worker/tests/test_corpus.py services/worker/tests/test_report.py -q`
+
 Expected: FAIL because the worker modules do not exist.
 
 - [ ] **Step 3: Implement preflight, corpus loader, and report schema**
@@ -116,12 +119,14 @@ Run `git check-ignore -v storage/evaluations/sample.png` and confirm the existin
 
 - [ ] **Step 5: Run focused checks**
 
-Run: `services/worker/.venv/Scripts/python.exe -m pytest -c services/worker/pyproject.toml services/worker/tests/test_preflight.py services/worker/tests/test_corpus.py services/worker/tests/test_report.py -q`  
+Run: `services/worker/.venv/Scripts/python.exe -m pytest -c services/worker/pyproject.toml services/worker/tests/test_preflight.py services/worker/tests/test_corpus.py services/worker/tests/test_report.py -q`
+
 Expected: PASS; reports contain no names, original paths, prompts, image bytes, or EXIF.
 
 ### Task 3: Local character-generation benchmark CLI
 
 **Files:**
+- Modify: `services/worker/pyproject.toml`
 - Create: `services/worker/petforge_worker/providers/base.py`
 - Create: `services/worker/petforge_worker/providers/cutout.py`
 - Create: `services/worker/petforge_worker/providers/person.py`
@@ -167,12 +172,13 @@ Generate one candidate at a time. Use person detection for candidate boxes and p
 
 - [ ] **Step 5: Run contract checks**
 
-Run: `services/worker/.venv/Scripts/python.exe -m pytest -c services/worker/pyproject.toml services/worker/tests/test_cutout_provider.py services/worker/tests/test_person_provider.py services/worker/tests/test_layers_provider.py services/worker/tests/test_portrait_provider.py services/worker/tests/test_benchmark.py -q`  
+Run: `services/worker/.venv/Scripts/python.exe -m pytest -c services/worker/pyproject.toml services/worker/tests/test_cutout_provider.py services/worker/tests/test_person_provider.py services/worker/tests/test_layers_provider.py services/worker/tests/test_portrait_provider.py services/worker/tests/test_benchmark.py -q`
+
 Expected: PASS with the fake provider; no GPU or model downloads are needed for this check.
 
 - [ ] **Step 6: Install the selected model and run the local benchmark**
 
-Run: `powershell -NoProfile -ExecutionPolicy Bypass -File scripts/install-photo-models.ps1 -Device auto` then `powershell -NoProfile -ExecutionPolicy Bypass -File scripts/run-photo-benchmark.ps1 -Device auto`  
+Run: `powershell -NoProfile -ExecutionPolicy Bypass -File scripts/install-photo-models.ps1 -Device auto` then `powershell -NoProfile -ExecutionPolicy Bypass -File scripts/run-photo-benchmark.ps1 -Device auto`
 The installer shows model licenses, exact download size, destination, and free-space check before download; it verifies hashes and supports resume. Model weights never enter Git. Inference sets local-only model flags and disables model-hub telemetry. Expected: per-stage progress, cancellable generation, candidate files under ignored local storage, and a redacted report.
 
 ### Task 4: Hybrid five-action preview spike
@@ -202,7 +208,8 @@ Write rig and preview tests for normalized coordinates, bounded corrections, unk
 
 - [ ] **Step 2: Run rig and preview contract tests**
 
-Run: `services/worker/.venv/Scripts/python.exe -m pytest -c services/worker/pyproject.toml services/worker/tests/test_layer_confidence.py services/worker/tests/test_rig_seed.py services/worker/tests/test_action_pose.py -q`  
+Run: `services/worker/.venv/Scripts/python.exe -m pytest -c services/worker/pyproject.toml services/worker/tests/test_layer_confidence.py services/worker/tests/test_rig_seed.py services/worker/tests/test_action_pose.py -q`
+
 Expected: FAIL because rig and preview modules do not exist.
 
 - [ ] **Step 3: Implement a coordinate-driven P0 rig seed**
@@ -213,12 +220,14 @@ Build isolated P0 animation scripts that read normalized rig data. Do not modify
 
 Use continuous rig interpolation for idle and left/right run; use reference-conditioned key poses for wave and phone-crouch. Include entry, hold, and return phases at the selected original display scale.
 
-Run: `services/worker/.venv/Scripts/python.exe -m pytest -c services/worker/pyproject.toml services/worker/tests/test_layer_confidence.py services/worker/tests/test_rig_seed.py services/worker/tests/test_action_pose.py -q`  
+Run: `services/worker/.venv/Scripts/python.exe -m pytest -c services/worker/pyproject.toml services/worker/tests/test_layer_confidence.py services/worker/tests/test_rig_seed.py services/worker/tests/test_action_pose.py -q`
+
 Expected: PASS; ready previews contain valid local frames and report 60 Hz as the runtime target.
 
 - [ ] **Step 5: Render two consented cases in Godot and review the complete silhouette**
 
-Run: `& $env:PETFORGE_GODOT_EXECUTABLE --path apps/desktop --script res://tools/preview_photo_p0.gd -- --input <local-eval-case>`  
+Run: `& $env:PETFORGE_GODOT_EXECUTABLE --path apps/desktop --script res://tools/preview_photo_p0.gd -- --input <local-eval-case>`
+
 Expected: five complete motion previews sampled at a 60 Hz runtime update target, a contact sheet, original character scale, no photo files written to the repository, and unsupported actions clearly marked. The 60 Hz target means time-based runtime interpolation; it does not require AI to generate 60 new frames per second.
 
 ### Task 5: P0 gate report and handoff
@@ -237,7 +246,8 @@ Require at least six varied consented real cases, at least two subject/owner-app
 
 - [ ] **Step 2: Run P0 gate tests**
 
-Run: `services/worker/.venv/Scripts/python.exe -m pytest -c services/worker/pyproject.toml services/worker/tests/test_p0_gate.py -q`  
+Run: `services/worker/.venv/Scripts/python.exe -m pytest -c services/worker/pyproject.toml services/worker/tests/test_p0_gate.py -q`
+
 Expected: FAIL because gate evaluator does not exist.
 
 - [ ] **Step 3: Implement a redacted, reproducible gate report**
@@ -246,7 +256,8 @@ Record CPU/GPU model, RAM/VRAM, model versions/licenses, per-stage time, peak us
 
 - [ ] **Step 4: Run P0 review and record the decision**
 
-Run: `services/worker/.venv/Scripts/python.exe -m pytest -c services/worker/pyproject.toml services/worker/tests/test_p0_gate.py -q`  
+Run: `services/worker/.venv/Scripts/python.exe -m pytest -c services/worker/pyproject.toml services/worker/tests/test_p0_gate.py -q`
+
 Expected: PASS for gate logic. The actual gate remains `incomplete_samples` until its real-photo and human-review evidence is present.
 
 - [ ] **Step 5: Stop at the evidence gate**
@@ -264,6 +275,3 @@ This plan implements and measures P0 only. It does not add a public upload flow 
 - Privacy/licensing: private paths stay on E: by default, reports redact identifying data, inference uses local model files, and model installation verifies licenses and hashes.
 - Test coverage: invalid input, group photos, missing/corrupt models, inferred regions, privacy redaction, cancellation, layer confidence, rig bounds, preview status, and P0 evidence gates are pinned.
 - Limitation: P0 cannot prove all 18 actions or the browser upload flow. It must supply evidence before their later plans and any complete-feature claim.
-
-
-

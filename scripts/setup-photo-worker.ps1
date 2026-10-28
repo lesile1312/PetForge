@@ -44,4 +44,3 @@ if ($Dev) {
 
 Write-Host "Worker environment ready: $($version.Trim()), requested device mode $Device."
 Write-Host 'Model-specific Torch/CUDA wheels and weights remain uninstalled until the P0 model/license choice.'
-

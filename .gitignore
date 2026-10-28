@@ -16,3 +16,4 @@ __pycache__/
 .godot/
 *.tsbuildinfo
 dist/
+/services/worker/*.egg-info/
