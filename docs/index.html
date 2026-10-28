@@ -4,12 +4,12 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#f5f1e8" />
-    <meta name="description" content="自定义桌宠petforge：Windows 本地桌宠创作工具。上传自己的角色图片，查看桌宠演示并了解本机制作方式。" />
+    <meta name="description" content="自定义桌宠petforge：查看本人定制的18种桌宠动作图册与60 FPS动画预览，了解本机制作方式。" />
     <link rel="icon" type="image/svg+xml" href="favicon.svg" />
     <link rel="stylesheet" href="reference-studio.css" />
     <script src="reference-studio.js" defer></script>
     <meta property="og:title" content="自定义桌宠petforge — 让喜欢的角色住进桌面" />
-    <meta property="og:description" content="一个 Windows 优先、照片本地处理的开源桌宠工坊。查看实际动作预览与项目进展。" />
+    <meta property="og:description" content="一个 Windows 优先、照片本地处理的开源桌宠工坊。查看18种定制动作图册与60 FPS动画预览。" />
     <meta property="og:type" content="website" />
     <meta property="og:image" content="https://lesile1312.github.io/PetForge/images/pet-demo/action-gallery.png" />
     <meta name="twitter:card" content="summary_large_image" />
@@ -148,6 +148,25 @@
       .pose figcaption { display: flex; align-items: center; justify-content: space-between; padding-top: 6px; font-size: 12px; font-weight: 700; }
       .pose figcaption span { color: var(--muted); font-size: 10px; font-weight: 500; }
 
+      .motion-reels { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; margin-bottom: 38px; }
+      .motion-reel { min-width: 0; margin: 0; border: 1px solid var(--line); background: #faf8f2; }
+      .motion-reel img { display: block; width: 100%; height: auto; aspect-ratio: 556 / 602; object-fit: contain; background: #f3f0e9; }
+      .motion-reel figcaption { min-height: 67px; display: flex; flex-direction: column; justify-content: center; gap: 5px; padding: 10px 13px; }
+      .motion-reel figcaption strong { font-size: 12px; font-weight: 700; }
+      .motion-reel figcaption span { color: var(--muted); font-size: 10px; }
+      .action-list-heading { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin: 0 0 14px; }
+      .action-list-heading strong { font: 500 22px/1.3 var(--serif); }
+      .action-list-heading span { color: var(--muted); font-size: 11px; }
+      .action-catalog { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+      .action-card { min-width: 0; margin: 0; border: 1px solid var(--line); background: #fbf9f4; }
+      .action-card img { display: block; width: 100%; height: 178px; padding: 8px; object-fit: contain; background: #f3f0e9; }
+      .action-card-copy { min-height: 76px; padding: 10px 12px 12px; }
+      .action-card-copy span { color: #9a7768; font-size: 9px; letter-spacing: .04em; }
+      .action-card-copy h3 { margin: 4px 0 3px; font: 500 14px/1.35 var(--serif); }
+      .action-card-copy p { margin: 0; color: var(--muted); font-size: 10px; line-height: 1.6; }
+      .action-interactions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 20px; }
+      .action-interactions span { padding: 7px 10px; border: 1px solid var(--line); border-radius: 999px; color: #706c69; background: #faf8f2; font-size: 10px; }
+
       .process-section { background: #e9e7dc; }
       .process-grid { display: grid; grid-template-columns: repeat(3, 1fr); border-top: 1px solid #c9c5b7; border-bottom: 1px solid #c9c5b7; }
       .process-item { min-height: 205px; padding: 24px 25px 27px 0; }
@@ -181,7 +200,8 @@
         .pet-stage { min-height: 435px; }
         .section { padding: 72px 0; }
         .section-heading { grid-template-columns: 1fr; gap: 14px; }
-        .gallery { grid-template-columns: 1fr; }
+        .motion-reels { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        .action-catalog { grid-template-columns: repeat(3, minmax(0, 1fr)); }
         .process-grid { grid-template-columns: 1fr; }
         .process-item { min-height: auto; padding: 22px 0; }
         .process-item + .process-item { padding: 22px 0; border-top: 1px solid #c9c5b7; border-left: 0; }
@@ -206,7 +226,12 @@
         .action-strip { flex-wrap: wrap; gap: 3px; }
         .action-label { flex-basis: 100%; margin: 0 0 3px 4px; }
         .action-button { padding: 0 8px; }
-        .pose img { height: 145px; }
+        .motion-reels { grid-template-columns: 1fr; }
+        .action-catalog { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+        .action-card img { height: 148px; padding: 5px; }
+        .action-card-copy { min-height: 82px; padding: 8px; }
+        .action-card-copy h3 { font-size: 13px; }
+        .action-list-heading { align-items: start; flex-direction: column; gap: 4px; }
         .gallery-plate { padding: 10px; }
         .status-band h2 { font-size: 30px; }
         .source-row { grid-template-columns: 1fr; gap: 22px; }
@@ -333,20 +358,46 @@ pnpm dev</pre></details>
       <section class="section" id="actions" aria-labelledby="actions-title">
         <div class="shell">
           <div class="section-heading">
-            <div><div class="section-kicker">A LITTLE CHARACTER, A FEW GESTURES</div><h2 id="actions-title">有自己的小动作。</h2></div>
-            <p>下面是这个定制示例当前接入桌面运行时的动作素材。待机、眨眼和左右跑动都可以直接查看；跑步帧组也保留在仓库里，方便继续调整。</p>
+            <div><div class="section-kicker">18 CUSTOM ACTIONS</div><h2 id="actions-title">从轻轻呼吸，到蹲下玩手机。</h2></div>
+            <p>这套定制角色动作素材共 18 种，涵盖待机、移动和互动。上方三段动画来自 Godot 桌面运行器，按 60 FPS 原速渲染；上传其他照片不会自动获得这套专属动作。</p>
           </div>
-          <div class="gallery">
-            <figure class="gallery-plate">
-              <img src="images/pet-demo/action-gallery.png" alt="待机、眨眼、向左跑和向右跑的角色动作总览" loading="lazy" width="872" height="812" />
-              <figcaption><strong>四个已接入姿态</strong><span>原始演示画布，完整显示角色</span></figcaption>
+          <div class="motion-reels" aria-label="桌面运行器动作动画预览">
+            <figure class="motion-reel">
+              <img src="images/pet-demo/motion/gesture-outer-60fps.webp" alt="卡通女孩连续展示招手、理头发、照镜子和抬手舒展，60帧每秒原速动画" loading="lazy" decoding="async" width="556" height="602" />
+              <figcaption><strong>招手 · 理头发 · 照镜子 · 舒展</strong><span>连续动作 · 60 FPS</span></figcaption>
             </figure>
-            <div class="gallery-side">
-              <figure class="pose"><img src="images/pet-demo/idle-portrait.png" alt="本人照片定制的卡通女孩安静待机" loading="lazy" width="160" height="300" /><figcaption>待机 <span>idle</span></figcaption></figure>
-              <figure class="pose"><img src="images/pet-demo/blink-portrait.png" alt="本人照片定制的卡通女孩闭眼微笑" loading="lazy" width="160" height="300" /><figcaption>眨眼 <span>blink</span></figcaption></figure>
-              <figure class="pose"><img src="images/pet-demo/run-left.png" alt="本人照片定制的卡通女孩向左跑动" loading="lazy" width="256" height="244" /><figcaption>向左跑 <span>run left</span></figcaption></figure>
-              <figure class="pose"><img src="images/pet-demo/run-right.png" alt="本人照片定制的卡通女孩向右跑动" loading="lazy" width="256" height="244" /><figcaption>向右跑 <span>run right</span></figcaption></figure>
-            </div>
+            <figure class="motion-reel">
+              <img src="images/pet-demo/motion/gesture-face-60fps.webp" alt="卡通女孩连续展示托腮思考、捂嘴轻笑、害羞摸脸和送出小爱心，60帧每秒原速动画" loading="lazy" decoding="async" width="556" height="602" />
+              <figcaption><strong>托腮思考 · 轻笑 · 摸脸 · 送爱心</strong><span>表情与手势 · 60 FPS</span></figcaption>
+            </figure>
+            <figure class="motion-reel">
+              <img src="images/pet-demo/motion/phone-16s-60fps.webp" alt="卡通女孩完整16秒蹲姿玩手机动作，包含看屏幕、点按和滑动" loading="lazy" decoding="async" width="278" height="301" />
+              <figcaption><strong>蹲下玩手机 · 点按 · 滑动</strong><span>完整 16 秒动作 · 60 FPS</span></figcaption>
+            </figure>
+          </div>
+          <div class="action-list-heading"><strong>18 个动作一览</strong><span>待机 4 · 移动 2 · 问候与小动作 11 · 手机 1</span></div>
+          <div class="action-catalog" aria-label="卡通女孩18种动作目录">
+            <article class="action-card"><img src="images/pet-demo/actions/idle.png" alt="卡通女孩安静站立，轻轻呼吸" loading="lazy" width="160" height="300" /><div class="action-card-copy"><span>01 · 日常状态</span><h3>安静待机</h3><p>轻轻呼吸，保持原本身形。</p></div></article>
+            <article class="action-card"><img src="images/pet-demo/actions/waiting.png" alt="卡通女孩等待输入时的姿态" loading="lazy" width="256" height="244" /><div class="action-card-copy"><span>02 · 日常状态</span><h3>等待输入</h3><p>安静站立，目光稍作变化。</p></div></article>
+            <article class="action-card"><img src="images/pet-demo/actions/blink.png" alt="卡通女孩眨眼微笑" loading="lazy" width="160" height="300" /><div class="action-card-copy"><span>03 · 日常状态</span><h3>眨眼微笑</h3><p>轻轻闭眼，再自然睁开。</p></div></article>
+            <article class="action-card"><img src="images/pet-demo/actions/sleep.png" alt="卡通女孩闭眼睡觉" loading="lazy" width="256" height="244" /><div class="action-card-copy"><span>04 · 日常状态</span><h3>睡觉</h3><p>休息时进入睡姿，并显示 Zzz。</p></div></article>
+            <article class="action-card"><img src="images/pet-demo/actions/run-left.png" alt="卡通女孩向左跑动" loading="lazy" width="256" height="244" /><div class="action-card-copy"><span>05 · 移动</span><h3>向左跑动</h3><p>沿桌面向左移动。</p></div></article>
+            <article class="action-card"><img src="images/pet-demo/actions/run-right.png" alt="卡通女孩向右跑动" loading="lazy" width="256" height="244" /><div class="action-card-copy"><span>06 · 移动</span><h3>向右跑动</h3><p>沿桌面向右移动。</p></div></article>
+            <article class="action-card"><img src="images/pet-demo/actions/wave.png" alt="卡通女孩抬手招呼" loading="lazy" width="256" height="244" /><div class="action-card-copy"><span>07 · 问候回应</span><h3>招手微笑</h3><p>靠近或互动时抬手问候。</p></div></article>
+            <article class="action-card"><img src="images/pet-demo/actions/happy.png" alt="卡通女孩开心微笑" loading="lazy" width="256" height="244" /><div class="action-card-copy"><span>08 · 问候回应</span><h3>开心微笑</h3><p>用轻松表情回应互动。</p></div></article>
+            <article class="action-card"><img src="images/pet-demo/actions/bow.png" alt="卡通女孩点头致意" loading="lazy" width="256" height="244" /><div class="action-card-copy"><span>09 · 问候回应</span><h3>点头致意</h3><p>轻轻鞠躬，再回到站姿。</p></div></article>
+            <article class="action-card"><img src="images/pet-demo/actions/hair-touch.png" alt="卡通女孩抬手整理头发" loading="lazy" width="256" height="244" /><div class="action-card-copy"><span>10 · 日常小动作</span><h3>整理头发</h3><p>抬手理顺头发，再自然收手。</p></div></article>
+            <article class="action-card"><img src="images/pet-demo/actions/mirror.png" alt="卡通女孩拿着镜子查看妆容" loading="lazy" width="256" height="244" /><div class="action-card-copy"><span>11 · 日常小动作</span><h3>照镜子</h3><p>举起小镜子，视线跟随镜面。</p></div></article>
+            <article class="action-card"><img src="images/pet-demo/actions/think.png" alt="卡通女孩托腮思考" loading="lazy" width="256" height="244" /><div class="action-card-copy"><span>12 · 日常小动作</span><h3>托腮思考</h3><p>托住脸颊，安静想一想。</p></div></article>
+            <article class="action-card"><img src="images/pet-demo/actions/look.png" alt="卡通女孩左右张望" loading="lazy" width="256" height="244" /><div class="action-card-copy"><span>13 · 日常小动作</span><h3>左右张望</h3><p>轻轻转动视线，看看周围。</p></div></article>
+            <article class="action-card"><img src="images/pet-demo/actions/shy-face.png" alt="卡通女孩害羞地摸脸" loading="lazy" width="256" height="244" /><div class="action-card-copy"><span>14 · 日常小动作</span><h3>害羞摸脸</h3><p>手从脸侧靠近，轻轻触碰脸颊。</p></div></article>
+            <article class="action-card"><img src="images/pet-demo/actions/stretch.png" alt="卡通女孩抬手舒展身体" loading="lazy" width="256" height="244" /><div class="action-card-copy"><span>15 · 日常小动作</span><h3>抬手舒展</h3><p>伸展身体，再慢慢放下手臂。</p></div></article>
+            <article class="action-card"><img src="images/pet-demo/actions/covered-laugh.png" alt="卡通女孩捂嘴轻笑" loading="lazy" width="256" height="244" /><div class="action-card-copy"><span>16 · 日常小动作</span><h3>捂嘴轻笑</h3><p>轻轻遮住嘴角，眼神随之变化。</p></div></article>
+            <article class="action-card"><img src="images/pet-demo/actions/heart.png" alt="卡通女孩抬手送出爱心" loading="lazy" width="256" height="244" /><div class="action-card-copy"><span>17 · 日常小动作</span><h3>送出小爱心</h3><p>抬手送出一颗小爱心。</p></div></article>
+            <article class="action-card"><img src="images/pet-demo/actions/phone.png" alt="卡通女孩蹲下玩手机" loading="lazy" width="278" height="301" /><div class="action-card-copy"><span>18 · 手机互动</span><h3>蹲下玩手机</h3><p>停留看屏幕，点按几次并滑动。</p></div></article>
+          </div>
+          <div class="action-interactions" aria-label="桌面交互方式">
+            <span>拖动宠物可移动位置</span><span>鼠标停留会招手</span><span>右键可轮换互动动作</span><span>空闲时自动穿插动作、走动和休息</span>
           </div>
         </div>
       </section>

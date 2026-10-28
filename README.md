@@ -29,6 +29,17 @@ These images show the same creator-owned character: the provided reference photo
 
 [View the original-photo comparison](https://lesile1312.github.io/PetForge/#example) · [View run-cycle frames](docs/images/pet-demo/run-cycle.png)
 
+## 18 actions in the custom character showcase
+
+[Browse the full illustrated action catalog and watch the motion previews](https://lesile1312.github.io/PetForge/#actions). The page includes 18 character-specific action illustrations and three animated previews rendered from the Godot desktop runtime at 60 FPS, including a full 16-second phone interaction.
+
+- **Everyday (4):** quiet breathing idle, waiting for input, blink and smile, sleep.
+- **Movement (2):** run left, run right.
+- **Greetings and gestures (11):** wave and smile, happy smile, bow, adjust hair, look in a mirror, chin-rest thinking, look around, shy face touch, stretch, covered-mouth laugh, send a heart.
+- **Phone interaction (1):** crouch, watch the screen, tap, and swipe.
+
+These are custom assets for the showcased character. A newly uploaded image does not automatically receive these poses, animation frames, or a character-specific rig.
+
 ## What you can use today
 
 | Capability | Current behavior |
@@ -36,7 +47,7 @@ These images show the same creator-owned character: the provided reference photo
 | Your own PNG → desktop pet | Creates a package from your image and runs the generic Godot pet; no AI model required |
 | Portrait processing | Local rembg segmentation plus a comic palette/outline filter; original and processed images are shown together |
 | Desktop window | Transparent, borderless, draggable, optionally always on top; independent of the browser |
-| Behavior | Movement, idle, sleep, jump and click interactions; detailed character gestures depend on suitable artwork/rig data |
+| Behavior | The showcased character has 18 custom action illustrations; the generic runtime provides idle, movement, sleep, jump and click reactions. Other images do not inherit this character's gestures automatically |
 | Portable package | `pet.json` and `character.png`; optional cutout and static GLB |
 | Public website | Reference-photo preview and `.petforge.json` download; no cloud photo generation |
 | AI chibi redrawing, body completion, automatic rigging | Planned; see the [technical design](docs/photo-to-pet-technical-design.zh-CN.md) |
