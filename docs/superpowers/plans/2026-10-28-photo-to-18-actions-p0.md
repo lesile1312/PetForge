@@ -92,36 +92,39 @@ Expected: PASS; CPU/GPU status and missing model details are actionable and cont
 - Create: `services/worker/tests/test_corpus.py`
 - Create: `services/worker/tests/test_report.py`
 - Create: `services/worker/tests/test_preflight.py`
+- Modify: `services/worker/requirements-p0.txt`
 
 **Interfaces:**
 - `load_eval_cases(root: Path) -> list[EvalCase]` reads local sample metadata and refuses real photos without explicit consent metadata.
 - `write_eval_report(results: list[EvalResult], output_path: Path) -> Path` writes only pseudonymous case IDs, model/device IDs, timings, resource peaks, correction counts, and stage outcomes.
-- `preflight_image(source_path: Path, limits: ImageLimits) -> PreflightResult` validates type, size, dimensions, decode integrity, and orientation before any model import; derived previews drop EXIF.
+- `preflight_image(source_path: Path, output_path: Path, limits: ImageLimits) -> PreflightResult` validates type, size, dimensions, decode integrity, and orientation before any model import; derived previews drop EXIF.
 - `PETFORGE_MODEL_ROOT` defaults to `E:\PetForge\models`; `PETFORGE_EVAL_ROOT` defaults to `E:\PetForge\evaluations`, both outside tracked source. Real photos are never copied into `docs/` or `tests/fixtures/`.
 
-- [ ] **Step 1: Write failing image-preflight, corpus-privacy, and report-redaction tests**
+- [x] **Step 1: Write failing image-preflight, corpus-privacy, and report-redaction tests**
 
 Cover invalid/oversized/corrupt files, EXIF orientation removal, missing consent, valid opt-in, private paths, duplicate sample IDs, and model error strings containing absolute paths.
 
-- [ ] **Step 2: Run focused privacy and preflight tests**
+- [x] **Step 2: Run focused privacy and preflight tests**
 
 Run: `services/worker/.venv/Scripts/python.exe -m pytest -c services/worker/pyproject.toml services/worker/tests/test_preflight.py services/worker/tests/test_corpus.py services/worker/tests/test_report.py -q`
 
 Expected: FAIL because the worker modules do not exist.
 
-- [ ] **Step 3: Implement preflight, corpus loader, and report schema**
+- [x] **Step 3: Implement preflight, corpus loader, and report schema**
 
-Require a local consent record for real photographs. Synthetic/openly licensed images may supplement technical cases but cannot count as user-approved likeness results.
+Require a local consent record for real photographs. Synthetic images and openly licensed illustrations may supplement technical cases; neither counts as a user-approved likeness result. A license record only describes asset reuse and never replaces subject consent for real-person photos.
 
-- [ ] **Step 4: Verify the local evaluation directory is ignored**
+- [x] **Step 4: Verify the local evaluation directory is ignored**
 
 Run `git check-ignore -v storage/evaluations/sample.png` and confirm the existing root-anchored `/storage/` rule covers it. Do not add a redundant ignore rule or broad pattern that hides API source.
 
-- [ ] **Step 5: Run focused checks**
+- [x] **Step 5: Run focused checks**
 
 Run: `services/worker/.venv/Scripts/python.exe -m pytest -c services/worker/pyproject.toml services/worker/tests/test_preflight.py services/worker/tests/test_corpus.py services/worker/tests/test_report.py -q`
 
 Expected: PASS; reports contain no names, original paths, prompts, image bytes, or EXIF.
+
+Task 2 limits: Match the existing browser/API upload cap at 10 MiB; cap decoded images at 8192 pixels per edge and 80 megapixels. Pillow is required for decoding and EXIF-safe output, pinned to the API-supported Pillow>=10.4,<13.0 range.
 
 ### Task 3: Local character-generation benchmark CLI
 

@@ -1,0 +1,60 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "PetForge redacted local evaluation report",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "results"],
+  "properties": {
+    "schema_version": { "const": 1 },
+    "results": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "case_id",
+          "model_id",
+          "device_id",
+          "elapsed_ms",
+          "peak_memory_bytes",
+          "correction_count",
+          "stages",
+          "error_code"
+        ],
+        "properties": {
+          "case_id": { "type": "string", "pattern": "^case_[a-f0-9]{8,32}$" },
+          "model_id": { "type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,79}$" },
+          "device_id": { "type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,79}$" },
+          "elapsed_ms": { "type": "integer", "minimum": 0 },
+          "peak_memory_bytes": { "type": "integer", "minimum": 0 },
+          "correction_count": { "type": "integer", "minimum": 0 },
+          "stages": {
+            "type": "object",
+            "propertyNames": {
+              "enum": [
+                "preflight",
+                "detection",
+                "cutout",
+                "generation",
+                "layer_segmentation",
+                "review",
+                "idle",
+                "run_left",
+                "run_right",
+                "wave",
+                "phone_crouch"
+              ]
+            },
+            "additionalProperties": {
+              "enum": ["passed", "failed", "skipped", "rejected", "needs_review"]
+            }
+          },
+          "error_code": {
+            "type": ["string", "null"],
+            "pattern": "^[a-z][a-z0-9_]{0,63}$"
+          }
+        }
+      }
+    }
+  }
+}
