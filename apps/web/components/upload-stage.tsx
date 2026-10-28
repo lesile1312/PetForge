@@ -6,10 +6,10 @@ import { CharacterArt, type CharacterVariant } from "@/components/character-art"
 import { Icon } from "@/components/icons";
 
 const samples: { id: CharacterVariant; title: string; detail: string; asset: string }[] = [
-  { id: "cat", title: "小猫", detail: "一位毛茸茸的新朋友", asset: "/demo/cat.svg" },
-  { id: "anime", title: "动漫角色", detail: "让最喜欢的角色来陪你", asset: "/demo/anime.svg" },
-  { id: "person", title: "人物", detail: "把熟悉的面孔放进桌面", asset: "/demo/person.svg" },
-  { id: "plush", title: "毛绒玩偶", detail: "让收藏品在桌边醒来", asset: "/demo/plush.svg" },
+  { id: "idle", title: "安静待机", detail: "我的卡通女孩桌宠", asset: "/demo/idle-portrait.png" },
+  { id: "blink", title: "眨眼微笑", detail: "我的卡通女孩桌宠", asset: "/demo/blink-portrait.png" },
+  { id: "run-left", title: "向左跑动", detail: "我的卡通女孩桌宠", asset: "/demo/run-left.png" },
+  { id: "run-right", title: "向右跑动", detail: "我的卡通女孩桌宠", asset: "/demo/run-right.png" },
 ];
 
 interface UploadStageProps {
@@ -77,7 +77,7 @@ export function UploadStage({ busy, error, onFile, onSample }: UploadStageProps)
           <div className="mini-desktop-orbit orbit-one" />
           <div className="mini-desktop-orbit orbit-two" />
           <div className="desktop-shortcuts"><span><b /><small>周报.docx</small></span><span><b /><small>音乐</small></span><span><b /><small>设计素材</small></span></div>
-          <div className="desktop-pet"><CharacterArt variant="cat" /></div>
+          <div className="desktop-pet"><CharacterArt variant="idle" alt="我的卡通女孩桌宠，待机示意" /></div>
           <div className="desktop-notice"><span className="notice-dot" /><div><b>你的新朋友</b><small>正在桌面上等你</small></div></div>
           <div className="mini-taskbar"><span className="windows-mark">◩</span><span className="task-search">搜索</span><span className="task-icons"><i /><i /><i /></span><span className="task-clock">9:41<br />10/07</span></div>
         </div>
@@ -94,11 +94,11 @@ export function UploadStage({ busy, error, onFile, onSample }: UploadStageProps)
       </div>
 
       <div className="sample-shelf" id="examples">
-        <div className="shelf-heading"><div><h2>先从喜欢的样子开始</h2><p>也可以上传自己的角色</p></div><span>试用示例</span></div>
+        <div className="shelf-heading"><div><h2>我的卡通女孩桌宠</h2><p>同一角色的不同动作，点选即可试用</p></div><span>作者定制角色</span></div>
         <div className="sample-grid">
           {samples.map((sample) => (
-            <button key={sample.id} type="button" className="sample-card" onClick={() => onSample(sample.asset, sample.title)} disabled={busy}>
-              <span className={`sample-art sample-${sample.id}`}><CharacterArt variant={sample.id} /></span>
+            <button key={sample.id} type="button" className="sample-card" aria-label={`${sample.title}，用我的卡通女孩创建桌宠`} onClick={() => onSample(sample.asset, "我的卡通女孩")} disabled={busy}>
+              <span className={`sample-art sample-${sample.id}`}><CharacterArt variant={sample.id} alt="" /></span>
               <span className="sample-copy"><b>{sample.title}</b><small>{sample.detail}</small></span>
               <span className="sample-open"><Icon name="arrow" size={15} /></span>
             </button>

@@ -126,7 +126,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, [tabindex="0"]:focus
 .desktop-shortcuts span:nth-child(3) b { background: #d6a292; box-shadow: 3px -3px 0 -1px #eccbb2; }
 .desktop-shortcuts small { max-width: 51px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 6px; }
 .desktop-pet { position: absolute; z-index: 1; right: 14%; bottom: 12%; width: clamp(95px, 14vw, 145px); filter: drop-shadow(0 11px 13px rgb(6 26 25 / 33%)); animation: pet-breathe 4s ease-in-out infinite; }
-.desktop-pet svg { display: block; width: 100%; height: auto; }
+.desktop-pet img { display: block; width: 100%; height: auto; }
 .desktop-notice { position: absolute; z-index: 2; right: 16px; top: 16px; display: flex; align-items: center; gap: 9px; padding: 9px 12px; border: 1px solid rgb(255 255 255 / 26%); border-radius: 9px; background: rgb(248 251 248 / 90%); box-shadow: 0 8px 23px rgb(8 22 21 / 12%); backdrop-filter: blur(10px); animation: notice-enter 4.2s ease-in-out infinite; }
 .notice-dot { width: 6px; height: 6px; flex: 0 0 auto; border-radius: 50%; background: #509a7f; }
 .desktop-notice div { display: flex; flex-direction: column; gap: 2px; }
@@ -156,9 +156,9 @@ button:focus-visible, a:focus-visible, input:focus-visible, [tabindex="0"]:focus
 .sample-card { position: relative; min-width: 0; min-height: 90px; display: grid; grid-template-columns: 55px minmax(0, 1fr) 24px; align-items: center; gap: 11px; padding: 10px 12px; text-align: left; border: 1px solid #e2e9e5; border-radius: 12px; background: rgb(255 255 255 / 72%); cursor: pointer; transition: border-color 150ms ease, box-shadow 150ms ease, transform 150ms ease, background 150ms ease; }
 .sample-card:hover:not(:disabled) { transform: translateY(-2px); border-color: #bfd5ca; background: #fff; box-shadow: 0 8px 17px rgb(34 77 65 / 7%); }
 .sample-card:disabled { opacity: .55; cursor: progress; }
-.sample-art { width: 54px; height: 66px; display: grid; place-items: end center; overflow: hidden; border-radius: 9px; background: #edf3ef; }
-.sample-art svg { width: 39px; height: 54px; }
-.sample-anime { background: #edf0f4; }.sample-person { background: #edf2e9; }.sample-plush { background: #f5edf2; }
+.sample-art { width: 54px; height: 66px; display: grid; place-items: center; overflow: hidden; border-radius: 9px; background: #edf3ef; }
+.sample-art img { display: block; width: 100%; height: 100%; padding: 3px; object-fit: contain; }
+.sample-blink { background: #edf0f4; }.sample-run-left { background: #edf2e9; }.sample-run-right { background: #f5edf2; }
 .sample-copy { min-width: 0; display: flex; flex-direction: column; gap: 6px; }
 .sample-copy b { overflow: hidden; color: #435957; font-size: 11px; font-weight: 630; text-overflow: ellipsis; white-space: nowrap; }
 .sample-copy small { overflow: hidden; color: #91a09a; font-size: 9px; text-overflow: ellipsis; white-space: nowrap; }

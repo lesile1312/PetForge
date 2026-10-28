@@ -111,7 +111,7 @@ export function DesktopPreview({ config, imageSrc, modelSrc }: DesktopPreviewPro
           <div key={actionRun} className={`preview-avatar-motion action-${previewAction}`}>
             {show3d && modelViewerReady && modelSrc
               ? createElement("model-viewer", { ref: modelViewerRef, src: modelSrc, alt: `${config.name} 的 3D 模型`, "camera-controls": "", "camera-orbit": "180deg 75deg 90%", "environment-image": "neutral", "shadow-intensity": "0.35", "interaction-prompt": "none", exposure: "1.35" })
-              : imageSrc ? <img src={imageSrc} alt="" draggable={false} /> : <CharacterArt variant="cat" />}
+              : imageSrc ? <img src={imageSrc} alt="" draggable={false} /> : <CharacterArt variant="idle" alt="" />}
           </div>
           {previewAction !== "idle" && <span className="preview-reaction" aria-hidden="true">{actionLabels[previewAction]}</span>}
           <span className="preview-name-tag">{config.name || "新伙伴"}</span>
