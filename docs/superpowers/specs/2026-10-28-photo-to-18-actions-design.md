@@ -1,6 +1,6 @@
 # Photo-to-PetForge 18-Action Generation
 
-**Status:** Draft for owner review; implementation has not started.
+**Status:** Approved by owner on 2026-10-28; P0 implementation is in progress.
 
 **Decision:** Hybrid character rig and generated key poses, selected by the user on 2026-10-28.
 
@@ -161,4 +161,4 @@ The implementer may settle exact model revisions, runtime/device heuristics, lan
 
 ## Approval gate
 
-This is a proposed product design, not an implementation promise. No application code, model download, or package migration starts until the owner approves this document. After approval, create a sequenced implementation plan and complete P0 before claiming photo-to-18-actions works.
+The owner approved this design and the P0 implementation plan on 2026-10-28. Complete P0 and record evidence before claiming photo-to-18-actions works. Continue later phases from measured P0 results.

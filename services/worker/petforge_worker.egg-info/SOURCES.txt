@@ -1,0 +1,12 @@
+pyproject.toml
+petforge_worker/__init__.py
+petforge_worker/device.py
+petforge_worker/manifest.py
+petforge_worker.egg-info/PKG-INFO
+petforge_worker.egg-info/SOURCES.txt
+petforge_worker.egg-info/dependency_links.txt
+petforge_worker.egg-info/entry_points.txt
+petforge_worker.egg-info/top_level.txt
+tests/test_device.py
+tests/test_manifest.py
+tests/test_setup_script.py

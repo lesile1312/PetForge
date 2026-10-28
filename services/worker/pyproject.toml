@@ -1,0 +1,21 @@
+[build-system]
+requires = ["setuptools>=68,<82"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "petforge-worker"
+version = "0.1.0"
+description = "Local photo-to-pet inference worker for PetForge"
+requires-python = ">=3.12,<3.13"
+dependencies = []
+
+[project.scripts]
+petforge-worker = "petforge_worker.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["petforge_worker*"]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]
