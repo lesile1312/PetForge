@@ -20,10 +20,10 @@
 
 <p align="center">
   <img src="docs/images/pet-demo/reference-photo.jpg" height="340" alt="Original portrait used as the character reference" />
-  <img src="docs/images/pet-demo/idle.png" height="300" alt="Custom cartoon desktop pet based on the reference" />
+  <img src="docs/images/pet-demo/idle-portrait.png" height="300" alt="Custom cartoon desktop pet based on the reference" />
 </p>
 
-The photo is the original creator-provided reference. The cartoon example was designed and refined over multiple iterations. Its appearance and detailed action sheets demonstrate the intended result; arbitrary photo uploads do not automatically receive the same artwork or animation rig.
+These images show the same creator-owned character: the provided reference photo and the custom cartoon girl designed and refined over multiple iterations. The website action preview, the desktop runtime default, and this coursework prototype reuse the same character assets. This is a custom case; arbitrary photo uploads do not automatically receive the same artwork or animation rig.
 
 <p align="center"><img src="docs/images/pet-demo/action-gallery.png" width="760" alt="Custom pet idle, blink, left-run and right-run poses" /></p>
 

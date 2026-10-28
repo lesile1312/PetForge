@@ -22,10 +22,10 @@
 
 <p align="center">
   <img src="docs/images/pet-demo/reference-photo.jpg" height="340" alt="最初的真人参考照片" />
-  <img src="docs/images/pet-demo/idle.png" height="300" alt="参照真人照片制作的卡通桌宠" />
+  <img src="docs/images/pet-demo/idle-portrait.png" height="300" alt="参照真人照片制作的卡通桌宠" />
 </p>
 
-左边是最初使用的真人照片，右边是参照人物特征设计并反复调整的卡通桌宠。双辫、碎花上衣、浅色长裤与棕色鞋子都保留了设计参考。这是定制案例，**不代表任意照片上传后都已能自动生成同等精细的卡通立绘和动作绑定。**
+左右图展示同一位作者自有角色：本人提供的参考照片，以及参照人物特征人工设计并多轮调整的卡通女孩。网站动作预览、桌面运行器内置示例与本次课程原型复用这套素材。**这只是定制案例；上传任意照片不会自动生成同等精细的卡通立绘和动作绑定。**
 
 <p align="center"><img src="docs/images/pet-demo/action-gallery.png" width="760" alt="定制角色的待机、眨眼和左右跑动作" /></p>
 
