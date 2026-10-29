@@ -276,7 +276,7 @@ Expected: PASS for gate logic. The actual gate remains `incomplete_samples` unti
 
 Result (2026-10-29, pre-pose-v2): all 90 worker tests passed. The selected single-case gate report is `incomplete_samples`, with no failure codes. It records one consented real case, zero owner-approved characters, zero reviewed actions, and missing six-case, 16 GiB CPU, two-character, and ten-action evidence. This report predates the pose-v2 provider and is not evidence for that revision.
 
-Pose-v2 update (2026-10-29): added pinned OpenPose T2I-Adapter conditioning and retained pose-control images for idle, wave, and phone crouch. The previous verification run recorded 91 passing worker tests, web typecheck, Python compile, and PowerShell parse before the final model revision-label change. The new real-photo rerun was interrupted before producing a candidate, so pose-v2 image quality and actions remain unverified.
+Pose-v2 update (2026-10-29): added pinned OpenPose T2I-Adapter conditioning and retained pose-control images for idle, wave, and phone crouch. One real-photo CUDA run initially failed because the pinned Diffusers 0.38.0 adapter pipeline uses `callback`/`callback_steps`, while the worker passed unsupported `callback_on_step_end`. A regression test reproduced the failure; the worker now uses the supported step callback, and all 92 worker tests pass. A rerun passed preflight, person detection, cutout, and generation in 125,349 ms. Peak process memory was 15,254,204,416 bytes and peak GPU memory was 6,970,933,248 bytes. Candidate pose, layer segmentation, and human review remain `needs_review`; the output is not an accepted character. Report and images stay outside Git. One sample does not close P0.
 
 - [x] **Step 5: Stop at the evidence gate**
 

@@ -4,17 +4,23 @@
 
 [中文文档](README.zh-CN.md) · **English** · [Live demo](https://lesile1312.github.io/PetForge/#example) · [Create with your reference](https://lesile1312.github.io/PetForge/#create)
 
-自定义桌宠petforge is a Windows-first open-source desktop-pet studio built with Next.js, FastAPI and Godot. The goal is a private, local photo-to-pet path: upload a photo, select the person to use, preserve visible traits, label AI-inferred body regions, generate a cartoon character and its motions, review the result, then package it as a desktop pet. Person detection finds people in the image; it does not identify real-world identities.
+I started 自定义桌宠petforge because I wanted to turn a photo into a little companion on my desktop. My goal is a simple path: upload a photo, choose the person, make a cartoon character and some motions, keep previewing and adjusting them, then run the pet anywhere on the desktop. Person detection finds someone in the picture; it does not identify who they are. I want photos to stay on the user's computer.
 
 ## New here? Start with the route that fits
 
 | What you want to do | Follow this route | You will need |
 | --- | --- | --- |
 | I already have a transparent character PNG | [Run a PNG desktop pet](#make-your-own-pet--transparent-png-route) ([download source ZIP](https://github.com/lesile1312/PetForge/archive/refs/heads/main.zip)) | Windows, Godot 4, and the 自定义桌宠petforge source |
-| I want to start from a portrait | [Set up the local photo editor](#quick-start-windows-development) | Windows, Node.js, pnpm, Python, Godot 4, and internet for the first model download |
+| I want to start from a portrait | [Try the local photo editor](#quick-start-windows-development) (cutout and comic filter today; cartoon generation and motions are still experimental) | Windows, Node.js, pnpm, Python, and Godot 4 |
 | I only want to preview the project | [Open the live demo](https://lesile1312.github.io/PetForge/#example) | A browser; the demo cannot launch a pet on your computer |
 
-**Current status:** GitHub Pages is a static showcase and reference-photo helper, not a hosted generation service. The existing local editor still focuses on cutout and a comic filter. This repository now includes an experimental local Python P0 path for person preflight/selection, cutout, reference-conditioned cartoon generation, and previews of five representative actions. Pose-v2 adds explicit skeleton controls for idle, wave, and phone crouch. Intermediate files stay local. The worker is not connected to the web editor. The real-photo pose-v2 rerun is unfinished, and image/action/Godot acceptance has not passed; the 18 actions shown below are hand-authored for the showcased character, not generated for arbitrary uploads. There is no one-click installer yet. For a desktop pet today, use a complete transparent cartoon PNG. 自定义桌宠petforge is an independent community project and is not affiliated with OpenAI or Codex.
+**Where I am now:** The website is a static showcase, not a cloud generation service. The current local editor can cut out a photo and apply a comic filter. I have also started a local photo-generation experiment. I ran one approved local photo through it: person detection, cutout, and a cartoon candidate completed, but the hair, pose, and layers still need work. The saved files stay on my computer, and this new flow is not connected to the web editor yet, so I cannot call it a finished upload-and-go feature. The 18 actions below are motions I shaped for my own character over many tries; a new photo does not automatically get them. The repository has source code, but no one-click installer. To run a pet today, start with a complete transparent cartoon PNG. 自定义桌宠petforge is an independent community project and is not affiliated with OpenAI or Codex.
+
+## How I built this character, one change at a time
+
+At first, the pet sometimes did not show up, lost its color, or had hair and feet cut off. Then I kept adjusting the run, blink, wave, mirror, hair, and phone motions. The arms, eyes, expressions, and timing often needed another pass. I would run it, spot something odd, change a small part, and try again. That process shaped the character and the action showcase you see here.
+
+I want other people to work the same way on their own pets: make a first version, preview each motion, then adjust the pose, arms, gaze, expression, speed, and how long an action lasts. Keep tweaking until it feels right. The user chooses and refines the final version; uploading a photo is only the beginning. The full web editor for this process is still in development. The current local P0 tool is for checking photo generation and motion previews.
 
 ## From the original photo to the custom character
 
@@ -52,7 +58,7 @@ These are custom assets for the showcased character. A newly uploaded image does
 | Public website | Reference-photo preview and `.petforge.json` download; no cloud photo generation |
 | Photo recognition, cartoon generation and motion adaptation | Experimental local P0 code is on this development branch; it is not connected to the web editor, and real-photo quality, actions and Godot integration are not accepted yet. See the [technical design](docs/photo-to-pet-technical-design.zh-CN.md) and [P0 record](docs/superpowers/plans/2026-10-28-photo-to-18-actions-p0.md) |
 
-The current editor filters an uploaded photo; it does not yet turn it into the polished chibi example. The experimental worker is validating the full photo-recognition → cartoon → motion-preview → desktop-pet path, but users cannot start that flow from the website yet. For a desktop pet today, prepare a cartoon PNG first and use the direct-PNG route. New limb-motion frames are not automatically generated for arbitrary images.
+The current editor filters an uploaded photo; it does not yet turn it into the polished chibi example. I am still working on connecting photo recognition, cartoon generation, motion editing, and desktop launch into one flow. For now, prepare a cartoon PNG and use the direct-PNG route. New limb-motion frames are not automatically generated for arbitrary images.
 
 ## Make your own pet — transparent PNG route
 

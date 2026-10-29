@@ -2,6 +2,7 @@ import builtins
 import builtins
 from importlib import import_module
 from pathlib import Path
+from types import SimpleNamespace
 
 import pytest
 from PIL import Image
@@ -112,4 +113,66 @@ def test_local_generator_checks_all_model_files_before_importing_runtime(tmp_pat
         generator._load(device)
     assert not (model_root / "ip-adapter/models/image_encoder/model.safetensors").exists()
 
-\n
+
+def test_local_generator_uses_diffusers_adapter_step_callback(tmp_path):
+    api = _api()
+    source = tmp_path / "reference.png"
+    pose_control = tmp_path / "pose.png"
+    Image.new("RGBA", (24, 32), (210, 120, 100, 255)).save(source)
+    Image.new("RGB", (24, 32), (0, 0, 0)).save(pose_control)
+
+    class Tokenizer:
+        model_max_length = 77
+
+        @staticmethod
+        def encode(_text, add_special_tokens=True):
+            return [1]
+
+    class AdapterPipeline:
+        tokenizer = Tokenizer()
+        tokenizer_2 = Tokenizer()
+
+        def __call__(
+            self,
+            *,
+            prompt,
+            prompt_2,
+            negative_prompt,
+            negative_prompt_2,
+            image,
+            ip_adapter_image,
+            width,
+            height,
+            num_inference_steps,
+            guidance_scale,
+            adapter_conditioning_scale,
+            generator,
+            callback=None,
+            callback_steps=1,
+        ):
+            assert callback is not None
+            assert callback_steps == 1
+            callback(0, 1, None)
+            return SimpleNamespace(images=[Image.new("RGB", (width, height), (255, 255, 255))])
+
+    generator = api.LocalSDXLPortraitGenerator(
+        tmp_path / "models",
+        lambda image: Image.new("L", image.size, 255),
+        device_mode="cpu",
+    )
+    generator._pipeline = AdapterPipeline()
+    generator._runtime_device = "cpu"
+    generator._dtype = "float32"
+    request = api.PortraitRequest(
+        source_path=source,
+        selected_crop_xywh_norm=(0.0, 0.0, 1.0, 1.0),
+        style_preset="warm_chibi",
+        clothing_description=None,
+        inferred_regions=(),
+        pose_control_image=pose_control,
+    )
+    device = api.DeviceProfile("Windows", "x86_64", 24, 8, None, None, None, True, ())
+
+    candidate = generator.generate(request, device, tmp_path / "output", api.CancelToken())
+
+    assert candidate.image_path.is_file()

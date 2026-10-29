@@ -265,10 +265,9 @@ class LocalSDXLPortraitGenerator:
         if self._runtime_device == "cuda":
             torch.cuda.reset_peak_memory_stats()
 
-        def check_cancel(_pipeline, _step, _timestep, callback_kwargs):
+        def check_cancel(_step, _timestep, _latents):
             if cancel:
                 cancel.check()
-            return callback_kwargs
 
         try:
             result = pipeline(
@@ -284,7 +283,8 @@ class LocalSDXLPortraitGenerator:
                 guidance_scale=7.0,
                 adapter_conditioning_scale=pose_conditioning_scale,
                 generator=random,
-                callback_on_step_end=check_cancel if cancel else None,
+                callback=check_cancel if cancel else None,
+                callback_steps=1,
             )
             if self._runtime_device == "cuda":
                 self.peak_gpu_memory_bytes = int(torch.cuda.max_memory_reserved())
