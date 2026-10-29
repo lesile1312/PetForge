@@ -34,6 +34,7 @@
               "enum": [
                 "preflight",
                 "detection",
+                "candidate_pose",
                 "cutout",
                 "generation",
                 "layer_segmentation",
@@ -52,7 +53,28 @@
           "error_code": {
             "type": ["string", "null"],
             "pattern": "^[a-z][a-z0-9_]{0,63}$"
-          }
+          },
+          "stage_elapsed_ms": {
+            "type": "object",
+            "propertyNames": {
+              "enum": [
+                "preflight",
+                "detection",
+                "candidate_pose",
+                "cutout",
+                "generation",
+                "layer_segmentation",
+                "review",
+                "idle",
+                "run_left",
+                "run_right",
+                "wave",
+                "phone_crouch"
+              ]
+            },
+            "additionalProperties": { "type": "integer", "minimum": 0 }
+          },
+          "peak_gpu_memory_bytes": { "type": "integer", "minimum": 0 }
         }
       }
     }

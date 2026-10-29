@@ -1,5 +1,188 @@
 {
-  "schema_version": 1,
-  "active_model_id": null,
-  "models": []
+  "schema_version": 2,
+  "active_model_id": "photo-to-cartoon-p0-local",
+  "models": [
+    {
+      "id": "photo-to-cartoon-p0-local",
+      "revision": "p0-2026-10-29",
+      "components": [
+        {
+          "id": "sdxl-base-1.0",
+          "source_url": "https://huggingface.co/stabilityai/stable-diffusion-xl-base-1.0",
+          "revision": "bf714989e22c57ddc1c453bf74dab4521acb81d8",
+          "license": {
+            "license_name": "CreativeML Open RAIL++-M",
+            "terms_url": "https://huggingface.co/stabilityai/stable-diffusion-xl-base-1.0/blob/bf714989e22c57ddc1c453bf74dab4521acb81d8/LICENSE.md",
+            "weights_redistributable": false,
+            "project_redistributes_weights": false,
+            "notice": "Custom use conditions apply. PetForge downloads directly from upstream and does not bundle these weights."
+          },
+          "files": [
+            {
+              "path": "sdxl/sd_xl_base_1.0.safetensors",
+              "download_url": "https://huggingface.co/stabilityai/stable-diffusion-xl-base-1.0/resolve/bf714989e22c57ddc1c453bf74dab4521acb81d8/sd_xl_base_1.0.safetensors?download=true",
+              "size_bytes": 6938078334,
+              "sha256": "31e35c80fc4829d14f90153f4c74cd59c90b779f6afe05a74cd6120b893f7e5b"
+            },
+            {
+              "path": "sdxl-config/model_index.json",
+              "download_url": "https://huggingface.co/stabilityai/stable-diffusion-xl-base-1.0/resolve/bf714989e22c57ddc1c453bf74dab4521acb81d8/model_index.json?download=true",
+              "size_bytes": 609,
+              "sha256": "6d7b93508390ab91ac5bfbe4aeb4dc2d83f7bb1b05fb069d714b5b0c75f70d44"
+            },
+            {
+              "path": "sdxl-config/scheduler/scheduler_config.json",
+              "download_url": "https://huggingface.co/stabilityai/stable-diffusion-xl-base-1.0/resolve/bf714989e22c57ddc1c453bf74dab4521acb81d8/scheduler/scheduler_config.json?download=true",
+              "size_bytes": 479,
+              "sha256": "af3e45a949aff8b8341ab8b811429ec03fee857a700a1d9477363e4fff9666e2"
+            },
+            {
+              "path": "sdxl-config/text_encoder/config.json",
+              "download_url": "https://huggingface.co/stabilityai/stable-diffusion-xl-base-1.0/resolve/bf714989e22c57ddc1c453bf74dab4521acb81d8/text_encoder/config.json?download=true",
+              "size_bytes": 565,
+              "sha256": "39b8b2e4b1949e36969caa425b6c81c68bace99198dd9078ce05d16ad401fe7f"
+            },
+            {
+              "path": "sdxl-config/text_encoder_2/config.json",
+              "download_url": "https://huggingface.co/stabilityai/stable-diffusion-xl-base-1.0/resolve/bf714989e22c57ddc1c453bf74dab4521acb81d8/text_encoder_2/config.json?download=true",
+              "size_bytes": 575,
+              "sha256": "a892d1c3a69a7e9247a24de2bc1d5891e3109a54696e53be20093af671072c34"
+            },
+            {
+              "path": "sdxl-config/tokenizer/tokenizer_config.json",
+              "download_url": "https://huggingface.co/stabilityai/stable-diffusion-xl-base-1.0/resolve/bf714989e22c57ddc1c453bf74dab4521acb81d8/tokenizer/tokenizer_config.json?download=true",
+              "size_bytes": 737,
+              "sha256": "19d7b034cb0cc3ce9766c2231373ab8aa8991fc72e2c8f76558bfaae3de0d563"
+            },
+            {
+              "path": "sdxl-config/tokenizer/special_tokens_map.json",
+              "download_url": "https://huggingface.co/stabilityai/stable-diffusion-xl-base-1.0/resolve/bf714989e22c57ddc1c453bf74dab4521acb81d8/tokenizer/special_tokens_map.json?download=true",
+              "size_bytes": 472,
+              "sha256": "c4864a9376a8401918425bed71fc14fc0e81f9b59ec45c1cf96cccb2df508eac"
+            },
+            {
+              "path": "sdxl-config/tokenizer/merges.txt",
+              "download_url": "https://huggingface.co/stabilityai/stable-diffusion-xl-base-1.0/resolve/bf714989e22c57ddc1c453bf74dab4521acb81d8/tokenizer/merges.txt?download=true",
+              "size_bytes": 524619,
+              "sha256": "9fd691f7c8039210e0fced15865466c65820d09b63988b0174bfe25de299051a"
+            },
+            {
+              "path": "sdxl-config/tokenizer/vocab.json",
+              "download_url": "https://huggingface.co/stabilityai/stable-diffusion-xl-base-1.0/resolve/bf714989e22c57ddc1c453bf74dab4521acb81d8/tokenizer/vocab.json?download=true",
+              "size_bytes": 1059962,
+              "sha256": "e089ad92ba36837a0d31433e555c8f45fe601ab5c221d4f607ded32d9f7a4349"
+            },
+            {
+              "path": "sdxl-config/tokenizer_2/tokenizer_config.json",
+              "download_url": "https://huggingface.co/stabilityai/stable-diffusion-xl-base-1.0/resolve/bf714989e22c57ddc1c453bf74dab4521acb81d8/tokenizer_2/tokenizer_config.json?download=true",
+              "size_bytes": 725,
+              "sha256": "c9d23941f76a41cbd50eda9290f57be7828f0a7a677939e9ef181f7e12bd1bdf"
+            },
+            {
+              "path": "sdxl-config/tokenizer_2/special_tokens_map.json",
+              "download_url": "https://huggingface.co/stabilityai/stable-diffusion-xl-base-1.0/resolve/bf714989e22c57ddc1c453bf74dab4521acb81d8/tokenizer_2/special_tokens_map.json?download=true",
+              "size_bytes": 460,
+              "sha256": "f118ab3a983206e4f32583448de6bd6aae4ee21869135cef1f5848a753cdaab6"
+            },
+            {
+              "path": "sdxl-config/tokenizer_2/merges.txt",
+              "download_url": "https://huggingface.co/stabilityai/stable-diffusion-xl-base-1.0/resolve/bf714989e22c57ddc1c453bf74dab4521acb81d8/tokenizer_2/merges.txt?download=true",
+              "size_bytes": 524619,
+              "sha256": "9fd691f7c8039210e0fced15865466c65820d09b63988b0174bfe25de299051a"
+            },
+            {
+              "path": "sdxl-config/tokenizer_2/vocab.json",
+              "download_url": "https://huggingface.co/stability-diffusion-xl-base-1.0/resolve/bf714989e22c57ddc1c453bf74dab4521acb81d8/tokenizer_2/vocab.json?download=true",
+              "size_bytes": 1059962,
+              "sha256": "e089ad92ba36837a0d31433e555c8f45fe601ab5c221d4f607ded32d9f7a4349"
+            },
+            {
+              "path": "sdxl-config/unet/config.json",
+              "download_url": "https://huggingface.co/stabilityai/stable-diffusion-xl-base-1.0/resolve/bf714989e22c57ddc1c453bf74dab4521acb81d8/unet/config.json?download=true",
+              "size_bytes": 1680,
+              "sha256": "30ebc70750223e59006f7f2b4e1e6c102570aa19a9c4ae3e1fbe7591332dbae6"
+            },
+            {
+              "path": "sdxl-config/vae/config.json",
+              "download_url": "https://huggingface.co/stabilityai/stable-diffusion-xl-base-1.0/resolve/bf714989e22c57ddc1c453bf74dab4521acb81d8/vae/config.json?download=true",
+              "size_bytes": 642,
+              "sha256": "0b331c8ac22ded5f9997a144a575c1d113d6169aff262c353f39015bd24a6264"
+            }
+          ]
+        },
+        {
+          "id": "ip-adapter-plus-sdxl-vit-h",
+          "source_url": "https://huggingface.co/h94/IP-Adapter",
+          "revision": "9bf28b38530e55ffa91c6d82e5161a982c22f284",
+          "license": {
+            "spdx_id": "Apache-2.0",
+            "terms_url": "https://github.com/tencent-ailab/IP-Adapter/blob/main/LICENSE",
+            "weights_redistributable": true,
+            "project_redistributes_weights": false
+          },
+          "files": [
+            {
+              "path": "ip-adapter/sdxl_models/ip-adapter-plus_sdxl_vit-h.safetensors",
+              "download_url": "https://huggingface.co/h94/IP-Adapter/resolve/9bf28b38530e55ffa91c6d82e5161a982c22f284/sdxl_models/ip-adapter-plus_sdxl_vit-h.safetensors?download=true",
+              "size_bytes": 847517512,
+              "sha256": "3f5062b8400c94b7159665b21ba5c62acdcd7682262743d7f2aefedef00e6581"
+            },
+            {
+              "path": "ip-adapter/models/image_encoder/config.json",
+              "download_url": "https://huggingface.co/h94/IP-Adapter/resolve/9bf28b38530e55ffa91c6d82e5161a982c22f284/models/image_encoder/config.json?download=true",
+              "size_bytes": 560,
+              "sha256": "625d37b31afbf2f0792a87846b3654ee23f20568409e35b78a1f795b04e1a7a1"
+            },
+            {
+              "path": "ip-adapter/models/image_encoder/model.safetensors",
+              "download_url": "https://huggingface.co/h94/IP-Adapter/resolve/9bf28b38530e55ffa91c6d82e5161a982c22f284/models/image_encoder/model.safetensors?download=true",
+              "size_bytes": 2528373448,
+              "sha256": "6ca9667da1ca9e0b0f75e46bb030f7e011f44f86cbfb8d5a36590fcd7507b030"
+            }
+          ]
+        },
+        {
+          "id": "birefnet-portrait-cutout",
+          "source_url": "https://github.com/danielgatis/rembg/releases/download/v0.0.0/BiRefNet-portrait-epoch_150.onnx",
+          "revision": "v0.0.0",
+          "license": {
+            "spdx_id": "MIT",
+            "terms_url": "https://huggingface.co/ZhengPeng7/BiRefNet-portrait/blob/main/LICENSE",
+            "weights_redistributable": true,
+            "project_redistributes_weights": false
+          },
+          "files": [
+            {
+              "path": "rembg/BiRefNet-portrait-epoch_150.onnx",
+              "download_url": "https://github.com/danielgatis/rembg/releases/download/v0.0.0/BiRefNet-portrait-epoch_150.onnx",
+              "size_bytes": 972666916,
+              "sha256": "1ba1c8ff5a7bbfadc8d8d13fb11d7be793f91f23d9d466549e37a854f6668f99",
+              "md5": "c3a64a6abf20250d090cd055f12a3b67"
+            }
+          ]
+        },
+        {
+          "id": "mediapipe-pose-full",
+          "source_url": "https://developers.google.com/edge/mediapipe/solutions/vision/pose_landmarker",
+          "revision": "float16-1",
+          "license": {
+            "spdx_id": "Apache-2.0",
+            "terms_url": "https://github.com/google-ai-edge/mediapipe/blob/master/LICENSE",
+            "weights_redistributable": true,
+            "project_redistributes_weights": false,
+            "notice": "Versioned Google model-bundle URL; model card discusses multi-person accuracy limits."
+          },
+          "files": [
+            {
+              "path": "mediapipe/pose_landmarker_full.task",
+              "download_url": "https://storage.googleapis.com/mediapipe-models/pose_landmarker/pose_landmarker_full/float16/1/pose_landmarker_full.task",
+              "size_bytes": 9398198,
+              "sha256": "5134a3aad27a58b93da0088d431f366da362b44e3ccfbe3462b3827a839011b1",
+              "md5": "83879689d373d143be094c972355e48e"
+            }
+          ]
+        }
+      ]
+    }
+  ]
 }

@@ -54,6 +54,45 @@ def _memory_status() -> tuple[int, int]:
     return 0, 0
 
 
+def peak_working_set_bytes() -> int:
+    """Return this process's Windows peak working set, or zero when unavailable."""
+    try:
+        from ctypes import wintypes
+
+        class _ProcessMemoryCounters(ctypes.Structure):
+            _fields_ = [
+                ("cb", wintypes.DWORD),
+                ("PageFaultCount", wintypes.DWORD),
+                ("PeakWorkingSetSize", ctypes.c_size_t),
+                ("WorkingSetSize", ctypes.c_size_t),
+                ("QuotaPeakPagedPoolUsage", ctypes.c_size_t),
+                ("QuotaPagedPoolUsage", ctypes.c_size_t),
+                ("QuotaPeakNonPagedPoolUsage", ctypes.c_size_t),
+                ("QuotaNonPagedPoolUsage", ctypes.c_size_t),
+                ("PagefileUsage", ctypes.c_size_t),
+                ("PeakPagefileUsage", ctypes.c_size_t),
+            ]
+
+        counters = _ProcessMemoryCounters()
+        counters.cb = ctypes.sizeof(counters)
+        kernel32 = ctypes.WinDLL("kernel32", use_last_error=True)
+        psapi = ctypes.WinDLL("psapi", use_last_error=True)
+        kernel32.GetCurrentProcess.restype = wintypes.HANDLE
+        get_process_memory_info = psapi.GetProcessMemoryInfo
+        get_process_memory_info.argtypes = [
+            wintypes.HANDLE,
+            ctypes.POINTER(_ProcessMemoryCounters),
+            wintypes.DWORD,
+        ]
+        get_process_memory_info.restype = wintypes.BOOL
+        process = kernel32.GetCurrentProcess()
+        if get_process_memory_info(process, ctypes.byref(counters), counters.cb):
+            return int(counters.PeakWorkingSetSize)
+    except (AttributeError, OSError, ImportError):
+        pass
+    return 0
+
+
 def _query_nvidia_gpu() -> tuple[str, int, str] | None:
     executable = shutil.which("nvidia-smi")
     if not executable:

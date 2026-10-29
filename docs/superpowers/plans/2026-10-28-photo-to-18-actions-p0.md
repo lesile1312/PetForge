@@ -1,6 +1,6 @@
 # Photo-to-PetForge Feasibility Spike Implementation Plan
 
-**Status:** Approved by owner on 2026-10-28; P0 implementation is in progress.
+**Status:** Approved by owner on 2026-10-28; P0 implementation is present, but the evidence gate remains incomplete. Last verified 2026-10-29.
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use `superpowers:executing-plans` or `superpowers:subagent-driven-development` to implement this plan task-by-task. Steps use checkbox syntax for tracking.
 
@@ -93,6 +93,7 @@ Expected: PASS; CPU/GPU status and missing model details are actionable and cont
 - Create: `services/worker/tests/test_report.py`
 - Create: `services/worker/tests/test_preflight.py`
 - Modify: `services/worker/requirements-p0.txt`
+- Create: `services/worker/requirements-photo-runtime.txt`
 
 **Interfaces:**
 - `load_eval_cases(root: Path) -> list[EvalCase]` reads local sample metadata and refuses real photos without explicit consent metadata.
@@ -130,6 +131,9 @@ Task 2 limits: Match the existing browser/API upload cap at 10 MiB; cap decoded 
 
 **Files:**
 - Modify: `services/worker/pyproject.toml`
+- Modify: `services/worker/requirements-p0.txt`
+- Modify: `models/manifest.json`
+- Modify: `services/worker/petforge_worker/manifest.py`
 - Create: `services/worker/petforge_worker/providers/base.py`
 - Create: `services/worker/petforge_worker/providers/cutout.py`
 - Create: `services/worker/petforge_worker/providers/person.py`
@@ -142,47 +146,50 @@ Task 2 limits: Match the existing browser/API upload cap at 10 MiB; cap decoded 
 - Create: `services/worker/tests/test_layers_provider.py`
 - Create: `services/worker/tests/test_portrait_provider.py`
 - Create: `services/worker/tests/test_benchmark.py`
+- Create: `services/worker/tests/test_cli.py`
 - Create: `scripts/run-photo-benchmark.ps1`
 - Create: `scripts/install-photo-models.ps1`
 
 **Interfaces:**
-- `CutoutProvider.cutout(source_path: Path) -> CutoutResult` saves a transparency-preserving mask/cutout pair with padded bounds and source-coordinate mapping.
+- `CutoutProvider.cutout(source_path: Path, selected_person: PersonCandidate, output_dir: Path) -> CutoutResult` uses the selected normalized source-image box, saves a transparency-preserving mask/cutout pair, and records the padded source bounds plus reversible source-to-cutout transform.
 - `PersonDetector.detect(source_path: Path) -> list[PersonCandidate]` returns normalized person boxes and pose confidence; the CLI requires an explicit selection for multiple candidates and accepts a manual crop when detection fails.
-- `LayerSegmenter.segment(candidate: PortraitCandidate) -> LayerSet` returns cutouts and confidence for the limbs, torso, hair, face, and eyes needed by the P0 motions.
+- `LayerSegmenter.segment(candidate: PortraitCandidate, landmarks_norm: dict[str, tuple[float, ...]], output_dir: Path) -> LayerSet` returns cutouts and confidence for the limbs, torso, hair, face, and eyes needed by the P0 motions. Landmarks come from a second detection pass on the generated candidate canvas.
 - `PersonCandidate` contains `bbox_xywh_norm`, `landmarks_norm`, and `confidence`; `PortraitCandidate` contains local image/mask paths, inferred-region IDs, and provenance; `LayerSet` maps the P0 body-part IDs to local texture paths and confidence values.
-- `PortraitRequest` contains a local source path, selected person crop, style preset, optional clothing description, and inferred-region labels.
-- `PortraitGenerator` is a protocol with `generate(request: PortraitRequest, device: DeviceProfile) -> PortraitCandidate`; the real model and deterministic fake implement the same signature.
+- `PortraitRequest` contains a local source path, selected normalized source-image crop, style preset, optional clothing description, and inferred-region labels.
+- `PortraitGenerator` is a protocol with `generate(request: PortraitRequest, device: DeviceProfile, output_dir: Path, cancel: CancelToken | None) -> PortraitCandidate`; the local model checks cancellation at diffusion step boundaries.
 - `EvalCase` and `EvalResult` are defined in `corpus.py`.
-- `LocalPortraitGenerator.generate(request: PortraitRequest, device: DeviceProfile) -> PortraitCandidate` writes a full-body candidate and a machine-readable provenance record under the local evaluation output root.
-- `run_case(case: EvalCase, preflight: ImagePreflight, detector: PersonDetector, cutout: CutoutProvider, generator: PortraitGenerator, segmenter: LayerSegmenter, output_root: Path, cancel: CancelToken) -> EvalResult` reports separate preflight, detection, cutout, generation, layer-segmentation, and review stages. Each stage writes to a temporary candidate directory and only promotes a complete accepted revision.
-- CLI entrypoints: `petforge-worker generate --input <photo> [--person-index N | --crop x,y,w,h] --device auto --output-root <folder>` creates one local candidate; `petforge-worker benchmark --root <consented-case-root> --device auto` runs the private evaluation corpus. Multi-person input must stop for a person selection.
+- `LocalSDXLPortraitGenerator.generate(request: PortraitRequest, device: DeviceProfile, output_dir: Path, cancel: CancelToken | None) -> PortraitCandidate` writes a full-body RGBA candidate and machine-readable provenance record; cancellation is checked at diffusion step boundaries.
+- `run_case(case: EvalCase, detector: PersonDetector, cutout: CutoutProvider, generator: PortraitGenerator, segmenter: LayerSegmenter, output_root: Path, cancel: CancelToken, reviewer: optional callback, person_index: optional index, manual_crop_xywh_px: optional crop) -> EvalResult` reports separate preflight, detection, cutout, generation, layer-segmentation, and review stages. Each stage writes to a retained revision directory; only explicit review acceptance updates the accepted pointer.
+- CLI entrypoints: `petforge-worker generate --input <photo> [--person-index N | --crop x,y,w,h] --device auto --output-root <folder>` creates one local candidate; `petforge-worker benchmark --root <consented-case-root> --device auto` runs the private evaluation corpus; `petforge-worker review-candidate --candidate-dir <folder> --decision accept|reject` records explicit review without regeneration. Multi-person input must stop for a person selection.
 
-- [ ] **Step 1: Write provider-contract tests with a deterministic fake**
+- [x] **Step 1: Write provider-contract tests with a deterministic fake**
 
 Pin corrupt-image rejection before model load, one-person selection, required group-photo choice, manual crop fallback, padded transparent cutout bounds and source-coordinate map, candidate dimensions/alpha, inferred-region labels, required layer confidence, provenance fields, cancellation, and stage-failure preservation without downloading real models.
 
-- [ ] **Step 2: Run provider-contract tests**
+- [x] **Step 2: Run provider-contract tests**
 
 Run the focused tests listed in Step 5. Expected: FAIL because provider modules do not exist. The test suite must use fakes and must not import or download model weights.
 
-- [ ] **Step 3: Verify model source, license, and CPU/GPU configuration**
+- [x] **Step 3: Verify model source, license, and CPU/GPU configuration**
 
 Use primary project/model documentation. Select one local candidate stack and record exact revisions, license findings, expected hashes, disk footprint, offline inference requirements, and separate CPU/CUDA dependency commands in the manifest before loading weights. Reject any stack whose source/weight license or redistribution/use conditions are unclear.
 
-- [ ] **Step 4: Implement the local providers and CLI**
+- [x] **Step 4: Implement the local providers and CLI**
 
 Generate one candidate at a time. Use person detection for candidate boxes and pose hints; keep manual crop as the fallback. Run semantic layer extraction as a separate provider stage. Preserve the source, mask, candidate, seed, model revision, settings, and elapsed times in the private project directory. Require explicit review acceptance or rejection; preserve the previous accepted revision when a candidate is rejected. Label unseen lower-body regions as inferred; never claim they were read from the photo. Disable model-hub telemetry and force local-only model loading after installation.
 
-- [ ] **Step 5: Run contract checks**
+- [x] **Step 5: Run contract checks**
 
-Run: `services/worker/.venv/Scripts/python.exe -m pytest -c services/worker/pyproject.toml services/worker/tests/test_cutout_provider.py services/worker/tests/test_person_provider.py services/worker/tests/test_layers_provider.py services/worker/tests/test_portrait_provider.py services/worker/tests/test_benchmark.py -q`
+Run: `services/worker/.venv/Scripts/python.exe -m pytest -c services/worker/pyproject.toml services/worker/tests/test_cutout_provider.py services/worker/tests/test_person_provider.py services/worker/tests/test_layers_provider.py services/worker/tests/test_portrait_provider.py services/worker/tests/test_benchmark.py services/worker/tests/test_cli.py services/worker/tests/test_manifest.py services/worker/tests/test_report.py -q`
 
 Expected: PASS with the fake provider; no GPU or model downloads are needed for this check.
 
-- [ ] **Step 6: Install the selected model and run the local benchmark**
+- [x] **Step 6: Install the selected model and run the local benchmark**
 
 Run: `powershell -NoProfile -ExecutionPolicy Bypass -File scripts/install-photo-models.ps1 -Device auto` then `powershell -NoProfile -ExecutionPolicy Bypass -File scripts/run-photo-benchmark.ps1 -Device auto`
 The installer shows model licenses, exact download size, destination, and free-space check before download; it verifies hashes and supports resume. Model weights never enter Git. Inference sets local-only model flags and disables model-hub telemetry. Expected: per-stage progress, cancellable generation, candidate files under ignored local storage, and a redacted report.
+
+Result (2026-10-29): all four model components passed local size/hash/license checks. One consented CUDA photo run completed all inference stages in 134,841 ms; peak process memory was 15,772,946,432 bytes and peak GPU reservation was 6,765,412,352 bytes. Candidate remains pending owner review. A separate run generated additional candidates; those remain private and unaccepted.
 
 ### Task 4: Hybrid five-action preview spike
 
@@ -203,19 +210,19 @@ The installer shows model licenses, exact download size, destination, and free-s
 - `ActionPreview` contains `action_id`, `status` (`ready`, `needs_fix`, or `unsupported`), `frame_paths`, `fps_target`, `duration_seconds`, and `issues`; P0 supports only the five action IDs listed below.
 - `generate_action_pose(candidate: PortraitCandidate, rig: RigSeed, action_id: str) -> ActionPoseCandidate` accepts only `wave_smile` or `phone_crouch` in P0.
 - `render_action_preview(candidate: PortraitCandidate, rig: RigSeed, action_id: str, key_pose: ActionPoseCandidate | None = None) -> ActionPreview` renders `idle`, `run_left`, `run_right`, `wave_smile`, or `phone_crouch` at the selected original display scale. Idle and run use rig interpolation; wave and phone-crouch require a matching generated key pose plus interpolated entry/hold/return.
-- Godot preview reads a local P0 manifest and renders at original scale; it does not change the shipped default-pet configuration.
+- Godot preview reads a local P0 manifest and fits the complete character to the existing desktop runtime's 330 px maximum height; it does not change the shipped default-pet configuration.
 
-- [ ] **Step 1: Write rig and action-pose contract checks**
+- [x] **Step 1: Write rig and action-pose contract checks**
 
 Write rig and preview tests for normalized coordinates, bounded corrections, unknown action rejection, stable character reference, matching required key poses, missing-layer handling, and ready/needs-fix/unsupported states.
 
-- [ ] **Step 2: Run rig and preview contract tests**
+- [x] **Step 2: Run rig and preview contract tests**
 
 Run: `services/worker/.venv/Scripts/python.exe -m pytest -c services/worker/pyproject.toml services/worker/tests/test_layer_confidence.py services/worker/tests/test_rig_seed.py services/worker/tests/test_action_pose.py -q`
 
 Expected: FAIL because rig and preview modules do not exist.
 
-- [ ] **Step 3: Implement a coordinate-driven P0 rig seed**
+- [x] **Step 3: Implement a coordinate-driven P0 rig seed**
 
 Build isolated P0 animation scripts that read normalized rig data. Do not modify the existing creator-specific gesture/phone scripts or copy their absolute pixel coordinates into generated character outputs.
 
@@ -227,11 +234,15 @@ Run: `services/worker/.venv/Scripts/python.exe -m pytest -c services/worker/pypr
 
 Expected: PASS; ready previews contain valid local frames and report 60 Hz as the runtime target.
 
+Result (2026-10-29): five 60 Hz target previews and a contact sheet were generated for one riggable candidate. All five actions are `needs_fix`; the generated wave and phone key poses have missing/low-confidence landmarks and visible character drift. No action was accepted.
+
 - [ ] **Step 5: Render two consented cases in Godot and review the complete silhouette**
 
 Run: `& $env:PETFORGE_GODOT_EXECUTABLE --path apps/desktop --script res://tools/preview_photo_p0.gd -- --input <local-eval-case>`
 
 Expected: five complete motion previews sampled at a 60 Hz runtime update target, a contact sheet, original character scale, no photo files written to the repository, and unsupported actions clearly marked. The 60 Hz target means time-based runtime interpolation; it does not require AI to generate 60 new frames per second.
+
+Result (2026-10-29): not run. Godot executable was not found on PATH or the checked install locations; only one consented case has usable rig evidence.
 
 ### Task 5: P0 gate report and handoff
 
@@ -243,29 +254,33 @@ Expected: five complete motion previews sampled at a 60 Hz runtime update target
 **Interfaces:**
 - `evaluate_p0(results: list[EvalResult], action_previews: list[ActionPreview]) -> P0GateReport` returns `pass`, `incomplete_samples`, or `fail` with pseudonymous case IDs, relative evidence IDs, and explicit unsupported cases; never include absolute source paths or names.
 
-- [ ] **Step 1: Write P0 gate tests**
+- [x] **Step 1: Write P0 gate tests**
 
 Require at least six varied consented real cases, at least two subject/owner-approved generated characters, five reviewed motions on both accepted characters, a measured Windows x64/16 GB CPU run, and a measured supported discrete-GPU run. Reject missing license, timing, memory, correction, or privacy evidence.
 
-- [ ] **Step 2: Run P0 gate tests**
+- [x] **Step 2: Run P0 gate tests**
 
 Run: `services/worker/.venv/Scripts/python.exe -m pytest -c services/worker/pyproject.toml services/worker/tests/test_p0_gate.py -q`
 
 Expected: FAIL because gate evaluator does not exist.
 
-- [ ] **Step 3: Implement a redacted, reproducible gate report**
+- [x] **Step 3: Implement a redacted, reproducible gate report**
 
 Record CPU/GPU model, RAM/VRAM, model versions/licenses, per-stage time, peak usage, manual corrections, visible action defects, and the reason for pass/incomplete/fail.
 
-- [ ] **Step 4: Run P0 review and record the decision**
+- [x] **Step 4: Run P0 review and record the decision**
 
 Run: `services/worker/.venv/Scripts/python.exe -m pytest -c services/worker/pyproject.toml services/worker/tests/test_p0_gate.py -q`
 
 Expected: PASS for gate logic. The actual gate remains `incomplete_samples` until its real-photo and human-review evidence is present.
 
-- [ ] **Step 5: Stop at the evidence gate**
+Result (2026-10-29): all 90 worker tests passed. The selected single-case gate report is `incomplete_samples`, with no failure codes. It records one consented real case, zero owner-approved characters, zero reviewed actions, and missing six-case, 16 GiB CPU, two-character, and ten-action evidence.
+
+- [x] **Step 5: Stop at the evidence gate**
 
 If P0 passes, use its measured model and rig evidence to write the separate P1 local-generation plan. If it fails, revise the design and return to the owner before expanding the implementation. Do not claim the full 18-action workflow from P0 evidence.
+
+Result (2026-10-29): stopped before P1. Five-action quality and real-Godot review remain unresolved; the P0 evidence threshold is not met.
 
 ## Execution boundary
 

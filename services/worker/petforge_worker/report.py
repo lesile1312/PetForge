@@ -15,6 +15,7 @@ _SAFE_ERROR_CODE = re.compile(r"[a-z][a-z0-9_]{0,63}\Z")
 _STAGES = {
     "preflight",
     "detection",
+    "candidate_pose",
     "cutout",
     "generation",
     "layer_segmentation",
@@ -54,6 +55,14 @@ def _serialize_result(result: EvalResult) -> dict[str, object]:
             raise ValueError("invalid_stage_outcome")
         if not isinstance(outcome, str) or outcome not in _OUTCOMES:
             raise ValueError("invalid_stage_outcome")
+    if result.stage_elapsed_ms is not None:
+        if not isinstance(result.stage_elapsed_ms, dict):
+            raise ValueError("invalid_stage_timing")
+        for stage, elapsed_ms in result.stage_elapsed_ms.items():
+            if not isinstance(stage, str) or stage not in _STAGES or not _metric(elapsed_ms):
+                raise ValueError("invalid_stage_timing")
+    if result.peak_gpu_memory_bytes is not None and not _metric(result.peak_gpu_memory_bytes):
+        raise ValueError("invalid_report_metric")
     if result.error_code is not None and (
         not isinstance(result.error_code, str)
         or _SAFE_ERROR_CODE.fullmatch(result.error_code) is None
@@ -70,6 +79,10 @@ def _serialize_result(result: EvalResult) -> dict[str, object]:
         "stages": dict(sorted(result.stages.items())),
         "error_code": result.error_code,
     }
+    if result.stage_elapsed_ms is not None:
+        serialized["stage_elapsed_ms"] = dict(sorted(result.stage_elapsed_ms.items()))
+    if result.peak_gpu_memory_bytes is not None:
+        serialized["peak_gpu_memory_bytes"] = result.peak_gpu_memory_bytes
     return serialized
 
 

@@ -12,6 +12,18 @@ from urllib.parse import urlparse
 
 _CASE_ID = re.compile(r"case_[a-f0-9]{8,32}\Z")
 _SUBJECT_TYPES = {"real_person", "synthetic", "licensed_illustration"}
+_VARIATION_TAGS = {
+    "full_body",
+    "half_body",
+    "portrait",
+    "group_photo",
+    "indoor",
+    "outdoor",
+    "low_light",
+    "complex_background",
+    "simple_background",
+    "different_clothing",
+}
 
 
 class CorpusError(ValueError):
@@ -25,6 +37,7 @@ class EvalCase:
     subject_type: str
     is_real_person: bool
     likeness_approved: bool
+    variation_tags: tuple[str, ...] = ()
 
 
 @dataclass(frozen=True, slots=True)
@@ -38,6 +51,8 @@ class EvalResult:
     stages: dict[str, str]
     error_code: str | None = None
     private_context: dict[str, Any] | None = None
+    stage_elapsed_ms: dict[str, int] | None = None
+    peak_gpu_memory_bytes: int | None = None
 
 
 def default_eval_root() -> Path:
@@ -112,6 +127,12 @@ def load_eval_cases(root: Path) -> list[EvalCase]:
         if subject_type == "licensed_illustration" and not _has_license_record(record.get("license")):
             _raise("license_metadata_required")
 
+        raw_variation_tags = record.get("variation_tags", [])
+        if not isinstance(raw_variation_tags, list) or any(
+            not isinstance(tag, str) or tag not in _VARIATION_TAGS for tag in raw_variation_tags
+        ):
+            _raise("invalid_variation_tags")
+
         image_value = record.get("image")
         if not isinstance(image_value, str) or not image_value.strip():
             _raise("image_path_missing")
@@ -141,6 +162,7 @@ def load_eval_cases(root: Path) -> list[EvalCase]:
                 subject_type=subject_type,
                 is_real_person=is_real_person,
                 likeness_approved=is_real_person and approved,
+                variation_tags=tuple(sorted(set(raw_variation_tags))),
             )
         )
     return cases

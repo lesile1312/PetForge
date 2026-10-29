@@ -1,0 +1,10 @@
+# PyTorch and torchvision wheels install from the CPU or CUDA 13.0 index first.
+accelerate==1.15.0
+# 0.38.0 supports Hub <2.0 and stays compatible with Transformers 4.57.6.
+diffusers==0.38.0
+mediapipe==0.10.35
+numpy>=1.26,<2.4
+onnxruntime==1.31.1
+rembg==2.0.86
+safetensors==0.8.0
+transformers==4.57.6

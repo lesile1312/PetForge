@@ -97,6 +97,41 @@ def test_report_rejects_non_string_identifiers(tmp_path: Path) -> None:
         write_eval_report([result], tmp_path / "report.json")
 
 
+def test_report_allows_only_redacted_stage_and_gpu_timings(tmp_path: Path) -> None:
+    result = EvalResult(
+        case_id="case_01234567",
+        model_id="petforge-cartoon-v0",
+        device_id="cuda",
+        elapsed_ms=101,
+        peak_memory_bytes=2_000_000,
+        correction_count=0,
+        stages={"generation": "passed"},
+        stage_elapsed_ms={"generation": 80},
+        peak_gpu_memory_bytes=1_000_000,
+    )
+
+    output = json.loads(write_eval_report([result], tmp_path / "timed.json").read_text(encoding="utf-8"))
+
+    assert output["results"][0]["stage_elapsed_ms"] == {"generation": 80}
+    assert output["results"][0]["peak_gpu_memory_bytes"] == 1_000_000
+
+
+def test_report_rejects_invalid_stage_timing(tmp_path: Path) -> None:
+    result = EvalResult(
+        case_id="case_01234567",
+        model_id="petforge-cartoon-v0",
+        device_id="cpu",
+        elapsed_ms=10,
+        peak_memory_bytes=0,
+        correction_count=0,
+        stages={"generation": "passed"},
+        stage_elapsed_ms={"C:/Users/private/photo.jpg": -1},
+    )
+
+    with pytest.raises(ValueError, match="invalid_stage_timing"):
+        write_eval_report([result], tmp_path / "bad-timing.json")
+
+
 def test_schema_only_allows_redacted_report_fields() -> None:
     schema_path = Path(__file__).parents[1] / "petforge_worker" / "evaluation_schema.json"
     schema = json.loads(schema_path.read_text(encoding="utf-8"))
@@ -113,4 +148,4 @@ def test_schema_only_allows_redacted_report_fields() -> None:
         "correction_count",
         "stages",
         "error_code",
-    }
+    } | {"stage_elapsed_ms", "peak_gpu_memory_bytes"}

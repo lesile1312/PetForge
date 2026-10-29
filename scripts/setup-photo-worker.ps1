@@ -2,6 +2,7 @@
 param(
     [ValidateSet('auto', 'cpu', 'cuda')]
     [string]$Device = 'auto',
+    [switch]$InstallRuntime,
     [switch]$Dev
 )
 
@@ -42,5 +43,37 @@ if ($Dev) {
     if ($LASTEXITCODE -ne 0) { throw 'Worker development dependencies did not install.' }
 }
 
+if ($InstallRuntime) {
+    $selectedDevice = $Device
+    if ($selectedDevice -eq 'auto') {
+        & nvidia-smi --query-gpu=name --format=csv,noheader 2>$null | Out-Null
+        $selectedDevice = if ($LASTEXITCODE -eq 0) { 'cuda' } else { 'cpu' }
+    }
+    $cacheRoot = 'E:\PetForge\cache'
+    New-Item -ItemType Directory -Force -Path $cacheRoot | Out-Null
+    $env:PIP_CACHE_DIR = Join-Path $cacheRoot 'pip'
+    if ($selectedDevice -eq 'cuda') {
+        $torchIndex = 'https://download.pytorch.org/whl/cu130'
+        $torchVersion = '2.14.1+cu130'
+        $visionVersion = '0.29.1+cu130'
+    } else {
+        $torchIndex = 'https://download.pytorch.org/whl/cpu'
+        $torchVersion = '2.14.1+cpu'
+        $visionVersion = '0.29.1+cpu'
+    }
+    & $venvPython -m pip install --index-url $torchIndex "torch==$torchVersion" "torchvision==$visionVersion"
+    if ($LASTEXITCODE -ne 0) { throw "PyTorch $selectedDevice wheels did not install." }
+    & $venvPython -m pip install -r (Join-Path $workerRoot 'requirements-photo-runtime.txt')
+    if ($LASTEXITCODE -ne 0) { throw 'Photo inference runtime did not install.' }
+    $runtime = & $venvPython -c 'import torch; print(torch.__version__); print(torch.cuda.is_available())'
+    if ($LASTEXITCODE -ne 0) { throw 'Could not verify the photo inference runtime.' }
+    if ($selectedDevice -eq 'cuda' -and $runtime[1].Trim() -ne 'True') {
+        throw 'CUDA runtime installed, but PyTorch cannot access the NVIDIA GPU.'
+    }
+    Write-Host "Photo runtime ready: mode $selectedDevice, Torch $($runtime[0]), CUDA available $($runtime[1])."
+} else {
+    Write-Host 'Photo runtime packages remain uninstalled. Add -InstallRuntime to install CPU or CUDA dependencies.'
+}
+
 Write-Host "Worker environment ready: $($version.Trim()), requested device mode $Device."
-Write-Host 'Model-specific Torch/CUDA wheels and weights remain uninstalled until the P0 model/license choice.'
+Write-Host 'Model weights remain uninstalled until scripts/install-photo-models.ps1 verifies licenses, sizes, and hashes.'

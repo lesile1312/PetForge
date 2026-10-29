@@ -82,3 +82,10 @@ def test_device_profile_is_immutable_and_serializes_snake_case(monkeypatch):
 
     assert "total_ram_bytes" in profile.to_dict()
     assert "totalRamBytes" not in profile.to_dict()
+
+
+@pytest.mark.skipif(__import__("platform").system() != "Windows", reason="Windows process memory API")
+def test_peak_working_set_reads_current_process_memory():
+    api = _device_api()
+
+    assert api.peak_working_set_bytes() > 0

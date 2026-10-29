@@ -1,3 +1,2 @@
-# Worker base dependencies are added with each tested pipeline phase.
-# Do not install Torch here; Task 3 selects model-specific CPU/CUDA wheels.
+# Base worker dependencies stay small; model runtimes install separately.
 Pillow>=10.4,<13.0
