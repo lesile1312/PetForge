@@ -2,6 +2,16 @@
 
 **Make a desktop companion from your own character image.**
 
+## Try the finished desktop pet
+
+[Download the Windows portable release](https://github.com/lesile1312/PetForge/releases/tag/v1.0.0), extract the whole ZIP, then double-click `Start-PetForge.bat`. Drag the character, right-click to cycle interactions, and press Esc while the pet has focus to exit. She wanders and performs gestures including waving with a little heart, fixing her hair, looking in a mirror, and using a phone. Godot is included.
+
+To make your own pet, follow the transparent PNG or local editor instructions below. You can adjust the appearance and desktop behavior. The example girl's detailed motions were authored for her; another image does not automatically inherit them.
+
+For action-frame format and adjustments, see [the pet package format](docs/pet-format.md); a [Chinese guide to making your own motions](docs/customize-your-pet.zh-CN.md) describes the process.
+
+![The girl waving with a small heart](docs/images/pet-demo/wave-heart.png)
+
 [中文文档](README.zh-CN.md) · **English** · [Live demo](https://lesile1312.github.io/PetForge/#example) · [Create with your reference](https://lesile1312.github.io/PetForge/#create)
 
 I am focusing first on the part I can make work well: put your own character image on the desktop, adjust its size, walking speed, idle and sleep habits, then save or launch it. If you already have a transparent PNG, you can use it as-is. A regular photo can go through local background removal, but the result depends on the photo. Automatic high-quality cartoon redraw and custom actions for every photo are not reliable yet, so I do not present them as finished features.
@@ -14,7 +24,7 @@ I am focusing first on the part I can make work well: put your own character ima
 | I just want to start a pet quickly | [Use a transparent PNG](#make-your-own-pet--transparent-png-route) ([download source ZIP](https://github.com/lesile1312/PetForge/archive/refs/heads/main.zip)) | Windows, Godot 4, and the 自定义桌宠petforge source |
 | I only want to preview the project | [Open the live demo](https://lesile1312.github.io/PetForge/#example) | A browser; the demo cannot launch a pet on your computer |
 
-**Where I am now:** The local editor can import a transparent character PNG directly, adjust its look and behavior, preview it, save a package, and launch it on the Windows desktop when Godot is configured. Regular photos can use local background removal, but that does not redraw them into the polished cartoon girl shown here. The 18 illustrated actions are custom work for my character; new images get the runtime's built-in general actions. The repository has source code, but no one-click installer. GitHub Pages is a showcase and cannot launch a pet on your computer. 自定义桌宠petforge is an independent community project and is not affiliated with OpenAI or Codex.
+**Where I am now:** The local editor can import a transparent character PNG directly, adjust its look and behavior, preview it, save a package, and launch it on the Windows desktop when Godot is configured. Regular photos can use local background removal, but that does not redraw them into the polished cartoon girl shown here. The 18 illustrated actions are custom work for my character; new images get the runtime's built-in general actions. The repository provides source code and a Windows portable ZIP for the example pet. GitHub Pages is a showcase and cannot launch a pet on your computer. 自定义桌宠petforge is an independent community project and is not affiliated with OpenAI or Codex.
 
 ## How I built this character, one change at a time
 

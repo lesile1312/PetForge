@@ -68,9 +68,9 @@ Git 只读查询使用单次命令的 `safe.directory` 参数处理旧沙箱文�
 - [JSON Schema](../packages/pet-schema/schemas/pet.schema.json)
 - [Pydantic](../services/api/app/models.py)
 
-共享 `appearance` 主要为 sprite / model / scale，JSON Schema 不允许额外属性，Pydantic 同样 `extra="forbid"`。定制成品包则使用 `animationFrames / animationFps / animationFpsByAction / gestureRig`，并使用不同于 API 正则的 ID。
+共享 `appearance` 仍严格限定 sprite / model / scale。顶层 `animations` 现在支持相对路径 PNG 帧、帧率和循环标记，Godot 运行器与 ZIP 导出都能读取这些动作资源。旧定制包的 `appearance.animationFrames` 和 `gestureRig` 仍属于兼容路径，不是新建包的共享格式。
 
-因此，“共享格式一致”目前只能作为架构目标，不能作为全部现有资源的真实兼容保证。新链路必须先明确 2.0 schema 和两种旧包迁移方式。
+因此，共享格式已覆盖普通 PNG 序列动作；骨架绑定、动作生成元数据和旧包迁移仍需要后续统一。
 
 ## 5. 已发现的产品化缺口
 

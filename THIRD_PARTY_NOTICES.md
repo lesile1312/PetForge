@@ -1,5 +1,7 @@
 # Third-party notices
 
+The character artwork in `examples/creator-pet` is provided by the creator for this project's demonstration and desktop-pet distribution. The Apache-2.0 source-code license does not grant separate rights to reuse the character artwork. Please contact the creator for permission to reuse it elsewhere. The portable Windows bundle includes Godot; see `docs/GODOT-LICENSE.txt` for its license notice.
+
 ## Demonstration photograph
 
 `docs/images/pet-demo/reference-photo.jpg` is a web-sized copy of the creator-provided personal reference photograph, displayed at the creator's request to demonstrate the custom character design. The source-code Apache-2.0 license does not grant rights to reuse this personal photograph. Contact the creator for permission to reuse it. The unchanged local source is retained outside the public website files.

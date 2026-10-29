@@ -218,7 +218,7 @@ CPU 与 CUDA 使用明确的设备配置，分别处理精度和内存策略；�
 
 ### 5.1 为什么需要 2.0
 
-当前共享 schema 的 appearance 只描述静态 sprite / model / scale，而定制包还使用 animationFrames、animationFpsByAction、gestureRig，且 ID 规则不同。先统一格式再接自动生成，避免网页保存时拒绝或丢失动作扩展。
+共享 schema 现在用顶层 `animations` 保存 PNG 帧路径、帧率与循环标记，Godot 和 ZIP 导出都可读取。旧包的 `appearance.animationFrames` 与 `gestureRig` 仍是兼容路径；骨架数据、程序化动作和旧包迁移还需继续统一，避免网页保存或导出时丢失动作扩展。
 
 建议以 JSON Schema 为包文件的权威定义，生成 TypeScript 类型与 Pydantic 模型，Godot 读取前运行包编译校验并做必要运行时检查。类型生成不能替代业务规则、文件引用和路径安全检查。
 

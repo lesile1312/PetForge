@@ -1,0 +1,96 @@
+{
+  "version": "1.0",
+  "id": "codex_desktop_pet_photo_22",
+  "name": "Codex 桌宠",
+  "appearance": {
+    "sprite": "character.png",
+    "scale": 0.88,
+    "animationFrames": {
+      "idle": [
+        "frames/idle/idle_000.png"
+      ],
+      "waiting": [
+        "frames/idle/idle_000.png"
+      ],
+      "run_right": [
+        "frames/run_right/run_right_000.png",
+        "frames/run_right/run_right_001.png",
+        "frames/run_right/run_right_002.png",
+        "frames/run_right/run_right_003.png",
+        "frames/run_right/run_right_004.png",
+        "frames/run_right/run_right_005.png",
+        "frames/run_right/run_right_006.png",
+        "frames/run_right/run_right_007.png"
+      ],
+      "run_left": [
+        "frames/run_left/run_left_000.png",
+        "frames/run_left/run_left_001.png",
+        "frames/run_left/run_left_002.png",
+        "frames/run_left/run_left_003.png",
+        "frames/run_left/run_left_004.png",
+        "frames/run_left/run_left_005.png",
+        "frames/run_left/run_left_006.png",
+        "frames/run_left/run_left_007.png"
+      ],
+      "blink": [
+        "frames/idle/idle_000.png",
+        "frames/blink_final/blink_closed_face.png",
+        "frames/blink_final/blink_closed_face.png",
+        "frames/idle/idle_000.png"
+      ],
+      "blink_waiting": [
+        "frames/idle/idle_000.png",
+        "frames/blink_final/blink_closed_face.png",
+        "frames/blink_final/blink_closed_face.png",
+        "frames/idle/idle_000.png"
+      ],
+      "wave": [],
+      "happy": [],
+      "bow": [],
+      "hair_touch": [],
+      "mirror": [],
+      "sleep": []
+    },
+    "animationFps": 60,
+    "animationFpsByAction": {
+      "run_left": 12.0,
+      "run_right": 12.0,
+      "blink": 30.0,
+      "blink_waiting": 30.0
+    },
+    "gestureRig": {
+      "enabled": true,
+      "sources": "rig/limb_sources.json",
+      "durations": {
+        "wave": 2.65,
+        "hair_touch": 3.25,
+        "mirror": 3.65,
+        "happy": 1.45,
+        "bow": 2.05,
+        "phone": 16.0,
+        "shy": 3.8,
+        "think": 4.2,
+        "stretch": 4.8,
+        "heart": 3.8,
+        "look": 4.6,
+        "yawn": 4.5
+      }
+    }
+  },
+  "behavior": {
+    "moveSpeed": 190,
+    "idleDuration": 20,
+    "sleepDuration": 120,
+    "randomWalk": true,
+    "randomJump": false,
+    "autoSleep": false,
+    "draggable": true,
+    "initialPosition": "right",
+    "randomWalkFrequency": "low",
+    "waitAfter": 30
+  },
+  "window": {
+    "alwaysOnTop": true,
+    "mousePassthrough": true
+  }
+}

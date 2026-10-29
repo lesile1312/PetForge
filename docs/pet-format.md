@@ -23,6 +23,20 @@ A package contains `pet.json` and the image paths it references. `version` is ma
 }
 ```
 
-`character.png` is the transparent comic-style sprite that the web preview and 2D desktop runtime use. `cutout.png` is optional and preserves the unfiltered transparent segmentation for 3D reconstruction. The desktop actions are built into the runtime, so a package does not need generated animation sheets. `model.glb`, when present, is a separate static 3D preview.
+`character.png` is the transparent sprite shown by the web preview. The desktop runtime uses the file named by `appearance.sprite`, which can be a padded canvas that keeps full action frames inside the transparent window. `cutout.png` is optional and preserves the unfiltered transparent segmentation for 3D reconstruction. `model.glb`, when present, is a separate static 3D preview.
+
+Optional `animations` maps action names to PNG frame paths inside the package. Each action has an explicit frame rate and loop setting. Paths must stay inside the package.
+
+```json
+"animations": {
+  "wave": {
+    "frames": ["animations/wave/wave_000.png", "animations/wave/wave_001.png"],
+    "fps": 60,
+    "loop": false
+  }
+}
+```
+
+The runtime plays these frames for matching actions. It uses the built-in procedural pose when a package does not provide frames for an action.
 
 `packages/pet-schema/schemas/pet.schema.json` is the JSON Schema contract. The API additionally validates with Pydantic. Runtime and animation fields have explicit version-compatible defaults.

@@ -337,7 +337,7 @@ func _update_pose() -> void:
 	_arm.draw_lower = not _front_arm.visible
 	_hand.visible = arm_action
 	_mirror.visible = _action == &"mirror"
-	_heart.visible = _action == &"heart"
+	_heart.visible = _action in [&"heart", &"wave"]
 	var head_angle := 0.0
 	var head_drop := 0.0
 	var gaze_offset := Vector2.ZERO
@@ -371,6 +371,8 @@ func _update_pose() -> void:
 		if _action == &"wave":
 			soft_smile = .7*_envelope(t-.25,.4,1.55,2.0)
 			gesture_blink = _blink_pulse(t,1.55,.18)
+			_heart.amount = _envelope(t-.75,.25,.75,1.35)
+			_heart.progress = _ease((t-.8)/1.25)
 			target = Vector2(82.0, 103.0)
 			rise = 0.95
 			hold_until = 1.65

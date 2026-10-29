@@ -88,7 +88,9 @@ func _ready() -> void:
 	var action_index := launch_args.find("--start-action")
 	if action_index >= 0 and action_index + 1 < launch_args.size():
 		var startup_action := StringName(launch_args[action_index + 1])
-		if startup_action in RIGHT_CLICK_ACTIONS:
+		if startup_action == &"walk":
+			state_machine.change_state(&"WALK")
+		elif startup_action in RIGHT_CLICK_ACTIONS or startup_action in [&"run_left", &"run_right"]:
 			requested_action = startup_action
 			state_machine.change_state(&"CLICK_REACTION")
 
@@ -234,8 +236,17 @@ func _load_character() -> void:
 	_load_animation_frames(package_directory)
 
 func _load_animation_frames(package_directory: String) -> void:
-	var frame_map: Variant = appearance.get("animationFrames", {})
-	if not frame_map is Dictionary:
+	var frame_map: Dictionary = {}
+	var legacy_frame_map: Variant = appearance.get("animationFrames", {})
+	if legacy_frame_map is Dictionary:
+		frame_map.merge(legacy_frame_map, true)
+	var package_animations: Variant = config.get("animations", {})
+	if package_animations is Dictionary:
+		for raw_action in package_animations:
+			var definition: Variant = package_animations[raw_action]
+			if definition is Dictionary and definition.has("frames") and definition["frames"] is Array:
+				frame_map[String(raw_action)] = definition["frames"]
+	if frame_map.is_empty():
 		return
 	for raw_action in frame_map.keys():
 		var entries: Variant = frame_map[raw_action]
@@ -327,10 +338,23 @@ func animation_frame_image(action: StringName, frame_index: int) -> Image:
 	return frame_image if frame_image is Image else null
 
 func animation_fps(action: StringName) -> float:
+	var package_animations: Variant = config.get("animations", {})
+	if package_animations is Dictionary:
+		var definition: Variant = package_animations.get(String(action), {})
+		if definition is Dictionary and definition.has("fps"):
+			return maxf(1.0, float(definition["fps"]))
 	var per_action: Variant = appearance.get("animationFpsByAction", {})
 	if per_action is Dictionary and per_action.has(String(action)):
 		return maxf(1.0, float(per_action[String(action)]))
 	return maxf(1.0, float(appearance.get("animationFps", 60.0)))
+
+func animation_loops(action: StringName) -> bool:
+	var package_animations: Variant = config.get("animations", {})
+	if package_animations is Dictionary:
+		var definition: Variant = package_animations.get(String(action), {})
+		if definition is Dictionary and definition.has("loop"):
+			return bool(definition["loop"])
+	return action in [&"run_left", &"run_right"]
 
 func set_animation_frame(action: StringName, frame_index: int) -> void:
 	_apply_animation_frame(action, frame_index)

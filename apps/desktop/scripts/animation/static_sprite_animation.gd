@@ -338,7 +338,7 @@ func _play_frame_animation(action: StringName) -> bool:
 	if action in [&"idle", &"waiting"]:
 		_host.call("set_animation_frame", action, 0)
 		return false
-	_frame_looping = action in [&"run_left", &"run_right"]
+	_frame_looping = bool(_host.call("animation_loops", action)) if _host.has_method("animation_loops") else action in [&"run_left", &"run_right"]
 	var frame_fps := float(_host.call("animation_fps", action)) if _host.has_method("animation_fps") else 60.0
 	_frame_action = action
 	_frame_index = 0

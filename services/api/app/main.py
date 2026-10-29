@@ -459,23 +459,38 @@ def export_pet(pet_id: str) -> StreamingResponse:
     pet = get_pet_or_404(pet_id)
     if not pet.get("processed_image"):
         raise HTTPException(409, "Remove the image background before exporting")
-    sprite = storage.pet_directory(pet_id) / "character.png"
-    if not sprite.is_file():
+    package_directory = storage.pet_directory(pet_id).resolve()
+    sprite_relative = pet["config"].get("appearance", {}).get("sprite", "character.png")
+    sprite = (package_directory / sprite_relative).resolve()
+    original_sprite = package_directory / "character.png"
+    if not sprite.is_relative_to(package_directory) or not sprite.is_file() or not original_sprite.is_file():
         raise HTTPException(404, "Processed character image not found")
     config = PetConfig.model_validate(pet["config"]).model_dump(exclude_none=True)
     package = io.BytesIO()
     with zipfile.ZipFile(package, "w", compression=zipfile.ZIP_DEFLATED) as archive:
         archive.writestr("pet.json", json.dumps(config, ensure_ascii=False, indent=2))
-        archive.write(sprite, "character.png")
-        cutout_path = (storage.pet_directory(pet_id) / "cutout.png").resolve()
+        archive.write(original_sprite, "character.png")
+        if sprite != original_sprite:
+            archive.write(sprite, sprite_relative)
+        for animation in config.get("animations", {}).values():
+            for relative_frame in animation["frames"]:
+                frame_path = (package_directory / relative_frame).resolve()
+                if not frame_path.is_relative_to(package_directory) or not frame_path.is_file():
+                    raise HTTPException(409, "An animation frame is missing from this pet package")
+                archive.write(frame_path, relative_frame)
+        cutout_path = (package_directory / "cutout.png").resolve()
         if cutout_path.is_relative_to(storage.root) and cutout_path.is_file():
             archive.write(cutout_path, "cutout.png")
-        model_path = (storage.pet_directory(pet_id) / "model.glb").resolve()
+        model_path = (package_directory / "model.glb").resolve()
         has_model = config["appearance"].get("model") == "model.glb" and model_path.is_relative_to(storage.root) and model_path.is_file()
         if has_model:
             archive.write(model_path, "model.glb")
         readme = "PetForge package 1.0\nOpen this folder in the PetForge Godot runtime.\n"
-        readme += "Includes a comic-styled character sprite and built-in desktop actions.\n"
+        animation_count = len(config.get("animations", {}))
+        if animation_count:
+            readme += f"Includes a comic-styled character sprite and {animation_count} packaged frame animations.\n"
+        else:
+            readme += "Includes a comic-styled character sprite and built-in desktop actions.\n"
         readme += "Includes a locally generated 3D model (model.glb).\n" if has_model else "Includes a transparent 2D character image (character.png).\n"
         archive.writestr("README.txt", readme)
     package.seek(0)

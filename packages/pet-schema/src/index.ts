@@ -1,6 +1,11 @@
 export type InitialPosition = "left" | "right" | "random";
 export type WalkFrequency = "low" | "medium" | "high";
 export type PetAction = "idle" | "walk" | "sleep" | "jump" | "wave" | "happy" | "angry";
+export interface PetAnimation {
+  frames: string[];
+  fps: number;
+  loop: boolean;
+}
 
 export interface PetConfig {
   version: "1.0";
@@ -19,7 +24,7 @@ export interface PetConfig {
     randomWalkFrequency: WalkFrequency;
   };
   window: { alwaysOnTop: boolean; mousePassthrough: boolean };
-  animations?: Record<string, { file: string; fps: number; loop: boolean }>;
+  animations?: Record<string, PetAnimation>;
   personality?: Record<string, unknown>;
   voice?: Record<string, unknown>;
   skills?: string[];

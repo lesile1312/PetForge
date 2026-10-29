@@ -1,8 +1,10 @@
 from __future__ import annotations
 
+import re
+from pathlib import Path
 from typing import Literal
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 
 class AppearanceConfig(BaseModel):
@@ -31,6 +33,29 @@ class WindowConfig(BaseModel):
     mousePassthrough: bool = True
 
 
+class AnimationConfig(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    frames: list[str] = Field(min_length=1, max_length=3000)
+    fps: float = Field(default=60.0, ge=1.0, le=120.0)
+    loop: bool = False
+
+    @field_validator("frames")
+    @classmethod
+    def validate_frame_paths(cls, frames: list[str]) -> list[str]:
+        for frame in frames:
+            path = Path(frame)
+            if (
+                not frame
+                or "\\" in frame
+                or path.is_absolute()
+                or any(part in {"", ".", ".."} for part in frame.split("/"))
+                or path.suffix.lower() != ".png"
+                or not re.fullmatch(r"[A-Za-z0-9._/-]+", frame)
+            ):
+                raise ValueError("Animation frame paths must be safe relative PNG paths")
+        return frames
+
+
 class PetConfig(BaseModel):
     model_config = ConfigDict(extra="forbid")
     version: Literal["1.0"] = "1.0"
@@ -39,7 +64,7 @@ class PetConfig(BaseModel):
     appearance: AppearanceConfig = Field(default_factory=AppearanceConfig)
     behavior: BehaviorConfig = Field(default_factory=BehaviorConfig)
     window: WindowConfig = Field(default_factory=WindowConfig)
-    animations: dict[str, dict[str, object]] | None = None
+    animations: dict[str, AnimationConfig] | None = None
     personality: dict[str, object] | None = None
     voice: dict[str, object] | None = None
     skills: list[str] | None = None
