@@ -12,6 +12,7 @@ import { readReferenceFile } from "@/lib/reference";
 
 type Stage = "upload" | "cutout" | "editor";
 type ModelStatus = "idle" | "processing" | "ready" | "error";
+type SourceMode = "transparent" | "photo";
 const canLaunchLocalRuntime = process.env.NEXT_PUBLIC_PETFORGE_RUNTIME_MODE === "local";
 
 export function Studio() {
@@ -25,6 +26,7 @@ export function Studio() {
   const [previewOriginal, setPreviewOriginal] = useState(false);
   const [modelStatus, setModelStatus] = useState<ModelStatus>("idle");
   const [desktopStarted, setDesktopStarted] = useState(false);
+  const [directCharacter, setDirectCharacter] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -37,6 +39,7 @@ export function Studio() {
       if (cancelled) return;
       setPet(savedPet);
       setConfig(savedPet.config);
+      setDirectCharacter(window.localStorage.getItem(`petforge:source:${savedPet.id}`) === "transparent");
       setStage(savedPet.processedImage ? "editor" : savedPet.originalImage ? "cutout" : "upload");
       setActiveStep(savedPet.modelUrl ? 4 : savedPet.processedImage ? 3 : savedPet.originalImage ? 2 : 1);
       setPreviewOriginal(!savedPet.processedImage);
@@ -48,7 +51,7 @@ export function Studio() {
     return () => { cancelled = true; };
   }, []);
 
-  async function handleFile(inputFile: File, nameHint?: string) {
+  async function handleFile(inputFile: File, nameHint?: string, mode: SourceMode = "photo") {
     setError(null);
     setNotice(null);
     setWorking(true);
@@ -75,7 +78,7 @@ export function Studio() {
     try {
       let current = pet;
       if (!current) {
-        current = await api.createPet(nameHint ?? "Momo");
+        current = await api.createPet(nameHint ?? "我的桌宠");
         window.localStorage.setItem("petforge:lastPetId", current.id);
         setPet(current);
         setConfig(current.config);
@@ -83,12 +86,26 @@ export function Studio() {
       const uploaded = await api.upload(current.id, file);
       setPet(uploaded);
       setConfig(uploaded.config);
-      setStage("cutout");
-      setActiveStep(2);
-      setPreviewOriginal(true);
       setModelStatus("idle");
-      setNotice("图片已上传，正在识别人物并抠除背景…");
-      await processImage(uploaded);
+      setDesktopStarted(false);
+      if (mode === "transparent") {
+        const readyPet = await api.useOriginal(current.id);
+        setPet(readyPet);
+        setConfig(readyPet.config);
+        window.localStorage.setItem(`petforge:source:${current.id}`, "transparent");
+        setDirectCharacter(true);
+        setPreviewOriginal(false);
+        setStage("editor");
+        setActiveStep(3);
+        setNotice("透明角色 PNG 已直接导入。可以继续调大小、行动习惯和桌面显示方式。");
+      } else {
+        setDirectCharacter(false);
+        setStage("cutout");
+        setActiveStep(2);
+        setPreviewOriginal(true);
+        setNotice("图片已上传，正在本机抠除背景…");
+        await processImage(uploaded);
+      }
     } catch (reason) {
       setError(reason instanceof Error ? reason.message : "图片上传失败，请重试。");
     } finally {
@@ -124,7 +141,7 @@ export function Studio() {
       const png = await new Promise<Blob>((resolve, reject) => {
         canvas.toBlob((blob) => blob ? resolve(blob) : reject(new Error("示例图片转换失败。")), "image/png");
       });
-      await handleFile(new File([png], `${name}.png`, { type: "image/png" }), name);
+      await handleFile(new File([png], `${name}.png`, { type: "image/png" }), name, "transparent");
     } catch (reason) {
       setError(reason instanceof Error ? reason.message : "示例图片无法加载。");
       setWorking(false);
@@ -146,6 +163,8 @@ export function Studio() {
   }
 
   async function processImage(sourcePet: PetRecord) {
+    setDirectCharacter(false);
+    window.localStorage.setItem(`petforge:source:${sourcePet.id}`, "photo");
     setStage("cutout");
     setActiveStep(2);
     setModelStatus("idle");
@@ -166,7 +185,7 @@ export function Studio() {
     setStage("editor");
     setActiveStep(3);
     setDesktopStarted(false);
-    setNotice(`2D 漫画风格角色已生成 · ${result.width} × ${result.height}。请先检查原图对照，再点击启动桌宠或导出资源。3D 建模可单独选择。`);
+    setNotice(`人物透明图已准备 · ${result.width} × ${result.height}。这是从照片抠除并轻量滤镜处理的结果，不是重新绘制的卡通人物。`);
   }
 
   async function generateModel(sourcePet: PetRecord) {
@@ -213,6 +232,8 @@ export function Studio() {
       };
       setPet(restoredPet);
       setConfig(restoredPet.config);
+      setDirectCharacter(false);
+      window.localStorage.setItem(`petforge:source:${pet.id}`, "photo");
       setModelStatus("idle");
       setPreviewOriginal(true);
       setStage("cutout");
@@ -271,7 +292,7 @@ export function Studio() {
       await api.launch(pet.id);
       setDesktopStarted(true);
       setActiveStep(5);
-      setNotice("卡通桌宠已显示在桌面，可以关闭创建器了。");
+      setNotice("桌宠已显示在桌面，可以关闭创建器了。");
     } catch (reason) {
       setDesktopStarted(false);
       const message = reason instanceof Error ? reason.message : "";
@@ -291,7 +312,7 @@ export function Studio() {
     try {
       const response = await fetch(url);
       if (!response.ok) throw new Error("透明 PNG 暂时无法下载，请检查 API 服务。");
-      downloadBlob(await response.blob(), "character-cartoon.png");
+      downloadBlob(await response.blob(), "character.png");
     } catch (reason) {
       setError(reason instanceof Error ? reason.message : "透明 PNG 下载失败。");
     }
@@ -318,6 +339,7 @@ export function Studio() {
     setError(null);
     setNotice(null);
     setPreviewOriginal(false);
+    setDirectCharacter(false);
     setModelStatus("idle");
   }
 
@@ -345,7 +367,7 @@ export function Studio() {
           <div className="workflow-bar" aria-label="创建步骤">
             <div className="workflow-project"><button type="button" onClick={startAnother} aria-label="返回创建页面"><Icon name="arrow" size={17} className="back-arrow" /></button><span className="workflow-project-name">{config?.name || "新桌宠"}</span><span className="workflow-unsaved"><i /> PetForge 项目</span></div>
             <ol className="workflow-steps">
-              {(["上传照片", "自动抠图", "检查与设置", "导出资源", canLaunchLocalRuntime ? "启动桌宠" : "导出资源"] as const).map((label, index) => {
+              {(["导入角色", "准备图片", "设置与预览", "导出资源", canLaunchLocalRuntime ? "启动桌宠" : "导出资源"] as const).map((label, index) => {
                 const number = index + 1;
                 return <li key={label} className={`${activeStep === number ? "is-current" : ""}${activeStep > number ? " is-complete" : ""}`}><span className="workflow-step-number">{activeStep > number ? <Icon name="check" size={13} /> : number}</span><span>{label}</span></li>;
               })}
@@ -359,7 +381,7 @@ export function Studio() {
 
           {stage === "cutout" ? (
             <section className="cutout-stage">
-              <div className="cutout-intro"><span className="section-eyebrow">第 2 步 · 角色制作</span><h1>让角色从背景里<br /><span>轻轻地走出来。</span></h1><p>本机抠除背景并应用漫画滤镜。先检查原图和透明形象，再启动 2D 桌宠。3D 是独立的可选实验。</p></div>
+              <div className="cutout-intro"><span className="section-eyebrow">第 2 步 · 图片准备</span><h1>先把角色<br /><span>从背景里请出来。</span></h1><p>本机抠除背景并做轻量滤镜。结果取决于原图，不会凭空补画头发、衣服或身体；也可以返回直接导入透明 PNG。</p></div>
               <div className="cutout-card">
                 {(error || notice) && <div className="editor-status" aria-live="polite">{error && <span className="editor-alert" role="alert">{error}</span>}{notice && !error && <span className="editor-notice"><Icon name="spark" size={14} /> {notice}</span>}</div>}
                 <div className="cutout-card-top"><div><span className="cutout-card-kicker"><Icon name="image" size={15} /> 原始图片</span><b>{pet?.name}</b></div><button className="text-button" type="button" onClick={() => fileInputRef.current?.click()}><Icon name="undo" size={15} /> 换一张</button></div>
@@ -377,18 +399,18 @@ export function Studio() {
               </div>
               <div className="editor-grid">
                 <div className="editor-main-column">
-                  <div className="editor-heading"><div><span className="section-eyebrow">桌面伙伴 · {pet.id.slice(0, 12)}</span><h1>给它一点个性。</h1><p>调好大小和行动习惯，预览会即时更新。</p></div><div className="editor-image-actions"><button type="button" className="text-button" onClick={restoreOriginal} disabled={working}><Icon name="undo" size={15} /> 恢复原图</button><button type="button" className="text-button" onClick={downloadPng} disabled={working || !pet.processedImage}><Icon name="download" size={15} /> 下载透明 PNG</button><button type="button" className="text-button" onClick={downloadModel} disabled={working || !pet.modelUrl}><Icon name="download" size={15} /> 下载 GLB</button></div></div>
-                  <div className="reference-comparison">
-                    <figure><figcaption>参考原图 · 保留在本机</figcaption>{pet.originalImage && <img src={imageUrl(pet.originalImage) ?? ""} alt="人物参考原图" />}</figure>
-                    <figure><figcaption>当前处理结果 · 漫画滤镜</figcaption>{pet.processedImage && <img src={imageUrl(pet.processedImage) ?? ""} alt="处理后的卡通风格角色" />}</figure>
-                  </div>
+                  <div className="editor-heading"><div><span className="section-eyebrow">桌面伙伴 · {pet.id.slice(0, 12)}</span><h1>给它一点个性。</h1><p>调好大小和行动习惯，预览会即时更新。</p></div><div className="editor-image-actions">{!directCharacter && <button type="button" className="text-button" onClick={restoreOriginal} disabled={working}><Icon name="undo" size={15} /> 恢复原图</button>}<button type="button" className="text-button" onClick={downloadPng} disabled={working || !pet.processedImage}><Icon name="download" size={15} /> 下载透明 PNG</button><button type="button" className="text-button" onClick={downloadModel} disabled={working || !pet.modelUrl}><Icon name="download" size={15} /> 下载 GLB</button></div></div>
+                  {!directCharacter && <div className="reference-comparison">
+                    <figure><figcaption>上传素材 · 原图保留</figcaption>{pet.originalImage && <img src={imageUrl(pet.originalImage) ?? ""} alt="人物参考原图" />}</figure>
+                    <figure><figcaption>桌宠使用的透明角色图</figcaption>{pet.processedImage && <img src={imageUrl(pet.processedImage) ?? ""} alt="桌宠使用的透明角色图" />}</figure>
+                  </div>}
                   <DesktopPreview config={config} imageSrc={image} modelSrc={pet.modelUrl ? imageUrl(pet.modelUrl) : null} />
                   <div className={`model-status-card model-status-${modelStatus}`} aria-live="polite">
                     <span className="model-status-mark"><Icon name={modelStatus === "ready" ? "check" : modelStatus === "processing" ? "spark" : "layers"} size={15} /></span>
-                    <div><b>{modelStatus === "ready" ? "3D 参考模型已生成" : modelStatus === "processing" ? "正在重建 3D 参考模型" : modelStatus === "error" ? "3D 模型尚未生成" : "可选：生成 3D 参考模型"}</b><small>{modelStatus === "ready" ? "可在网页单独查看；桌面运行的是带动作的卡通角色。" : modelStatus === "processing" ? "首次运行可能需要下载模型权重；卡通桌宠可以先运行。" : modelStatus === "error" ? "卡通桌宠和动作仍可使用，3D 下载稍后重试。" : "2D 桌宠已可独立使用；3D 实验需要额外安装模型与显卡依赖。"}</small></div>
+                    <div><b>{modelStatus === "ready" ? "3D 参考模型已生成" : modelStatus === "processing" ? "正在重建 3D 参考模型" : modelStatus === "error" ? "3D 模型尚未生成" : "可选：生成 3D 参考模型"}</b><small>{modelStatus === "ready" ? "可在网页单独查看；桌面运行使用当前角色图和内置动作。" : modelStatus === "processing" ? "首次运行可能需要下载模型权重；2D 桌宠可以先运行。" : modelStatus === "error" ? "2D 桌宠仍可使用，3D 下载稍后重试。" : "2D 桌宠已可独立使用；3D 实验需要额外安装模型与显卡依赖。"}</small></div>
                     {(modelStatus === "idle" || modelStatus === "error") && <button type="button" className="text-button" onClick={retryModelGeneration} disabled={working}>{modelStatus === "error" ? "重试 3D 建模" : "生成 3D（可选）"}</button>}
                   </div>
-                  <div className="cutout-method"><span className="method-status"><i /> {pet.modelUrl ? "3D GLB 已生成" : pet.processedImage ? "透明 PNG 已生成" : "背景未移除"}</span><span>{pet.modelUrl ? "单图重建 · 背面与细节为 AI 推断" : pet.processedImage ? "AI 人物分割" : "先上传图片以运行 AI 抠图"}</span><button type="button" onClick={() => { setStage("cutout"); setActiveStep(2); setPreviewOriginal(true); setError(null); setNotice(null); }} disabled={working}>重新处理</button></div>
+                  <div className="cutout-method"><span className="method-status"><i /> {pet.modelUrl ? "3D GLB 已生成" : pet.processedImage ? "透明 PNG 已就绪" : "背景未移除"}</span><span>{pet.modelUrl ? "单图重建 · 背面与细节为 AI 推断" : directCharacter ? "使用上传的透明角色图" : pet.processedImage ? "本机抠图与轻量滤镜" : "先导入角色图片"}</span><button type="button" onClick={() => { setStage("cutout"); setActiveStep(2); setPreviewOriginal(true); setError(null); setNotice(null); }} disabled={working}>重新处理</button></div>
                 </div>
                 <SettingsPanel config={config} onChange={setConfig} />
               </div>

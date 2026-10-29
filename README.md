@@ -4,23 +4,23 @@
 
 [中文文档](README.zh-CN.md) · **English** · [Live demo](https://lesile1312.github.io/PetForge/#example) · [Create with your reference](https://lesile1312.github.io/PetForge/#create)
 
-I started 自定义桌宠petforge because I wanted to turn a photo into a little companion on my desktop. My goal is a simple path: upload a photo, choose the person, make a cartoon character and some motions, keep previewing and adjusting them, then run the pet anywhere on the desktop. If the photo does not show the whole body, I want the editor to label anything it fills in as an AI guess. Person detection finds someone in the picture; it does not identify who they are. I want photos to stay on the user's computer.
+I am focusing first on the part I can make work well: put your own character image on the desktop, adjust its size, walking speed, idle and sleep habits, then save or launch it. If you already have a transparent PNG, you can use it as-is. A regular photo can go through local background removal, but the result depends on the photo. Automatic high-quality cartoon redraw and custom actions for every photo are not reliable yet, so I do not present them as finished features.
 
 ## New here? Start with the route that fits
 
 | What you want to do | Follow this route | You will need |
 | --- | --- | --- |
-| I already have a transparent character PNG | [Run a PNG desktop pet](#make-your-own-pet--transparent-png-route) ([download source ZIP](https://github.com/lesile1312/PetForge/archive/refs/heads/main.zip)) | Windows, Godot 4, and the 自定义桌宠petforge source |
-| I want to start from a portrait | [Try the local photo editor](#quick-start-windows-development) (cutout and comic filter today; cartoon generation and motions are still experimental) | Windows, Node.js, pnpm, Python, and Godot 4 |
+| I want to adjust the character and desktop behavior | [Run the local pet editor](#quick-start-windows-development) (transparent PNG works directly; photo cutout is optional) | Windows, Node.js, pnpm, Python, and Godot 4 |
+| I just want to start a pet quickly | [Use a transparent PNG](#make-your-own-pet--transparent-png-route) ([download source ZIP](https://github.com/lesile1312/PetForge/archive/refs/heads/main.zip)) | Windows, Godot 4, and the 自定义桌宠petforge source |
 | I only want to preview the project | [Open the live demo](https://lesile1312.github.io/PetForge/#example) | A browser; the demo cannot launch a pet on your computer |
 
-**Where I am now:** The website is a static showcase, not a cloud generation service. The current local editor can cut out a photo and apply a comic filter. I have also started a local photo-generation experiment. I ran one approved local photo through it: person detection, cutout, and a cartoon candidate completed, but the hair, pose, and layers still need work. The saved files stay on my computer, and this new flow is not connected to the web editor yet, so I cannot call it a finished upload-and-go feature. The 18 actions below are motions I shaped for my own character over many tries; a new photo does not automatically get them. The repository has source code, but no one-click installer. To run a pet today, start with a complete transparent cartoon PNG. 自定义桌宠petforge is an independent community project and is not affiliated with OpenAI or Codex.
+**Where I am now:** The local editor can import a transparent character PNG directly, adjust its look and behavior, preview it, save a package, and launch it on the Windows desktop when Godot is configured. Regular photos can use local background removal, but that does not redraw them into the polished cartoon girl shown here. The 18 illustrated actions are custom work for my character; new images get the runtime's built-in general actions. The repository has source code, but no one-click installer. GitHub Pages is a showcase and cannot launch a pet on your computer. 自定义桌宠petforge is an independent community project and is not affiliated with OpenAI or Codex.
 
 ## How I built this character, one change at a time
 
 At first, the pet sometimes did not show up, lost its color, or had hair and feet cut off. Then I kept adjusting the run, blink, wave, mirror, hair, and phone motions. The arms, eyes, expressions, and timing often needed another pass. I would run it, spot something odd, change a small part, and try again. That process shaped the character and the action showcase you see here.
 
-I want other people to work the same way on their own pets: make a first version, preview each motion, then adjust the pose, arms, gaze, expression, speed, and how long an action lasts. Keep tweaking until it feels right. The user chooses and refines the final version; uploading a photo is only the beginning. The full web editor for this process is still in development. The current local P0 tool is for checking photo generation and motion previews.
+I want people to keep shaping their own pets too: choose a character image, adjust its size, speed, wandering frequency and rest time, preview it, then keep changing anything that feels off. The final version comes from the user's choices. Automatic cartoon redraw and photo-specific motions are still experimental, so I am putting the reliable transparent-PNG-to-desktop path first.
 
 ## From the original photo to the custom character
 
@@ -50,15 +50,15 @@ These are custom assets for the showcased character. A newly uploaded image does
 
 | Capability | Current behavior |
 | --- | --- |
-| Your own PNG → desktop pet | Creates a package from your image and runs the generic Godot pet; no AI model required |
-| Portrait processing | Local rembg segmentation plus a comic palette/outline filter; original and processed images are shown together |
+| Your own transparent PNG → desktop pet | Imports directly without cutout, preserves the source, and creates a runnable package |
+| Start from a regular photo | Optional local person cutout and light comic filter; it does not redraw or complete the character |
 | Desktop window | Transparent, borderless, draggable, optionally always on top; independent of the browser |
 | Behavior | The showcased character has 18 custom action illustrations; the generic runtime provides idle, movement, sleep, jump and click reactions. Other images do not inherit this character's gestures automatically |
 | Portable package | `pet.json` and `character.png`; optional cutout and static GLB |
 | Public website | Reference-photo preview and `.petforge.json` download; no cloud photo generation |
-| Photo recognition, cartoon generation and motion adaptation | Experimental local P0 code is on this development branch; it is not connected to the web editor, and real-photo quality, actions and Godot integration are not accepted yet. See the [technical design](docs/photo-to-pet-technical-design.zh-CN.md) and [P0 record](docs/superpowers/plans/2026-10-28-photo-to-18-actions-p0.md) |
+| Automatic cartoon redraw and photo-specific actions | Still experimental; not promised as an available feature. See the [technical design](docs/photo-to-pet-technical-design.zh-CN.md) |
 
-The current editor filters an uploaded photo; it does not yet turn it into the polished chibi example. I am still working on connecting photo recognition, cartoon generation, motion editing, and desktop launch into one flow. For now, prepare a cartoon PNG and use the direct-PNG route. New limb-motion frames are not automatically generated for arbitrary images.
+Choose **I have a transparent character PNG** before uploading a ready-made sprite; this skips photo processing. New characters use the runtime's built-in general actions and do not automatically receive the showcased character's custom run frames or gestures.
 
 ## Make your own pet — transparent PNG route
 
@@ -121,13 +121,15 @@ pnpm dev
 
 Keep that terminal open and visit <http://127.0.0.1:3000/>. API health: <http://127.0.0.1:8000/health>.
 
-### Photo → processed image → your desktop pet
+### Create, adjust, and launch
 
-1. Select a PNG/JPG/WEBP photo (maximum 10 MB), or import the `.petforge.json` reference file saved by the public website.
-2. Wait for local portrait segmentation and the comic filter. The first model load can download weights; a complicated background or occluded hair may need a different source image.
-3. Compare the original with the transparent result. Adjust appearance and behavior in the editor. This step currently does not offer AI cartoon redrawing or automatic body completion.
-4. Click **启动桌宠** after you are satisfied. Godot must be configured in `.env`; restart `pnpm dev` after changing configuration. The pet runs in a separate native window.
-5. Click **导出资源** to keep or share your generated ZIP. It is an asset package, not an `.exe` installer.
+1. Visit `http://127.0.0.1:3000/`. Choose **I have a transparent character image** or **I only have a regular photo**, then pick an image (up to 10 MB). Transparent PNGs are used directly; regular photos go through local background removal.
+2. Adjust the name, character size, movement speed, wandering frequency, jumping, sleeping, dragging, and window behavior. Preview updates as you make changes.
+3. Click **Save settings** to keep the current setup. Click **Download pet package** to export `pet.json` and the transparent character PNG.
+4. In local mode, configure Godot in `.env` and click **Launch pet**. The pet appears in its own desktop window outside the browser.
+5. If you started from a photo, inspect the hair, hands, feet, and edges. Cutout cannot restore parts hidden or missing in the source, and it does not draw a new cartoon character.
+
+The ZIP is a resource package, not a Windows installer. Anyone receiving it also needs Godot 4 or the matching runtime.
 
 3D generation is an explicit optional action, so making a 2D pet does not wait for TripoSR. Install the separate environment with `scripts/setup-ai.ps1` only if you want the static 3D preview. It can download large files and requires compatible CUDA hardware.
 

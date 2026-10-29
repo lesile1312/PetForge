@@ -1,27 +1,25 @@
 # Development status
 
-PetForge is an active Windows-first local-development project. This page describes the code and generic demo assets included in the public repository. It does not describe the excluded private character artwork or its local development archives.
+PetForge is a Windows-first open-source desktop-pet editor. The current goal is a dependable custom-pet workflow from a ready character image to a configurable desktop companion. This page describes the public source tree; private photo-processing runs and local character archives are not included.
 
 ## Included foundations
 
-- Next.js editor for the photo upload and pet settings flow.
+- Next.js editor for direct transparent-PNG import, optional photo cutout, live preview, pet settings, save, export and local launch.
 - FastAPI API with local SQLite and file storage.
-- Local portrait segmentation provider and transparent cutout workflow.
-- Comic-style image processing and optional local single-image 3D reconstruction experiment.
-- Godot 4 transparent desktop runtime with a generic cat demo, screen movement and interaction foundations.
+- Local portrait segmentation provider for the optional photo route.
+- Godot 4 transparent desktop runtime with screen movement and built-in interaction foundations.
 - Shared pet configuration schema and ZIP export path.
 
 ## In progress
 
-- Generating a consistent cartoon character from different personal photographs.
-- Automatically separating body, face, eyes, hair and limbs into reusable animation layers.
-- Rigging arbitrary generated characters and quality-checking actions without writing character-specific code.
-- Recoverable background jobs, a general-purpose Windows installer, and clean-machine release validation.
+- Windows app packaging and clean-machine setup validation.
+- Better ways to adjust or add actions for each imported character.
+- Automatic cartoon redraw and photo-specific action generation remain exploratory work, not part of the usable feature promise.
 
-The advanced animation poses in the local development history use a private, character-specific asset package, which is deliberately excluded from this public repository. The generic demo must not be presented as proof that every uploaded photo already receives those poses automatically.
+The illustrated 18-action set belongs to the creator's custom character. Other imported images use the runtime's built-in general actions; the custom set must not be presented as automatic output for every photo.
 
 ## Verification boundary
 
-Existing local Godot motion captures cover one character package and do not demonstrate universal photo-to-rig generation. A packaged consumer installer, broad Windows hardware matrix, CPU generative-illustration path, and public hosted service have not been validated as part of this publication preparation.
+The static GitHub Pages site is a showcase, not a remote desktop launcher. A packaged consumer installer, clean-machine Windows matrix, broad photo-cutout quality, and universal character-specific action generation have not been validated.
 
 See the [technical design](photo-to-pet-technical-design.zh-CN.md) and [current source audit](current-state-audit.zh-CN.md) for the implementation path and known limitations.

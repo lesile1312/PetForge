@@ -262,6 +262,59 @@ async def upload_image(pet_id: str, file: UploadFile = File(...)) -> JSONRespons
     return success(serialize_pet(pet))
 
 
+@app.post("/api/pets/{pet_id}/use-original")
+def use_original_as_character(pet_id: str) -> JSONResponse:
+    pet = get_pet_or_404(pet_id)
+    file_name = pet.get("original_image")
+    if not file_name or not RANDOM_IMAGE_PATTERN.fullmatch(file_name):
+        raise HTTPException(409, "请先上传透明背景 PNG，再将它作为桌宠角色图。")
+    if not file_name.lower().endswith(".png"):
+        raise HTTPException(415, "直接导入只支持透明背景 PNG。普通照片请切换到“我只有普通照片”。")
+
+    original_path = (storage.pet_directory(pet_id) / file_name).resolve()
+    if not original_path.is_relative_to(storage.root) or not original_path.is_file():
+        raise HTTPException(404, "Original image not found")
+    try:
+        with Image.open(original_path) as opened:
+            if opened.format != "PNG":
+                raise HTTPException(415, "直接导入只支持透明背景 PNG。普通照片请切换到“我只有普通照片”。")
+            character = opened.convert("RGBA")
+    except (UnidentifiedImageError, OSError, Image.DecompressionBombError) as error:
+        raise HTTPException(400, "无法读取这张 PNG，请重新导出后再试。") from error
+
+    alpha = character.getchannel("A")
+    histogram = alpha.histogram()
+    transparent_ratio = sum(histogram[:250]) / (character.width * character.height)
+    if alpha.getextrema()[0] == 255 or transparent_ratio < 0.005:
+        raise HTTPException(400, "这张 PNG 没有可用的透明背景。请切换到“我只有普通照片”，或先准备透明 PNG。")
+
+    bounds = alpha.point(lambda value: 255 if value > 8 else 0).getbbox()
+    if bounds is None:
+        raise HTTPException(400, "这张 PNG 里没有检测到可见角色。")
+    left, top, right, bottom = bounds
+    padding_x = max(2, round((right - left) * 0.03))
+    padding_y = max(2, round((bottom - top) * 0.03))
+    character = character.crop((
+        max(0, left - padding_x),
+        max(0, top - padding_y),
+        min(character.width, right + padding_x),
+        min(character.height, bottom + padding_y),
+    ))
+    output = io.BytesIO()
+    character.save(output, format="PNG", optimize=True)
+    storage.save(pet_id, "character.png", output.getvalue())
+    remove_derived_file(pet_id, "cutout.png")
+    remove_derived_file(pet_id, "model.glb")
+    remove_derived_file(pet_id, "triposr.log")
+    pet["processed_image"] = "character.png"
+    pet["config"]["appearance"]["sprite"] = "character.png"
+    pet["config"]["appearance"]["model"] = None
+    pet["updated_at"] = repository.now()
+    persist_pet(pet)
+    logger.info("Transparent character image selected for %s (%sx%s)", pet_id, character.width, character.height)
+    return success(serialize_pet(pet))
+
+
 @app.post("/api/pets/{pet_id}/remove-background")
 def remove_background(pet_id: str) -> JSONResponse:
     pet = get_pet_or_404(pet_id)

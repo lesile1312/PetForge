@@ -46,6 +46,7 @@ export const api = {
     form.append("file", file);
     return request<PetRecord>(`/pets/${id}/image`, { method: "POST", body: form });
   },
+  useOriginal: (id: string) => request<PetRecord>(`/pets/${id}/use-original`, { method: "POST" }),
   removeBackground: (id: string) => request<{ status: "processed" | "not_generated"; provider: string; imageUrl: string; width: number; height: number; note: string }>(`/pets/${id}/remove-background`, { method: "POST" }),
   generateModel: (id: string) => request<{ status: "generated"; provider: string; modelUrl: string; note: string }>(`/pets/${id}/generate-model`, { method: "POST" }),
   restoreOriginal: (id: string) => request<{ restored: boolean }>(`/pets/${id}/restore-original`, { method: "POST" }),

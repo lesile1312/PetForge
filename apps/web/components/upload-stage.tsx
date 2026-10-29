@@ -12,20 +12,23 @@ const samples: { id: CharacterVariant; title: string; detail: string; asset: str
   { id: "run-right", title: "向右跑动", detail: "我的卡通女孩桌宠", asset: "/demo/run-right.png" },
 ];
 
+type SourceMode = "transparent" | "photo";
+
 interface UploadStageProps {
   busy: boolean;
   error: string | null;
-  onFile: (file: File) => void;
+  onFile: (file: File, mode: SourceMode) => void;
   onSample: (asset: string, name: string) => void;
 }
 
 export function UploadStage({ busy, error, onFile, onSample }: UploadStageProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [dragging, setDragging] = useState(false);
+  const [sourceMode, setSourceMode] = useState<SourceMode>("transparent");
 
   function accept(file?: File) {
     if (!file || busy) return;
-    onFile(file);
+    onFile(file, sourceMode);
   }
 
   function onInput(event: ChangeEvent<HTMLInputElement>) {
@@ -42,10 +45,19 @@ export function UploadStage({ busy, error, onFile, onSample }: UploadStageProps)
   return (
     <section className="upload-stage" aria-labelledby="hero-title">
       <div className="hero-copy">
-        <div className="hero-kicker"><span className="kicker-orbit" /> 从一张照片开始</div>
-        <h1 id="hero-title">让熟悉的模样，<br /><span>住进你的桌面。</span></h1>
-        <p className="hero-subtitle">上传参考照片，或导入公开网页保存的参考文件。PetForge 在本机抠除背景、应用漫画滤镜，再预览和制作桌宠资源。</p>
-        <p className="hero-english">One photo in. A little companion on your screen.</p>
+        <div className="hero-kicker"><span className="kicker-orbit" /> 自己的角色，自己的桌宠</div>
+        <h1 id="hero-title">把喜欢的角色，<br /><span>放到你的桌面。</span></h1>
+        <p className="hero-subtitle">有透明 PNG 就直接开始；只有普通照片，也能先在本机抠除背景。接着调大小、走路速度和行动习惯，预览后再保存或启动。</p>
+        <p className="hero-english">Your character, your little desktop companion.</p>
+
+        <div className="source-mode-picker" role="group" aria-label="选择角色图片类型">
+          <button type="button" className={`source-mode-option${sourceMode === "transparent" ? " is-selected" : ""}`} aria-pressed={sourceMode === "transparent"} onClick={() => setSourceMode("transparent")} disabled={busy}>
+            <span className="source-mode-mark">PNG</span><span><b>我有透明角色图</b><small>直接导入，保留原画</small></span>
+          </button>
+          <button type="button" className={`source-mode-option${sourceMode === "photo" ? " is-selected" : ""}`} aria-pressed={sourceMode === "photo"} onClick={() => setSourceMode("photo")} disabled={busy}>
+            <span className="source-mode-mark"><Icon name="image" size={16} /></span><span><b>我只有普通照片</b><small>本机抠除背景，效果看原图</small></span>
+          </button>
+        </div>
 
         <div
           className={`dropzone${dragging ? " is-dragging" : ""}${busy ? " is-busy" : ""}`}
@@ -55,18 +67,18 @@ export function UploadStage({ busy, error, onFile, onSample }: UploadStageProps)
           onDragLeave={() => setDragging(false)}
           onDrop={onDrop}
         >
-          <input ref={inputRef} type="file" accept="image/png,image/jpeg,image/webp,.png,.jpg,.jpeg,.webp,.json" onChange={onInput} hidden />
+          <input ref={inputRef} type="file" accept={sourceMode === "transparent" ? "image/png,.png,.petforge.json" : "image/png,image/jpeg,image/webp,.png,.jpg,.jpeg,.webp,.petforge.json"} onChange={onInput} hidden />
           <div className="upload-icon"><Icon name={busy ? "spark" : "upload"} size={20} /></div>
           <div className="dropzone-content">
-            <strong>{busy ? "正在准备你的桌宠…" : "拖一张图片到这里"}</strong>
-            <span>{busy ? "请稍等片刻" : "或从电脑中选择图片"}</span>
+            <strong>{busy ? "正在准备你的桌宠…" : sourceMode === "transparent" ? "选择透明角色 PNG" : "选择普通人物照片"}</strong>
+            <span>{busy ? "请稍等片刻" : "也可以把图片拖到这里"}</span>
           </div>
           <button type="button" className="button button-primary upload-cta" disabled={busy} onClick={(event) => { event.stopPropagation(); inputRef.current?.click(); }}>
-            <Icon name="plus" size={16} /> 创建我的桌宠
+            <Icon name="plus" size={16} /> {sourceMode === "transparent" ? "导入角色图" : "从照片开始"}
           </button>
         </div>
-        <div className="upload-footnote"><Icon name="image" size={15} /><span>PNG、JPG、WEBP 或 .petforge.json 参考文件</span><i /> <span>原图最大 10 MB</span></div>
-        <p className="upload-privacy-note">仅上传你本人或已获授权的照片。图片会发送到当前 PetForge 服务进行处理。</p>
+        <div className="upload-footnote"><Icon name="image" size={15} /><span>透明 PNG 可直接用；照片支持 PNG、JPG、WEBP</span><i /> <span>最大 10 MB</span></div>
+        <p className="upload-privacy-note">照片只发送给当前 PetForge 服务。使用本机版本时，图片保存在本机；请勿把私人照片上传到不熟悉的网站。</p>
         {error && <div className="inline-alert" role="alert">{error}</div>}
       </div>
 
@@ -81,16 +93,16 @@ export function UploadStage({ busy, error, onFile, onSample }: UploadStageProps)
           <div className="desktop-notice"><span className="notice-dot" /><div><b>你的新朋友</b><small>正在桌面上等你</small></div></div>
           <div className="mini-taskbar"><span className="windows-mark">◩</span><span className="task-search">搜索</span><span className="task-icons"><i /><i /><i /></span><span className="task-clock">9:41<br />10/07</span></div>
         </div>
-        <div className="creation-steps" id="how-it-works" aria-label="从照片到桌宠的流程">
-          <div className="creation-step"><span className="step-number">1</span><b>上传照片</b><small>一张清晰图片即可</small></div>
+        <div className="creation-steps" id="how-it-works" aria-label="从角色图片到桌宠的流程">
+          <div className="creation-step"><span className="step-number">1</span><b>导入角色</b><small>透明 PNG 最省事</small></div>
           <span className="step-connector" />
-          <div className="creation-step"><span className="step-number">2</span><b>自动抠图</b><small>保留照片主体</small></div>
+          <div className="creation-step"><span className="step-number">2</span><b>准备图片</b><small>透明图直用，照片可抠图</small></div>
           <span className="step-connector" />
-          <div className="creation-step"><span className="step-number">3</span><b>形象预览</b><small>对照原图检查透明角色</small></div>
+          <div className="creation-step"><span className="step-number">3</span><b>设置与预览</b><small>调大小和行动习惯</small></div>
           <span className="step-connector" />
-          <div className="creation-step"><span className="step-number">4</span><b>导出资源</b><small>配合桌面运行程序使用</small></div>
+          <div className="creation-step"><span className="step-number">4</span><b>启动或导出</b><small>保存你调好的桌宠</small></div>
         </div>
-        <p className="creation-note">本机编辑器负责抠图、漫画滤镜和形象预览；常驻桌面需要 Godot 运行器。3D 建模是单独的可选实验。</p>
+        <p className="creation-note">运行器提供待机、走动、跳跃、睡觉和鼠标回应等通用动作。照片抠图不会自动画出新卡通，也不会生成专属动作。</p>
       </div>
 
       <div className="sample-shelf" id="examples">
