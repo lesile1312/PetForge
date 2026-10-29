@@ -4,7 +4,7 @@
 
 [中文文档](README.zh-CN.md) · **English** · [Live demo](https://lesile1312.github.io/PetForge/#example) · [Create with your reference](https://lesile1312.github.io/PetForge/#create)
 
-I started 自定义桌宠petforge because I wanted to turn a photo into a little companion on my desktop. My goal is a simple path: upload a photo, choose the person, make a cartoon character and some motions, keep previewing and adjusting them, then run the pet anywhere on the desktop. Person detection finds someone in the picture; it does not identify who they are. I want photos to stay on the user's computer.
+I started 自定义桌宠petforge because I wanted to turn a photo into a little companion on my desktop. My goal is a simple path: upload a photo, choose the person, make a cartoon character and some motions, keep previewing and adjusting them, then run the pet anywhere on the desktop. If the photo does not show the whole body, I want the editor to label anything it fills in as an AI guess. Person detection finds someone in the picture; it does not identify who they are. I want photos to stay on the user's computer.
 
 ## New here? Start with the route that fits
 
