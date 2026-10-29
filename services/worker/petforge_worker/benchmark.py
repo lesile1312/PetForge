@@ -29,6 +29,7 @@ from .providers.base import (
 )
 from .providers.cutout import AlphaCutoutProvider
 from .providers.portrait import DeterministicFakePortraitGenerator
+from .pose_control import write_openpose_control
 
 
 def _write_json(path: Path, payload: dict[str, object]) -> None:
@@ -203,6 +204,7 @@ def run_case(
         token.check()
         start_stage("generation")
         inferred_regions = _infer_regions(person)
+        pose_control_path = write_openpose_control("idle", (768, 1024), stage_dir / "generated" / "pose-control.png")
         request = PortraitRequest(
             source_path=cutout_result.cutout_path,
             selected_crop_xywh_norm=(0.0, 0.0, 1.0, 1.0),
@@ -213,6 +215,7 @@ def run_case(
             pose_description=(
                 "front-facing upright idle stand, arms relaxed at sides, both legs straight, both feet flat"
             ),
+            pose_control_image=pose_control_path,
         )
         try:
             candidate = generator.generate(request, selected_device, stage_dir / "generated", token)

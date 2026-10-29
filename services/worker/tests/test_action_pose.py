@@ -5,6 +5,7 @@ from PIL import Image, ImageDraw
 
 from petforge_worker.action_pose import ActionPoseCandidate, _motion_angles, generate_action_pose, render_action_preview
 from petforge_worker.device import DeviceProfile
+from petforge_worker.pose_control import POSE_TEMPLATES, write_openpose_control
 from petforge_worker.providers.base import LayerAsset, LayerSet, PortraitCandidate
 from petforge_worker.rig_seed import Landmark, seed_rig
 
@@ -26,8 +27,10 @@ def _rig(tmp_path: Path):
 
 def test_action_pose_only_accepts_reference_conditioned_gestures_and_keeps_identity(tmp_path: Path) -> None:
     candidate, rig = _rig(tmp_path)
+    requests = []
     class FakeGenerator:
         def generate(self, request, device, output_dir, cancel=None):
+            requests.append(request)
             assert request.source_path == candidate.image_path
             assert request.pose_description
             Path(output_dir).mkdir(parents=True, exist_ok=True)
@@ -62,6 +65,24 @@ def test_action_pose_only_accepts_reference_conditioned_gestures_and_keeps_ident
     assert pose.character_reference_id == rig.character_reference_id
     assert pose.landmarks_norm["left_wrist"][1] == .2
     assert pose.image_path.is_file()
+    assert requests[0].pose_control_image.is_file()
+    assert requests[0].pose_control_image.parent == tmp_path / "wave"
+
+
+def test_pose_controls_are_full_body_openpose_maps(tmp_path: Path) -> None:
+    control_paths = {
+        action: write_openpose_control(action, (128, 192), tmp_path / f"{action}.png")
+        for action in POSE_TEMPLATES
+    }
+
+    assert set(control_paths) == {"idle", "wave_smile", "phone_crouch"}
+    maps = {}
+    for action, path in control_paths.items():
+        with Image.open(path) as control:
+            assert control.size == (128, 192)
+            assert control.mode == "RGB"
+            maps[action] = control.tobytes()
+    assert len(set(maps.values())) == len(maps)
 
 
 def test_unknown_or_mismatched_action_key_pose_is_rejected(tmp_path: Path) -> None:

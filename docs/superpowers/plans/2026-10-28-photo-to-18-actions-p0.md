@@ -1,6 +1,6 @@
 # Photo-to-PetForge Feasibility Spike Implementation Plan
 
-**Status:** Approved by owner on 2026-10-28; P0 implementation is present, but the evidence gate remains incomplete. Last verified 2026-10-29.
+**Status:** Approved by owner on 2026-10-28; P0 implementation is present, but the evidence gate remains incomplete. Owner requested GitHub publication on 2026-10-29; publish the experimental feature branch only. Last verified 2026-10-29.
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use `superpowers:executing-plans` or `superpowers:subagent-driven-development` to implement this plan task-by-task. Steps use checkbox syntax for tracking.
 
@@ -25,7 +25,7 @@
 - Source photos, masks, candidates, corrections, and logs stay outside GitHub, CI, public previews, and telemetry unless each subject separately approves publication.
 - Put model weights and evaluation assets under `E:\PetForge\models` and `E:\PetForge\evaluations` by default; allow `PETFORGE_MODEL_ROOT` and `PETFORGE_EVAL_ROOT` overrides. Keep generated project output selectable with `--output-root`.
 - Existing version 1.0 pet packages must keep working and must not be overwritten.
-- Commit each completed task locally after its final green verification; do not push during P0.
+- Commit each completed task locally after its final verification. The owner explicitly requested publishing this experimental P0 feature branch; keep merge into `main` and release blocked until the acceptance gate passes.
 - A complete **18-action-ready** result requires all 18 actions; this P0 only evaluates idle, left/right run, wave, and phone-crouch.
 
 ## Review Focus
@@ -274,7 +274,9 @@ Run: `services/worker/.venv/Scripts/python.exe -m pytest -c services/worker/pypr
 
 Expected: PASS for gate logic. The actual gate remains `incomplete_samples` until its real-photo and human-review evidence is present.
 
-Result (2026-10-29): all 90 worker tests passed. The selected single-case gate report is `incomplete_samples`, with no failure codes. It records one consented real case, zero owner-approved characters, zero reviewed actions, and missing six-case, 16 GiB CPU, two-character, and ten-action evidence.
+Result (2026-10-29, pre-pose-v2): all 90 worker tests passed. The selected single-case gate report is `incomplete_samples`, with no failure codes. It records one consented real case, zero owner-approved characters, zero reviewed actions, and missing six-case, 16 GiB CPU, two-character, and ten-action evidence. This report predates the pose-v2 provider and is not evidence for that revision.
+
+Pose-v2 update (2026-10-29): added pinned OpenPose T2I-Adapter conditioning and retained pose-control images for idle, wave, and phone crouch. The previous verification run recorded 91 passing worker tests, web typecheck, Python compile, and PowerShell parse before the final model revision-label change. The new real-photo rerun was interrupted before producing a candidate, so pose-v2 image quality and actions remain unverified.
 
 - [x] **Step 5: Stop at the evidence gate**
 
@@ -284,7 +286,7 @@ Result (2026-10-29): stopped before P1. Five-action quality and real-Godot revie
 
 ## Execution boundary
 
-This plan implements and measures P0 only. It does not add a public upload flow for generated characters, promise all 18 motions, migrate pet packages, publish model weights, or create a Windows installer. Those phases need P0 evidence and their own focused plans.
+This plan implements and measures P0 only. It does not add a public upload flow for generated characters, promise all 18 motions, migrate pet packages, publish model weights, or create a Windows installer. Those phases need P0 evidence and their own focused plans. The owner authorized pushing this development branch; that does not mean P0 passed or authorize merging incomplete photo generation into `main`.
 
 ## Plan self-review
 

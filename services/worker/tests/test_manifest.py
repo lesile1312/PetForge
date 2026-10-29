@@ -228,12 +228,16 @@ def test_p0_source_manifest_has_pinned_component_metadata_and_no_repo_weights(tm
     assert result.component_ids == (
         "sdxl-base-1.0",
         "ip-adapter-plus-sdxl-vit-h",
+        "t2i-adapter-openpose-sdxl-1.0",
         "birefnet-portrait-cutout",
         "mediapipe-pose-full",
     )
-    assert result.expected_bytes > 11_000_000_000
-    assert len(result.missing_files) >= 19
-    assert all(not (repo_root / "models" / path).is_file() for path in ("sdxl/sd_xl_base_1.0.safetensors",))
+    assert result.expected_bytes > 11_600_000_000
+    assert len(result.missing_files) >= 21
+    assert all(
+        not (repo_root / "models" / path).is_file()
+        for path in ("sdxl/sd_xl_base_1.0.safetensors", "t2i-adapter/openpose/diffusion_pytorch_model.safetensors")
+    )
 
 
 def test_sdxl_second_tokenizer_uses_the_pinned_upstream_repository():

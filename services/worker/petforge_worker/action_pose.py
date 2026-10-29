@@ -9,6 +9,7 @@ from PIL import Image, ImageChops, ImageDraw, ImageFilter, ImageOps
 
 from .device import DeviceProfile
 from .providers.base import CancelToken, LayerSet, PortraitCandidate, PortraitRequest
+from .pose_control import write_openpose_control
 from .rig_seed import Joint, RigSeed
 
 
@@ -28,6 +29,7 @@ class ActionPoseCandidate:
     landmarks_norm: dict[str, tuple[float, ...]]
     image_path: Path
     issues: tuple[str, ...] = ()
+    control_image_path: Path | None = None
 
 
 @dataclass(frozen=True, slots=True)
@@ -96,6 +98,11 @@ def generate_action_pose(
         raise ValueError("character_reference_mismatch")
     seed_material = f"{rig.character_reference_id}:{action_id}".encode("ascii")
     seed = int.from_bytes(hashlib.sha256(seed_material).digest()[:4], "big") & 0x7FFFFFFF
+    output = Path(output_dir)
+    output.mkdir(parents=True, exist_ok=True)
+    with Image.open(candidate.image_path) as candidate_image:
+        control_size = candidate_image.size
+    control_path = write_openpose_control(action_id, control_size, output / "pose-control.png")
     request = PortraitRequest(
         source_path=Path(candidate.image_path),
         selected_crop_xywh_norm=(0.0, 0.0, 1.0, 1.0),
@@ -104,13 +111,14 @@ def generate_action_pose(
         inferred_regions=candidate.inferred_regions,
         seed=seed,
         pose_description=_GENERATED_POSES[action_id],
+        pose_control_image=control_path,
     )
-    generated = generator.generate(request, device, Path(output_dir), cancel)
+    generated = generator.generate(request, device, output, cancel)
     people = detector.detect(generated.image_path)
     person = max(people, key=lambda item: item.confidence) if people else None
     landmarks = person.landmarks_norm if person else {}
     issues = _required_pose_issues(action_id, landmarks)
-    return ActionPoseCandidate(rig.character_reference_id, action_id, landmarks, generated.image_path, issues)
+    return ActionPoseCandidate(rig.character_reference_id, action_id, landmarks, generated.image_path, issues, control_path)
 
 
 def _reference_id(candidate: PortraitCandidate) -> str:

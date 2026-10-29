@@ -72,6 +72,7 @@ class PortraitRequest:
     inferred_regions: tuple[str, ...]
     seed: int = 0
     pose_description: str | None = None
+    pose_control_image: Path | None = None
 
 
 class CancelToken:

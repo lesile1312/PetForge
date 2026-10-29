@@ -608,6 +608,11 @@ def _preview_actions(args: argparse.Namespace) -> int:
                 "action_id": preview.action_id,
                 "case_id": preview.case_id,
                 "key_pose_rig_manifest": action_rig_paths.get(preview.action_id),
+                "pose_control_path": (
+                    action_poses[preview.action_id].control_image_path.relative_to(output_dir).as_posix()
+                    if preview.action_id in action_poses and action_poses[preview.action_id].control_image_path
+                    else None
+                ),
                 "status": preview.status,
                 "duration_seconds": preview.duration_seconds,
                 "fps_target": preview.fps_target,

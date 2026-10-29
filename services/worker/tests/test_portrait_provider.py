@@ -92,6 +92,8 @@ def test_local_generator_checks_all_model_files_before_importing_runtime(tmp_pat
         "sdxl-config/model_index.json",
         "ip-adapter/models/image_encoder/config.json",
         "ip-adapter/sdxl_models/ip-adapter-plus_sdxl_vit-h.safetensors",
+        "t2i-adapter/openpose/config.json",
+        "t2i-adapter/openpose/diffusion_pytorch_model.safetensors",
     ):
         path = model_root / relative
         path.parent.mkdir(parents=True, exist_ok=True)
@@ -110,29 +112,4 @@ def test_local_generator_checks_all_model_files_before_importing_runtime(tmp_pat
         generator._load(device)
     assert not (model_root / "ip-adapter/models/image_encoder/model.safetensors").exists()
 
-
-def test_local_generator_checks_all_model_files_before_importing_runtime(tmp_path, monkeypatch):
-    api = _api()
-    model_root = tmp_path / "models"
-    for relative in (
-        "sdxl/sd_xl_base_1.0.safetensors",
-        "sdxl-config/model_index.json",
-        "ip-adapter/models/image_encoder/config.json",
-        "ip-adapter/sdxl_models/ip-adapter-plus_sdxl_vit-h.safetensors",
-    ):
-        path = model_root / relative
-        path.parent.mkdir(parents=True, exist_ok=True)
-        path.write_bytes(b"fixture")
-    device = api.DeviceProfile("Windows", "x86_64", 16, 8, None, None, None, True, ())
-    generator = api.LocalSDXLPortraitGenerator(model_root, lambda image: image, device_mode="cpu")
-    original_import = builtins.__import__
-
-    def reject_runtime_import(name, *args, **kwargs):
-        if name.split(".", 1)[0] in {"torch", "diffusers", "transformers"}:
-            raise AssertionError("heavy model runtime loaded before file preflight")
-        return original_import(name, *args, **kwargs)
-
-    monkeypatch.setattr(builtins, "__import__", reject_runtime_import)
-    with pytest.raises(api.ProviderError, match="portrait_model_files_missing"):
-        generator._load(device)
-    assert not (model_root / "ip-adapter/models/image_encoder/model.safetensors").exists()
+\n

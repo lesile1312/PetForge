@@ -17,5 +17,6 @@ PetForge depends on third-party code and may download separate model weights. Ea
 | Diffusers (optional) | [huggingface/diffusers](https://github.com/huggingface/diffusers) — Apache-2.0 |
 | SDXL (optional) | [stabilityai/stable-diffusion-xl-base-1.0](https://huggingface.co/stabilityai/stable-diffusion-xl-base-1.0) — CreativeML Open RAIL++-M; not bundled |
 | IP-Adapter (optional) | [tencent-ailab/IP-Adapter](https://github.com/tencent-ailab/IP-Adapter) — Apache-2.0; model variants have their own model cards |
+| T2I-Adapter OpenPose SDXL (optional) | [TencentARC/t2i-adapter-openpose-sdxl-1.0](https://huggingface.co/TencentARC/t2i-adapter-openpose-sdxl-1.0/tree/f90998885600ed3627cedc305316edff47b8b03f) — model card reports Apache-2.0; pinned weights download locally and are not redistributed |
 
 Model code, weight files, datasets, and generated images may have different terms. PetForge does not bundle large third-party weights in the source repository. Check each upstream license and model card before commercial use or redistribution. This notice is not legal advice.

@@ -4,7 +4,7 @@
   "models": [
     {
       "id": "photo-to-cartoon-p0-local",
-      "revision": "p0-2026-10-29",
+      "revision": "p0-2026-10-29-pose-v2",
       "components": [
         {
           "id": "sdxl-base-1.0",
@@ -138,6 +138,32 @@
               "download_url": "https://huggingface.co/h94/IP-Adapter/resolve/9bf28b38530e55ffa91c6d82e5161a982c22f284/models/image_encoder/model.safetensors?download=true",
               "size_bytes": 2528373448,
               "sha256": "6ca9667da1ca9e0b0f75e46bb030f7e011f44f86cbfb8d5a36590fcd7507b030"
+            }
+          ]
+        },
+        {
+          "id": "t2i-adapter-openpose-sdxl-1.0",
+          "source_url": "https://huggingface.co/TencentARC/t2i-adapter-openpose-sdxl-1.0",
+          "revision": "f90998885600ed3627cedc305316edff47b8b03f",
+          "license": {
+            "spdx_id": "Apache-2.0",
+            "terms_url": "https://huggingface.co/TencentARC/t2i-adapter-openpose-sdxl-1.0",
+            "weights_redistributable": true,
+            "project_redistributes_weights": false,
+            "notice": "Small OpenPose conditioning adapter for SDXL; weights download from upstream and stay outside the repository."
+          },
+          "files": [
+            {
+              "path": "t2i-adapter/openpose/config.json",
+              "download_url": "https://huggingface.co/TencentARC/t2i-adapter-openpose-sdxl-1.0/resolve/f90998885600ed3627cedc305316edff47b8b03f/config.json?download=true",
+              "size_bytes": 237,
+              "sha256": "dcc055ce84321bcbe95872fa1cc433f1939ee235ce5308e86f9b28a2922ec69b"
+            },
+            {
+              "path": "t2i-adapter/openpose/diffusion_pytorch_model.safetensors",
+              "download_url": "https://huggingface.co/TencentARC/t2i-adapter-openpose-sdxl-1.0/resolve/f90998885600ed3627cedc305316edff47b8b03f/diffusion_pytorch_model.safetensors?download=true",
+              "size_bytes": 316116784,
+              "sha256": "24c55f4b4f4903a50caaae7e3e11f4008bd51d24041385a5ca94e8d05be6311e"
             }
           ]
         },

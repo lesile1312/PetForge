@@ -111,6 +111,7 @@ def test_unreviewed_candidate_is_preserved_but_not_marked_accepted(tmp_path):
     assert candidate["character_reference_id"] == evidence["character_reference_id"]
     assert candidate["revision_id"].startswith("rev_")
     assert (revision_dir / "generated" / "provenance.json").is_file()
+    assert (revision_dir / "generated" / "pose-control.png").is_file()
 
 
 def test_cancellation_is_recorded_and_candidate_is_not_promoted(tmp_path):

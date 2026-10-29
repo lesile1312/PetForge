@@ -17,6 +17,7 @@ _REQUIRED_ACTIONS = {"idle", "run_left", "run_right", "wave_smile", "phone_crouc
 _REQUIRED_LICENSES = {
     "sdxl-base-1.0",
     "ip-adapter-plus-sdxl-vit-h",
+    "t2i-adapter-openpose-sdxl-1.0",
     "birefnet-portrait-cutout",
     "mediapipe-pose-full",
 }

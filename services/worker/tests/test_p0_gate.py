@@ -12,6 +12,7 @@ _LICENSES = [
     {"component_id": "sdxl", "license_name": "CreativeML Open RAIL++-M", "terms_url": "https://example.org/sdxl", "weights_redistributable": False},
     {"component_id": "sdxl-base-1.0", "license_name": "CreativeML Open RAIL++-M", "terms_url": "https://example.org/sdxl", "weights_redistributable": False},
     {"component_id": "ip-adapter-plus-sdxl-vit-h", "license_name": "Apache-2.0", "terms_url": "https://example.org/adapter", "weights_redistributable": True},
+    {"component_id": "t2i-adapter-openpose-sdxl-1.0", "license_name": "Apache-2.0", "terms_url": "https://huggingface.co/TencentARC/t2i-adapter-openpose-sdxl-1.0", "weights_redistributable": True},
     {"component_id": "birefnet-portrait-cutout", "license_name": "MIT", "terms_url": "https://example.org/birefnet", "weights_redistributable": True},
     {"component_id": "mediapipe-pose-full", "license_name": "Apache-2.0", "terms_url": "https://example.org/pose", "weights_redistributable": True},
 ]

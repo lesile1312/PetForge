@@ -86,9 +86,9 @@ class DeterministicFakePortraitGenerator:
 class LocalSDXLPortraitGenerator:
     """Reference-conditioned SDXL portrait generator with local-only model loading."""
 
-    model_id = "sdxl-base-ipadapter-plus-birefnet-p0"
+    model_id = "sdxl-base-ipadapter-t2i-openpose-birefnet-p0"
     model_evidence = {
-        "model_revision": "p0-2026-10-29",
+        "model_revision": "p0-2026-10-29-pose-v2",
         "licenses": [
             {
                 "component_id": "sdxl-base-1.0",
@@ -100,6 +100,12 @@ class LocalSDXLPortraitGenerator:
                 "component_id": "ip-adapter-plus-sdxl-vit-h",
                 "license_name": "Apache-2.0",
                 "terms_url": "https://github.com/tencent-ailab/IP-Adapter/blob/main/LICENSE",
+                "weights_redistributable": True,
+            },
+            {
+                "component_id": "t2i-adapter-openpose-sdxl-1.0",
+                "license_name": "Apache-2.0",
+                "terms_url": "https://huggingface.co/TencentARC/t2i-adapter-openpose-sdxl-1.0",
                 "weights_redistributable": True,
             },
             {
@@ -155,18 +161,21 @@ class LocalSDXLPortraitGenerator:
         adapter_root = self.model_root / "ip-adapter"
         encoder_dir = adapter_root / "models" / "image_encoder"
         adapter_file = adapter_root / "sdxl_models" / "ip-adapter-plus_sdxl_vit-h.safetensors"
+        pose_adapter_root = self.model_root / "t2i-adapter" / "openpose"
         required = (
             checkpoint,
             config_dir / "model_index.json",
             encoder_dir / "config.json",
             encoder_dir / "model.safetensors",
             adapter_file,
+            pose_adapter_root / "config.json",
+            pose_adapter_root / "diffusion_pytorch_model.safetensors",
         )
         if any(not path.is_file() for path in required):
             raise ProviderError("portrait_model_files_missing")
 
         import torch
-        from diffusers import StableDiffusionXLPipeline
+        from diffusers import StableDiffusionXLAdapterPipeline, T2IAdapter
         from transformers import CLIPVisionModelWithProjection
 
         use_cuda = self.device_mode == "cuda" or (
@@ -178,15 +187,19 @@ class LocalSDXLPortraitGenerator:
         dtype = torch.float16 if use_cuda else torch.float32
 
         try:
+            pose_adapter = T2IAdapter.from_pretrained(
+                str(pose_adapter_root), torch_dtype=dtype, local_files_only=True
+            )
             image_encoder = CLIPVisionModelWithProjection.from_pretrained(
                 str(encoder_dir), torch_dtype=dtype, local_files_only=True
             )
-            pipeline = StableDiffusionXLPipeline.from_single_file(
+            pipeline = StableDiffusionXLAdapterPipeline.from_single_file(
                 str(checkpoint),
                 config=str(config_dir),
                 torch_dtype=dtype,
                 use_safetensors=True,
                 local_files_only=True,
+                adapter=pose_adapter,
                 image_encoder=image_encoder,
                 add_watermarker=False,
             )
@@ -200,6 +213,7 @@ class LocalSDXLPortraitGenerator:
             pipeline.set_ip_adapter_scale(self.ip_adapter_scale)
             if use_cuda:
                 pipeline.enable_model_cpu_offload()
+                pipeline.adapter.to("cuda")
             else:
                 pipeline.to("cpu")
             pipeline.enable_vae_slicing()
@@ -216,6 +230,8 @@ class LocalSDXLPortraitGenerator:
     def generate(
         self, request: PortraitRequest, device: DeviceProfile, output_dir: Path, cancel: CancelToken | None = None
     ) -> PortraitCandidate:
+        if request.pose_control_image is not None and not Path(request.pose_control_image).is_file():
+            raise ProviderError("pose_control_image_missing")
         pipeline = self._load(device)
         import torch
         output = Path(output_dir)
@@ -227,6 +243,13 @@ class LocalSDXLPortraitGenerator:
             reference = background.convert("RGB")
             background.close()
             source_rgba.close()
+        if request.pose_control_image is not None:
+            with Image.open(request.pose_control_image) as control_file:
+                pose_control = control_file.convert("RGB")
+            pose_conditioning_scale = 1.0
+        else:
+            pose_control = Image.new("RGB", (self.width, self.height), (0, 0, 0))
+            pose_conditioning_scale = 0.0
 
         prompt, prompt_2, negative, negative_2 = _build_portrait_prompts(request)
         for text, tokenizer in (
@@ -253,11 +276,13 @@ class LocalSDXLPortraitGenerator:
                 prompt_2=prompt_2,
                 negative_prompt=negative,
                 negative_prompt_2=negative_2,
+                image=pose_control,
                 ip_adapter_image=reference,
                 width=self.width,
                 height=self.height,
                 num_inference_steps=self.steps,
                 guidance_scale=7.0,
+                adapter_conditioning_scale=pose_conditioning_scale,
                 generator=random,
                 callback_on_step_end=check_cancel if cancel else None,
             )
@@ -278,11 +303,14 @@ class LocalSDXLPortraitGenerator:
                 "seed": int(request.seed),
                 "base_revision": "bf714989e22c57ddc1c453bf74dab4521acb81d8",
                 "adapter_revision": "9bf28b38530e55ffa91c6d82e5161a982c22f284",
+                "pose_adapter_revision": "f90998885600ed3627cedc305316edff47b8b03f",
                 "runtime_device": self._runtime_device,
                 "runtime_dtype": self._dtype,
                 "inference_steps": self.steps,
                 "canvas_size": [self.width, self.height],
                 "ip_adapter_scale": self.ip_adapter_scale,
+                "pose_conditioning_scale": pose_conditioning_scale,
+                "pose_control_sha256": _sha256(request.pose_control_image) if request.pose_control_image else None,
                 "source_reference_sha256": _sha256(request.source_path),
                 "inferred_regions": list(request.inferred_regions),
                 "style_preset": request.style_preset,
@@ -294,6 +322,7 @@ class LocalSDXLPortraitGenerator:
         except Exception as error:
             raise ProviderError("portrait_generation_failed") from error
         finally:
+            pose_control.close()
             reference.close()
             try:
                 generated.close()
