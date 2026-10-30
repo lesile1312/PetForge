@@ -17,6 +17,9 @@ def from_project_root(value: str | Path) -> Path:
     path = Path(value).expanduser()
     return (path if path.is_absolute() else ROOT / path).resolve()
 
+if os.getenv("REMBG_HOME"):
+    os.environ["REMBG_HOME"] = str(from_project_root(os.environ["REMBG_HOME"]))
+
 
 STORAGE_ROOT = from_project_root(os.getenv("PETFORGE_STORAGE_ROOT", "storage"))
 DATABASE_PATH = from_project_root(os.getenv("PETFORGE_DATABASE_PATH", STORAGE_ROOT / "petforge.sqlite3"))

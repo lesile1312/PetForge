@@ -31,7 +31,12 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
   } catch {
     throw new Error("无法连接 PetForge 服务，请稍后重试。");
   }
-  const payload = (await response.json()) as ApiEnvelope<T>;
+  let payload: ApiEnvelope<T>;
+  try {
+    payload = (await response.json()) as ApiEnvelope<T>;
+  } catch {
+    throw new Error(`本机处理服务返回异常（${response.status}）。请确认服务正在运行；首次处理可能需要下载模型，请稍后重试。`);
+  }
   if (!response.ok || payload.error || payload.data === null) {
     throw new Error(payload.error?.message ?? `请求失败（${response.status}）`);
   }
@@ -64,7 +69,9 @@ export const api = {
       throw new Error("无法连接 PetForge 服务，请稍后重试。");
     }
     if (!response.ok) {
-      const payload = (await response.json()) as ApiEnvelope<never>;
+      let payload: ApiEnvelope<never>;
+      try { payload = (await response.json()) as ApiEnvelope<never>; }
+      catch { throw new Error(`导出服务返回异常（${response.status}），请检查本机服务。`); }
       throw new Error(payload.error?.message ?? `导出失败（${response.status}）`);
     }
     return response.blob();

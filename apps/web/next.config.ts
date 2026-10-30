@@ -5,6 +5,7 @@ const runtimeMode = process.env.PETFORGE_RUNTIME_MODE
   ?? (process.env.NODE_ENV === "development" ? "local" : "package");
 
 const nextConfig: NextConfig = {
+  experimental: { proxyTimeout: 900000 },
   transpilePackages: ["@petforge/pet-schema"],
   env: {
     NEXT_PUBLIC_PETFORGE_RUNTIME_MODE: runtimeMode,
