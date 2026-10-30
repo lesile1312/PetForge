@@ -15,7 +15,7 @@
 ## 产品 Demo、介绍网页和提案
 
 - [打开在线介绍网页与动作演示](https://lesile1312.github.io/PetForge/#proposal)
-- [下载完整资料包](https://github.com/lesile1312/PetForge/releases/download/v1.0.0/PetForge-Demo-and-Proposal-Illustrated-2026-10-31.zip)：包含 Windows 桌面 Demo、介绍网页副本、加入真人照片与卡通形象对照及 18 张动作图的产品提案 PDF 和可编辑 Word。解压后进入“桌面Demo”，双击 `Start-PetForge.bat`。
+- [下载完整资料包](https://github.com/lesile1312/PetForge/releases/download/v1.0.0/PetForge-Demo-and-Proposal-Illustrated-2026-10-31.zip)：包含 Windows 桌面 Demo、介绍网页副本，以及开篇放入真人照片与卡通桌宠对照、接着展示 18 张动作图的提案 PDF 和可编辑 Word。解压后进入“桌面Demo”，双击 `Start-PetForge.bat`。
 - 单独阅读：[产品提案 PDF](docs/downloads/PetForge-Product-Proposal-Illustrated-2026-10-31.pdf) · [可编辑 Word](docs/downloads/PetForge-Product-Proposal-Illustrated-2026-10-31.docx)
 
 示例桌宠可以直接运行。提案和网页也会说明当前照片处理、角色动作的实际边界；其他用户可以继续调整自己的角色和动作，再保存喜欢的版本。

@@ -15,7 +15,7 @@ For action-frame format and adjustments, see [the pet package format](docs/pet-f
 ## Demo, website, and product proposal
 
 - [Open the website and action showcase](https://lesile1312.github.io/PetForge/#proposal)
-- [Download the complete bundle](https://github.com/lesile1312/PetForge/releases/download/v1.0.0/PetForge-Demo-and-Proposal-Illustrated-2026-10-31.zip). It includes the Windows desktop demo, an offline intro website, and the proposal with the creator's photo-to-pet comparison and all 18 action illustrations as PDF and editable Word. Extract it, open `Desktop Demo`, and run `Start-PetForge.bat`.
+- [Download the complete bundle](https://github.com/lesile1312/PetForge/releases/download/v1.0.0/PetForge-Demo-and-Proposal-Illustrated-2026-10-31.zip). It includes the Windows desktop demo, an offline intro website, and the proposal with the creator's photo-to-pet comparison and all 18 action illustrations at the front, in PDF and editable Word. Extract it, open `Desktop Demo`, and run `Start-PetForge.bat`.
 - Read separately: [proposal PDF](docs/downloads/PetForge-Product-Proposal-Illustrated-2026-10-31.pdf) · [editable Word](docs/downloads/PetForge-Product-Proposal-Illustrated-2026-10-31.docx)
 
 The example pet is ready to run. The site and proposal explain current limits: regular photos get local background removal and a light filter; they do not automatically become the showcased cartoon or inherit its custom actions. Users can keep refining their own pet and motions.
