@@ -344,14 +344,26 @@
               </ol>
               <div class="reference-controls">
                 <button class="button" id="reference-download" type="button" disabled>保存参考文件 ↓</button>
-                <a class="button secondary" href="http://127.0.0.1:3000/" target="_blank" rel="noreferrer">打开本机创作器 ↗</a>
+                <a class="button secondary" href="https://github.com/lesile1312/PetForge/blob/main/README.zh-CN.md#路线二运行本机桌宠编辑器" target="_blank" rel="noreferrer">本机创作器安装步骤 ↗</a>
               </div>
               <p id="reference-status" class="reference-status" role="status" aria-live="polite"></p>
-              <p class="reference-note">这里的图片只在浏览器临时预览。桌宠制作、照片抠图和桌面运行都要在自己的电脑上启动本机创作器。</p>
+              <p class="reference-note">上面的参考照片只在浏览器临时预览。下方可以直接制作透明 PNG 桌宠；普通照片抠图需要运行本机创作器。</p>
               <details><summary>还没有安装本机创作器？</summary><p>项目提供开发版源码。按 <a href="https://github.com/lesile1312/PetForge#quick-start-windows-development" target="_blank" rel="noreferrer">Windows 安装说明</a>准备 Node.js、Python 和 Godot。启动后，导入透明角色 PNG；或者保存本页参考文件，再在本机创作器里选择照片路线。</p><pre>Copy-Item .env.example .env
 .\scripts\setup.ps1
 pnpm dev</pre></details>
             </div>
+          </div>
+          <div class="reference-next" style="margin-top:24px">
+            <h3>在线制作透明 PNG 桌宠</h3>
+            <p>已有透明角色图？在这里生成桌宠文件，再放入 Windows 便携版文件夹运行。图片只在浏览器处理，不会上传。</p>
+            <label for="custom-png">选择透明 PNG（最大 10 MB）</label>
+            <input id="custom-png" type="file" accept="image/png" style="display:block;margin:12px 0;max-width:100%" />
+            <label for="custom-name">桌宠名字</label>
+            <input id="custom-name" type="text" maxlength="40" value="我的桌宠" style="display:block;margin:8px 0 12px;padding:8px;max-width:100%" />
+            <button class="button" id="custom-download" type="button" disabled>下载我的桌宠文件 ↓</button>
+            <p id="custom-status" role="status" aria-live="polite">先选择一张带透明背景的 PNG。</p>
+            <p>使用步骤：① <a href="https://github.com/lesile1312/PetForge/releases/tag/v1.0.0">下载 Windows 便携版</a>并解压；② 将这里下载的 ZIP 解压到便携版同一文件夹；③ 双击新出现的 <strong>Start-Custom-Pet.bat</strong>。</p>
+            <p>新角色使用通用桌面动作；示例女孩的精细动作需要针对新角色另行制作。普通照片请先抠图，本页不自动生成卡通形象。</p>
           </div>
         </div>
       </section>
@@ -473,5 +485,6 @@ pnpm dev</pre></details>
         }));
       })();
     </script>
+    <script src="custom-creator.js"></script>
   </body>
 </html>

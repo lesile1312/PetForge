@@ -8,6 +8,8 @@
 
 想做自己的桌宠？往下看“路线一”和“路线二”：你可以导入透明角色 PNG，或用本机编辑器处理普通照片，再调整外观和桌面行为。示例女孩的精细动作经过专门制作，上传另一张图片不会自动获得同一套动作。
 
+**不想安装开发环境？** [打开网页制作透明 PNG 桌宠](https://lesile1312.github.io/PetForge/#create)：选图并下载桌宠文件，将它解压到 Windows 便携版文件夹，再双击 `Start-Custom-Pet.bat`。图片只在浏览器处理。普通照片需先抠图；这个入口不会自动制作示例女孩的专属动作。
+
 [看看如何为自己的角色逐步制作和调整动作](docs/customize-your-pet.zh-CN.md)。
 
 ![招手时的小爱心](docs/images/pet-demo/wave-heart.png)

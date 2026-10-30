@@ -8,6 +8,8 @@
 
 To make your own pet, follow the transparent PNG or local editor instructions below. You can adjust the appearance and desktop behavior. The example girl's detailed motions were authored for her; another image does not automatically inherit them.
 
+For a simpler transparent PNG workflow, use the [online creator](https://lesile1312.github.io/PetForge/#create). Download your pet files, extract them into the Windows portable folder beside `PetForge.exe`, then run `Start-Custom-Pet.bat`. Your image stays in your browser. Regular photographs need background removal first, and the example's custom motions are not generated automatically.
+
 For action-frame format and adjustments, see [the pet package format](docs/pet-format.md); a [Chinese guide to making your own motions](docs/customize-your-pet.zh-CN.md) describes the process.
 
 ![The girl waving with a small heart](docs/images/pet-demo/wave-heart.png)
