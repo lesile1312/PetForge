@@ -12,6 +12,14 @@ For a simpler transparent PNG workflow, use the [online creator](https://lesile1
 
 For action-frame format and adjustments, see [the pet package format](docs/pet-format.md); a [Chinese guide to making your own motions](docs/customize-your-pet.zh-CN.md) describes the process.
 
+## Demo, website, and product proposal
+
+- [Open the website and action showcase](https://lesile1312.github.io/PetForge/#proposal)
+- [Download the complete bundle](https://github.com/lesile1312/PetForge/releases/download/v1.0.0/PetForge-Demo-and-Proposal-2026-10.zip). It includes the Windows desktop demo, an offline copy of the intro website, and the revised proposal as PDF and editable Word. Extract the bundle, open `Desktop Demo`, and run `Start-PetForge.bat`.
+- Read separately: [proposal PDF](docs/downloads/PetForge-Product-Proposal-2026-10.pdf) · [editable Word](docs/downloads/PetForge-Product-Proposal-2026-10.docx)
+
+The example pet is ready to run. The site and proposal explain current limits: regular photos get local background removal and a light filter; they do not automatically become the showcased cartoon or inherit its custom actions. Users can keep refining their own pet and motions.
+
 ![The girl waving with a small heart](docs/images/pet-demo/wave-heart.png)
 
 [中文文档](README.zh-CN.md) · **English** · [Live demo](https://lesile1312.github.io/PetForge/#example) · [Create with your reference](https://lesile1312.github.io/PetForge/#create)
